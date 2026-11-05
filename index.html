@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script type="application/json" id="colorbox-skill-usage">
+{
+  "skills": [
+    "colorbox-auth-get-user-info",
+    "colorbox-cloud-save-get-value",
+    "colorbox-cloud-save-set-value",
+    "colorbox-fullscreen-safe-top",
+    "colorbox-oss-upload-file",
+    "colorbox-request",
+    "colorbox-request-bbs-open-post-editor",
+    "colorbox-result-poster-posting",
+    "colorbox-vatask-complete-reward-video",
+    "colorbox-vatask-get-activity-task-state"
+  ]
+}
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>巨星拼图：巅峰王朝</title>
+<style>
+:root{ --ink:#1d2733; --paper:#f4efe3; --paper2:#e9e1cd; --accent:#b3402a; --accent2:#205d4d; --line:#c9bd9e; --dark:#141a21; }
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--dark)}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:#eef1f4}
+#app{max-width:430px;margin:0 auto;min-height:100vh;background:#1a222c;padding-top:env(safe-area-inset-top)}
+.paper{background:var(--paper);color:var(--ink);border-radius:6px;padding:12px;margin:10px;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+.paper h2,.paper h3{margin:4px 0 8px}
+h1.title{font-size:24px;margin:0;letter-spacing:1px}
+.sub{color:#9fb0c0;font-size:13px;margin:2px 10px}
+.btn{display:block;width:100%;padding:11px 10px;margin:7px 0;border:2px solid var(--ink);border-radius:6px;background:#fdfaf1;color:#1d2733;font-size:15px;font-weight:600;cursor:pointer;text-align:center}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--accent);color:#ffffff;border-color:#7e2a1a}
+.btn.green{background:var(--accent2);color:#ffffff;border-color:#123c31}
+.btn.ghost{background:#2a3644;color:#eef1f4;border-color:#54687c}
+.btn.small{padding:7px 8px;font-size:13px;margin:4px 0}
+.btn:disabled{opacity:.45}
+.row{display:flex;gap:8px}.row>.btn{flex:1}
+.resbar{display:flex;flex-wrap:wrap;gap:4px 10px;background:#10151b;color:#dfe7ee;border-radius:6px;padding:8px 10px;margin:10px;font-size:12.5px}
+.resbar b{color:#ffd98a;font-weight:700}
+.slots{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}
+.slot{background:#fdfaf1;border:1.5px dashed var(--line);border-radius:5px;padding:6px 4px;text-align:center;font-size:12px;color:var(--ink)}
+.slot.filled{border-style:solid;border-color:var(--ink)}
+.slot .v{font-size:17px;font-weight:800}
+.slot .src{color:#7a6c4f;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cands{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.cand{background:#fdfaf1;border:2px solid var(--line);border-radius:6px;padding:8px;text-align:center;cursor:pointer;color:var(--ink)}
+.cand.sel{border-color:var(--accent)}
+.cand img{width:74px;height:74px;object-fit:cover;border-radius:50%;background:#ddd3b8}
+.cand .nm{font-weight:800;font-size:15px}
+.cand .meta{font-size:11.5px;color:#7a6c4f}
+.attrgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.attrbtn{background:#fdfaf1;border:1.5px solid var(--ink);border-radius:5px;padding:7px 4px;font-size:13px;color:var(--ink);cursor:pointer}
+.attrbtn b{font-size:15px}
+.timeline{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}
+.timeline span{background:#2a3644;color:#c9d4df;border-radius:4px;padding:3px 7px;font-size:11.5px}
+.timeline span.done{background:var(--accent2);color:#fff}
+.timeline span.now{background:var(--accent);color:#fff}
+.settle{background:#fff8e6;border:2px solid var(--accent);border-radius:6px;padding:10px;color:var(--ink);margin:10px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.gcard{background:#fdfaf1;border:1.5px solid var(--line);border-radius:6px;padding:7px;text-align:center;color:var(--ink);font-size:12px}
+.gcard img{width:60px;height:60px;object-fit:cover;border-radius:50%;background:#ddd3b8}
+table.lb{width:100%;border-collapse:collapse;font-size:13px;color:var(--ink)}
+table.lb td,table.lb th{border-bottom:1px solid var(--line);padding:5px 4px;text-align:left}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.66);display:flex;align-items:center;justify-content:center;z-index:50}
+.modal .box{background:var(--paper);color:var(--ink);border-radius:8px;max-width:400px;width:92%;max-height:86vh;overflow:auto;padding:14px}
+textarea{width:100%;min-height:80px;font-size:12px}
+select,input[type=text]{width:100%;padding:9px;font-size:14px;border:1.5px solid var(--ink);border-radius:5px;background:#fff;color:#1d2733}
+.kicker{color:var(--accent);font-weight:800;font-size:12px;letter-spacing:2px}
+.foot{color:#7e8fa0;font-size:11.5px;text-align:center;padding:14px}
+label.chk{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--ink);margin:6px 0}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="modal-root"></div>
+<script>// 《巨星拼图：巅峰王朝》配置表——全部数值常量集中于此，代码禁散落魔法数（防屎山纪律 §1.3）
+window.BK_CONFIG = {
+  GAME_NAME: '巨星拼图：巅峰王朝',
+  VERSION: 'v1.0',
+  LB_API_BASE: 'https://app-6577eaef3c-d1gmtlqu9702c7de1-1252166086.ap-shanghai.app.tcloudbase.com/api',
+  LB_ENV_ID: 'app-6577eaef3c-d1gmtlqu9702c7de1',
+  BOARD_PREFIX: 'bk_',
+  SAVE_KEY: 'bk_save_v1',
+  META_KEY: 'bk_meta_v1',
+  PENDING_KEY: 'bk_pending_ad',
+  PENDING_QUEUE_KEY: 'bk_pending_queue',
+  AD_FLOOR_KEY: 'bk_ad_floor',
+  MOCK_ADCOUNT_KEY: 'bk_mock_adcount',
+  PLAT_ADCOUNT_KEY: 'bk_plat_adcount',
+  MOCK_LB_KEY: 'bk_mock_lb_v1',
+  SEED_PREFIX: 'BK',
+  ATTRS: ['三分','中投','突破','扣篮','传球','控球','篮板','抢断','封盖','体能','球商','领袖'],
+  TEAMS: ['80年代队','90年代队','00年代队','10年代队','新世代队','国际纵队'],
+  BASE_ATTR: 50,
+  DRAFT_ROUNDS: 12,
+  BATCH_SIZE: 5,
+  SWAPS_FREE: 3,
+  PEAK_CHANCE: 0.35,
+  PEAK_BOOST: 5,
+  // 出身（选秀顺位）：初始资源
+  ORIGINS: [
+    {id:'champion', name:'状元秀', power:1800, fame:12, rel:6},
+    {id:'lottery', name:'乐透秀', power:1600, fame:8, rel:5},
+    {id:'second', name:'次轮秀', power:1400, fame:5, rel:4},
+    {id:'undrafted', name:'落选秀', power:1200, fame:2, rel:3}
+  ],
+  START_HEALTH: 100,
+  // 判定（母本口径）：成功率 = clamp(35 + (属性-60)*0.8 - 负荷冲突*3 + 修正, 10, 90)
+  CHECK_BASE: 35, CHECK_PER_POINT: 0.8, CHECK_MIN: 10, CHECK_MAX: 90,
+  GRADE_GREAT_MARGIN: 25,   // roll <= rate-25 大胜
+  GRADE_HOLD_MARGIN: 15,    // 失败但 roll <= rate+15 时 B 类按僵持
+  MERIT: {great:3, win:2, hold:1, lose:0},
+  GAMBLE_RATE_FACTOR: 0.5,  // 拼一把：成功率减半、效果与功勋翻倍、失败额外代价
+  GAMBLE_FAIL_EXTRA: {health:-3, power:-50},
+  LOAD_FORMULA_DIV: 2, LOAD_FORMULA_ADD: 30, LOAD_HEALTH_PER: -2, LOAD_RATE_PER: -3,
+  SCENE_ATTR_MIN: 85,
+  REST_AFTER: [4,8,12,16], REST_HEALTH: 12,
+  EVENT_AFTER: [2,5,8,11,14,17],
+  SELF_PENALTY_FROM: 3, SELF_PENALTY: {fame:-1, power:-50}, SELF_PENALTY_ESCALATE: {controversy:1},
+  PERSONAL_FAIL_END: 4, PERSONAL_FAIL_END_LOWHP: 3, PERSONAL_FAIL_HP_LINE: 35, PERSONAL_FAIL_CHECK_BATTLE: 19,
+  PLAYOFF_GATE_MERIT: 11,        // 第14战后晋级季后赛所需功勋
+  LYING_CHAMP_MERIT_MAX: 21,     // 躺冠：夺冠且功勋低于此值且季后赛轮休>=3
+  LYING_CHAMP_REST_MIN: 3,
+  CONTRIBUTION: {meritW:2, sceneW:4, proW:1, HIGH:62},
+  FINALS: {A_POWER:2700, B_POWER:2500, C_POWER:3400, C_MERIT:30},
+  BOUNTY_CONCENTRATION_S_COUNT: 4, // 抱团标签：所夺能力中 S 档来源 >= 此数
+  IDENTITY_MOD: 6,               // 战术身份对应能力判定修正（百分点）
+  IDENTITY_GROUPS: {core:[4,5,2,10], shooter:[0,1,9], defense:[7,8,6]}, // 持球核心/无球终结/防守体系
+  FATE_BUFF: 8, FATE_BATTLES: 3, // 巨星时刻：接下来数战判定 +8
+  HEAL_AD_AMOUNT: 15,
+  // 位置权重（12维顺序同 ATTRS，每行和=1）
+  POS_WEIGHTS: {
+    PG:[0.08,0.07,0.10,0.02,0.16,0.15,0.03,0.08,0.01,0.08,0.14,0.08],
+    SG:[0.14,0.15,0.13,0.07,0.06,0.09,0.03,0.07,0.02,0.09,0.07,0.08],
+    SF:[0.10,0.11,0.13,0.10,0.08,0.08,0.07,0.07,0.04,0.09,0.06,0.07],
+    PF:[0.06,0.11,0.07,0.09,0.05,0.04,0.15,0.05,0.10,0.10,0.08,0.10],
+    C: [0.02,0.08,0.04,0.13,0.05,0.03,0.17,0.03,0.15,0.10,0.08,0.12]
+  },
+  POSITIONS: [
+    {id:'PG', name:'控卫 PG'}, {id:'SG', name:'分卫 SG'}, {id:'SF', name:'小前 SF'},
+    {id:'PF', name:'大前 PF'}, {id:'C', name:'中锋 C'}
+  ],
+  // 生涯规划商店（母本功名商店位阶）：price 为生涯功勋点（跨局 meta）
+  SHOP: [
+    {id:'physio', name:'专属理疗师', price:60, desc:'每局开局健康 +10', effect:{startHealth:10}},
+    {id:'trainer', name:'投篮训练师', price:90, desc:'每局开局总评相关：投篮三维下限 +3（锁定时生效）', effect:{shootFloor:3}},
+    {id:'agent', name:'王牌经纪人', price:90, desc:'每局开局人脉 +4', effect:{startRel:4}},
+    {id:'pr', name:'公关团队', price:120, desc:'每局开局争议 -3（不低于0）且人气 +3', effect:{startFame:3, startControversy:-3}},
+    {id:'mentor', name:'名宿私教', price:150, desc:'每局选秀免费换一批 +1', effect:{extraSwap:1}}
+  ],
+  AD_TTL_MS: 12*3600*1000,       // PENDING TTL 12h（母本 v5.22 口径，先核对后清理）
+  AD_BLOCK_AGE_MS: 3*60*1000,    // 未落定拦截：年龄 <=3 分钟
+  AD_BLOCK_MAX_CHECKS: 2,        // 且核对次数 <=2
+  AD_QUEUE_MAX: 5,
+  LB_PAGE: 20
+};
+</script>
+<script>// 种子 RNG（mulberry32）；rngState 随档保存——注意：保存的是判定后的位置（母本同口径）
+(function(){
+  function hashSeed(str){ let h=2166136261; for(let i=0;i<str.length;i++){ h^=str.charCodeAt(i); h=Math.imul(h,16777619); } return h>>>0; }
+  function createRng(seedStr, state){
+    let a = (state!=null ? state>>>0 : hashSeed(String(seedStr)));
+    const api = {
+      next(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; },
+      int(n){ return Math.floor(api.next()*n); },
+      range(lo,hi){ return lo+api.int(hi-lo+1); },
+      pick(arr){ return arr[api.int(arr.length)]; },
+      shuffle(arr){ const r=arr.slice(); for(let i=r.length-1;i>0;i--){ const j=api.int(i+1); const t=r[i]; r[i]=r[j]; r[j]=t; } return r; },
+      state(){ return a>>>0; },
+      setState(s){ a=s>>>0; }
+    };
+    return api;
+  }
+  function makeSeedCode(prefix, rng){ const chars='ABCDEFGHJKMNPQRSTUVWXYZ23456789'; let s=prefix; for(let i=0;i<6;i++) s+=chars[Math.floor(Math.random()*chars.length)]; return s; }
+  window.BK_RNG = { createRng, makeSeedCode, hashSeed };
+})();
+</script>
+<script>// 公式层：只算不改状态（单一事实源）。传奇值公式逐字照设计案 §10，系数不许动。
+(function(){
+  const C = window.BK_CONFIG;
+  function clamp(v,lo,hi){ return Math.max(lo, Math.min(hi, v)); }
+  // 负荷冲突（母本德不配位）：能力超过 (体能+领袖)/2+30 的项数
+  function loadConflict(attrs){
+    const line = (attrs[9]+attrs[11])/C.LOAD_FORMULA_DIV + C.LOAD_FORMULA_ADD;
+    let n=0; for(let i=0;i<12;i++){ if(i!==9 && i!==11 && attrs[i]>line) n++; }
+    return n;
+  }
+  // 单项有效值：绝活 floor 保下限（锁定时记录 floors[attr]）
+  function effAttr(state, idx){
+    let v = state.attrs[idx];
+    const f = state.attrFloors ? state.attrFloors[idx] : null;
+    if(f!=null && v<f) v=f;
+    return v;
+  }
+  // 判定成功率（母本）：clamp(35+(attr-60)*0.8 - 负荷*3 + 修正, 10, 90)；拼一把减半，上限95口径同母本锦囊位——本作无锦囊，封顶90
+  function checkRate(state, idx, opts){
+    opts = opts||{};
+    let rate = C.CHECK_BASE + (effAttr(state, idx)-60)*C.CHECK_PER_POINT + loadConflict(state.attrs)*C.LOAD_RATE_PER;
+    if(state.identity && C.IDENTITY_GROUPS[state.identity] && C.IDENTITY_GROUPS[state.identity].indexOf(idx)>=0) rate += C.IDENTITY_MOD;
+    if(state.fateBuff && state.fateBuff>0) rate += C.FATE_BUFF;
+    if(opts.mod) rate += opts.mod;
+    rate = clamp(rate, C.CHECK_MIN, C.CHECK_MAX);
+    if(opts.gamble) rate = Math.round(rate*C.GAMBLE_RATE_FACTOR);
+    return rate;
+  }
+  function gradeOf(roll, rate, success){
+    if(!success) return 'lose';
+    if(roll <= rate - C.GRADE_GREAT_MARGIN) return 'great';
+    return 'win';
+  }
+  function overall(state){
+    const w = C.POS_WEIGHTS[state.position||'SF']; let s=0;
+    for(let i=0;i<12;i++) s += state.attrs[i]*w[i];
+    return Math.round(s*10)/10;
+  }
+  // 个人贡献副轴（§2：独立计量，不用传奇值冒充）
+  function contribution(state){
+    const r = state.resources;
+    return r.merit*C.CONTRIBUTION.meritW + r.scene*C.CONTRIBUTION.sceneW + state.proSuccess*C.CONTRIBUTION.proW;
+  }
+  function contributionHigh(state){ return contribution(state) >= C.CONTRIBUTION.HIGH; }
+  // 传奇值 = 500 + [ (功勋-18)*0.09 + (总评-72)*0.05 + clamp(高光*0.3,0,1.2) + clamp((人气+人脉)*0.04,-0.8,0.8) - clamp(争议*0.06,0,1.2) + 结局bonus ] * 45，封顶1000
+  function legendValue(state, endingBonus){
+    const r = state.resources;
+    const inner = (r.merit-18)*0.09 + (overall(state)-72)*0.05
+      + clamp(r.scene*0.3, 0, 1.2)
+      + clamp((r.fame+r.rel)*0.04, -0.8, 0.8)
+      - clamp(r.controversy*0.06, 0, 1.2)
+      + (endingBonus||0);
+    return Math.min(1000, Math.round(500 + inner*45));
+  }
+  window.BK_Formulas = { clamp, loadConflict, effAttr, checkRate, gradeOf, overall, contribution, contributionHigh, legendValue };
+})();
+</script>
+<script>// 账本：资源变更唯一入口，带 reason 码留痕（防屎山纪律 §2.4）。其他模块不许直改 state.resources。
+(function(){
+  const FLOORS = { health:0, power:0, fame:0, rel:0, controversy:0, merit:0, scene:0 };
+  const CAPS = { health:130 };
+  function apply(state, changes, reason){
+    const r = state.resources;
+    state.ledgerLog = state.ledgerLog || [];
+    const applied = {};
+    for(const k in changes){
+      if(!(k in r)) continue;
+      let v = r[k] + changes[k];
+      if(FLOORS[k]!=null) v = Math.max(FLOORS[k], v);
+      if(CAPS[k]!=null) v = Math.min(CAPS[k], v);
+      applied[k] = v - r[k]; r[k] = v;
+    }
+    state.ledgerLog.push({reason: reason||'unknown', changes: applied, at: state.battleIdx||0});
+    if(state.ledgerLog.length>300) state.ledgerLog.splice(0, state.ledgerLog.length-300);
+    return applied;
+  }
+  window.BK_Ledger = { apply };
+})();
+</script>
+<script>// 存档层：唯一出入口。bk_save_v1；normalize 版本阶梯集中在此（防屎山纪律 §2.6）。
+// 判定落盘：结算后立刻 save('*-settle') 并写 S.lastSettle，恢复时按 lastSettle.kind 重建结果页，不许重选重结算（2026-11-05 修复口径）。
+(function(){
+  const C = window.BK_CONFIG;
+  function lsGet(k){ try{ const v = localStorage.getItem(k); return v?JSON.parse(v):null; }catch(e){ return null; } }
+  function lsSet(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+  function lsDel(k){ try{ localStorage.removeItem(k); }catch(e){} }
+
+  function defaultState(){
+    return {
+      ver: 1, phase: 'origin', // origin|position|draft|battle|event|settle|ending
+      seed: '', rngState: null,
+      originId: null, position: null, identity: null,
+      attrs: new Array(12).fill(C.BASE_ATTR), attrSrc: new Array(12).fill(null), attrFloors: new Array(12).fill(null),
+      lockedCount: 0, draftRound: 0, batch: null, batchTeam: null, swapsLeft: C.SWAPS_FREE,
+      directedReady: false, fateBuff: 0, rewindArmed: false,
+      resources: { health: C.START_HEALTH, power: 0, fame: 0, rel: 0, controversy: 0, merit: 0, scene: 0 },
+      personalFail: 0, proSuccess: 0, selfStreak: 0, playoffRest: 0,
+      flags: { loyal:false, transfer:false, injuryMark:false, bountyTag:false },
+      battleIdx: 0, pendingEvent: null, lastSettle: null, eDoneBattle: [],
+      ledgerLog: [], shopOwned: [], gambleNote: null, checkMod: null, finalsWins: 0,
+      endingId: null, legend: null, submitted: false
+    };
+  }
+  // 版本阶梯：只许在这里给老档补字段
+  function normalize(s){
+    if(!s || typeof s!=='object') return null;
+    const d = defaultState();
+    for(const k in d){ if(s[k]===undefined) s[k]=d[k]; }
+    for(const k in d.resources){ if(s.resources[k]===undefined) s.resources[k]=d.resources[k]; }
+    for(const k in d.flags){ if(s.flags[k]===undefined) s.flags[k]=d.flags[k]; }
+    s.ver = 1;
+    // phase 归一：settle 类 phase 恢复时统一回到 battle 流（靠 lastSettle 分发重建）——母本 settle 修复实锤口径
+    if(s.phase==='chapter-settle' || s.phase==='event-settle') s.phase='battle';
+    return s;
+  }
+  let current = null;
+  const Save = {
+    load(){ const s = normalize(lsGet(C.SAVE_KEY)); current = s; return s; },
+    peek(){ return current; },
+    startNew(state){ current = state; Save.save('new-game'); return current; },
+    save(reason){ if(current) lsSet(C.SAVE_KEY, current); },
+    clear(){ current=null; lsDel(C.SAVE_KEY); },
+    adopt(state){ current = normalize(state); return current; }
+  };
+  const Meta = {
+    load(){ return lsGet(C.META_KEY) || { points:0, shopOwned:[], runs:0, endingsSeen:[], lbName:'' }; },
+    save(m){ lsSet(C.META_KEY, m); }
+  };
+  window.BK_Save = Save; window.BK_Meta = Meta; window.BK_defaultState = defaultState; window.BK_normalizeSave = normalize;
+  window.BK_ls = { get: lsGet, set: lsSet, del: lsDel };
+})();
+</script>
+<script>// 广告层：PENDING v5.22 口径（拼将三作现行版，本作出生即带齐）
+// - settlePendingAd() 是唯一核对入口；只认平台广告计数余额增量发奖，落定即删标记
+// - 未落定保留续核；TTL 12h 先核对后清理留痕；PENDING 带 token 防覆盖
+// - 死锁改造：未落定只短暂拦截（年龄<=3分钟 且 核对次数<=2），超时必放行
+// - 存储：主槽 bk_pending_ad（单条）+ 后台槽队列 bk_pending_queue（上限5）FIFO 逐条核对；落定须 count>max(base,floor)，落定后 floor+1
+(function(){
+  const C = window.BK_CONFIG;
+  const LS = window.BK_ls;
+  // vatask 探活：getActivityTaskState 与 completeRewardVideo 均为 function 才算可用
+  function vatask(){
+    const v = window.ColorboxAI && window.ColorboxAI.vatask;
+    return !!(v && typeof v.getActivityTaskState==='function' && typeof v.completeRewardVideo==='function');
+  }
+  let platCache = null; // 平台广告计数内存缓存（vatask 可用时）
+  function adCount(){
+    if(vatask()){
+      if(typeof platCache==='number') return platCache;
+      const v = LS.get(C.PLAT_ADCOUNT_KEY);
+      if(typeof v==='number'){ platCache = v; return v; }
+      return 0;
+    }
+    return LS.get(C.MOCK_ADCOUNT_KEY) || 0; // mock 平台计数
+  }
+  // 刷新平台计数：code===200 且 availableChanceCount 为 number 时更新缓存并落盘；失败静默
+  async function refreshCount(){
+    if(!vatask()) return adCount();
+    try{
+      const st = await window.ColorboxAI.vatask.getActivityTaskState();
+      if(st && st.code===200 && st.data && typeof st.data.availableChanceCount==='number'){
+        platCache = st.data.availableChanceCount;
+        LS.set(C.PLAT_ADCOUNT_KEY, platCache);
+      }
+    }catch(e){}
+    return adCount();
+  }
+  function hasPendingToken(token){
+    const m = getMain(); if(m && m.token===token) return true;
+    return getQueue().some(r=>r && r.token===token);
+  }
+  function removePendingByToken(token){
+    const m = getMain();
+    if(m && m.token===token){ setMain(null); return true; }
+    const q = getQueue(); const i = q.findIndex(r=>r && r.token===token);
+    if(i>=0){ q.splice(i,1); setQueue(q); return true; }
+    return false;
+  }
+  function floor_(){ return LS.get(C.AD_FLOOR_KEY) || 0; }
+  function getMain(){ return LS.get(C.PENDING_KEY); }
+  function getQueue(){ return LS.get(C.PENDING_QUEUE_KEY) || []; }
+  function setMain(p){ if(p) LS.set(C.PENDING_KEY, p); else LS.del(C.PENDING_KEY); }
+  function setQueue(q){ LS.set(C.PENDING_QUEUE_KEY, q); }
+  function isBlocking(p, now){
+    if(!p) return false;
+    return (now - p.t) <= C.AD_BLOCK_AGE_MS && (p.checks||0) <= C.AD_BLOCK_MAX_CHECKS;
+  }
+  // 模拟平台：完播后计数 +1（真机为平台记账，客户端只读差量）
+  function mockComplete(){ LS.set(C.MOCK_ADCOUNT_KEY, adCount()+1); }
+  // 平台路径（vatask 可用时）：拦截/挤队列前置判断与 mock 路径相同；基线取平台计数，完播只认平台回执/差量
+  async function watchPlatform(type, grantFn){
+    const now = Date.now();
+    const main = getMain();
+    if(main && main.type!==type && isBlocking(main, now)){
+      Ads.settleAll(grantFn);
+      if(getMain()) return { ok:false, reason:'checking' };
+    }
+    if(main && main.type!==type){
+      // 主槽被他类占用且已可放行：挤入后台队列续核
+      const q = getQueue(); if(q.length < C.AD_QUEUE_MAX){ q.push(main); setQueue(q); } setMain(null);
+    }
+    await refreshCount();
+    const base = adCount();
+    const token = 'ad_' + now.toString(36) + '_' + Math.floor(Math.random()*1e6).toString(36);
+    const rec = { type, token, base, t: now, checks: 0 };
+    setMain(rec);
+    let receipt = 'none'; // ok＝明确获奖回执；denied＝平台明确不可用；none＝其余/抛错，无明确回执
+    try{
+      const res = await window.ColorboxAI.vatask.completeRewardVideo();
+      if(res && res.data && res.data.rewarded===true) receipt = 'ok';
+      else if(res && res.data && res.data.reason==='UNAVAILABLE') receipt = 'denied';
+    }catch(e){ receipt = 'none'; }
+    if(receipt==='denied'){
+      removePendingByToken(token); // 按 token 精确删本条，不动其他 PENDING
+      return { ok:false, reason:'unavailable', token };
+    }
+    if(receipt!=='ok'){
+      return { ok:false, reason:'unsettled', token }; // 保留 PENDING 交差量续核
+    }
+    await refreshCount();
+    let settledList = Ads.settleAll(grantFn);
+    if(hasPendingToken(token)){
+      // 计数刷新滞后、本条仍未落定：按母本回执口径把平台计数视为 base+1 再核对一次
+      platCache = base+1;
+      LS.set(C.PLAT_ADCOUNT_KEY, platCache);
+      const more = Ads.settleAll(grantFn);
+      settledList = settledList.concat(more.filter(t=>settledList.indexOf(t)<0));
+    }
+    return { ok:true, settled: settledList.indexOf(type)>=0, token };
+  }
+  const Ads = {
+    count: adCount,
+    refreshCount,
+    platform(){ return vatask(); },
+    // 发起观看：vatask 可用走平台路径（async）；不可用走 mock 同步逻辑（已有未落定主槽且仍在拦截窗内 -> 拒绝防覆盖；否则写 PENDING 并模拟完播）
+    watch(type, grantFn){
+      if(vatask()) return watchPlatform(type, grantFn);
+      const now = Date.now();
+      const main = getMain();
+      if(main && main.type!==type && isBlocking(main, now)){
+        Ads.settleAll(grantFn);
+        if(getMain()) return { ok:false, reason:'checking' };
+      }
+      if(main && main.type!==type){
+        // 主槽被他类占用且已可放行：挤入后台队列续核
+        const q = getQueue(); if(q.length < C.AD_QUEUE_MAX){ q.push(main); setQueue(q); } setMain(null);
+      }
+      const token = 'ad_' + now.toString(36) + '_' + Math.floor(Math.random()*1e6).toString(36);
+      const rec = { type, token, base: adCount(), t: now, checks: 0 };
+      setMain(rec);
+      mockComplete(); // 本地 mock 即时完播；真机此处拉起平台广告
+      const settled = Ads.settleAll(grantFn);
+      return { ok:true, settled: settled.indexOf(type)>=0, token };
+    },
+    // 唯一核对入口：主槽+队列 FIFO 逐条；返回本次落定的 type 列表
+    settleAll(grantFn){
+      const now = Date.now(); const settled = [];
+      const tryRec = (rec)=>{
+        if(!rec) return false;
+        rec.checks = (rec.checks||0)+1;
+        const cnt = adCount(); const fl = floor_();
+        if(cnt > Math.max(rec.base, fl)){
+          LS.set(C.AD_FLOOR_KEY, cnt); // 落定后水位推进（floor 以实际计数为准，防同一增量被旧账误领）
+          if(grantFn) grantFn(rec.type, rec);
+          settled.push(rec.type);
+          return true;
+        }
+        // 未落定：TTL 过期先留痕再清（本次已核对过）
+        if(now - rec.t > C.AD_TTL_MS){ settled.push('expired:'+rec.type); return true; }
+        return false;
+      };
+      let main = getMain();
+      if(main){ if(tryRec(main)) setMain(null); else setMain(main); }
+      const q = getQueue(); const rest = [];
+      for(const rec of q){ if(!tryRec(rec)) rest.push(rec); }
+      setQueue(rest);
+      return settled;
+    },
+    blocking(now){ return isBlocking(getMain(), now||Date.now()); },
+    pending(){ return { main: getMain(), queue: getQueue() }; },
+    _test: { setMain, setQueue, getMain, getQueue, mockComplete, isBlocking }
+  };
+  window.BK_Ads = Ads;
+})();
+</script>
+<script>// 榜单客户端：bk_ 前缀；总榜/最水榜/每日双榜（每日榜按北京时间日期）。
+// 真路径走母本 LB 层：cloud.auth + cloud.request（直连网络请求拿不到登录凭据）；
+// 无 ColorboxAI 时静默回落本地 mock，条目与返回形状与生产完全一致（{entries,total}）。
+(function(){
+  const C = window.BK_CONFIG;
+  const LS = window.BK_ls;
+  const LB_API_BASE = C.LB_API_BASE;
+  const LB_ENV_ID = C.LB_ENV_ID;
+  // 每日榜日期：北京时间（Date.now()+8h 后取 UTC 年月日拼 YYYYMMDD，母本口径）
+  function todayStr(){
+    const d = new Date(Date.now() + 8*3600*1000);
+    const p = n=>String(n).padStart(2,'0');
+    return ''+d.getUTCFullYear()+p(d.getUTCMonth()+1)+p(d.getUTCDate());
+  }
+  function boards(){
+    const t = todayStr();
+    return {
+      best: C.BOARD_PREFIX+'best_s1',
+      worst: C.BOARD_PREFIX+'worst',
+      dbest: C.BOARD_PREFIX+'dbest_'+t,
+      dworst: C.BOARD_PREFIX+'dworst_'+t
+    };
+  }
+  // —— 母本 LB 层 ——
+  function available(){
+    const cb = window.ColorboxAI;
+    return !!(cb && cb.cloud && typeof cb.cloud.request==='function' && typeof cb.cloud.auth==='function');
+  }
+  let __lbAuthed = false;
+  async function auth(){
+    if(__lbAuthed) return;
+    const r = await window.ColorboxAI.cloud.auth({ envId: LB_ENV_ID });
+    if(!r || (r.code!==200 && r.code!==0)) throw new Error('请先登录');
+    __lbAuthed = true;
+  }
+  async function request(path, data){
+    await auth();
+    const resp = await window.ColorboxAI.cloud.request({ url: LB_API_BASE+path, method: data?'POST':'GET', data, envId: LB_ENV_ID, auth: true });
+    if(!resp || resp.statusCode===401) throw new Error('请先登录');
+    if(resp.statusCode!==200 || (resp.code!==0 && resp.code!==200)) throw new Error((resp && resp.message) || '榜单服务异常');
+    return resp.data;
+  }
+  let __lbProfile = null;
+  async function profile(){
+    if(__lbProfile) return __lbProfile;
+    try{
+      const cb = window.ColorboxAI;
+      if(cb && cb.auth && typeof cb.auth.getUserInfo==='function'){
+        const r = await cb.auth.getUserInfo();
+        if(r && r.code===200 && r.data){
+          const av = r.data.avatar || r.data.userHeadUrl;
+          __lbProfile = { nickname: r.data.nickname ? String(r.data.nickname).slice(0,40) : '虎扑用户', avatar: (typeof av==='string' && /^https?:\/\//.test(av) && av.length<=512) ? av : null };
+          return __lbProfile;
+        }
+      }
+    }catch(e){}
+    return { nickname: '虎扑用户', avatar: null };
+  }
+  // —— 本地 mock 回落（形状与生产一致） ——
+  function mockStore(){ return LS.get(C.MOCK_LB_KEY) || {}; }
+  function mockSaveBoard(board, entry){
+    const store = mockStore(); const list = store[board]||[];
+    list.push(entry);
+    // best/dbest：score 降序，同分早者胜；worst/dworst：deathCh 升序 -> score 升序 -> 时间
+    const isWorst = board.indexOf('worst')>=0;
+    list.sort((a,b)=> isWorst ? ((a.deathCh||0)-(b.deathCh||0) || a.score-b.score || a.ts-b.ts) : (b.score-a.score || a.ts-b.ts));
+    store[board] = list.slice(0, 200);
+    LS.set(C.MOCK_LB_KEY, store);
+    return { entries: store[board].slice(0, C.LB_PAGE), total: store[board].length };
+  }
+  function mockFetch(board){
+    const store = mockStore(); const list = store[board]||[];
+    return { entries: list.slice(0, C.LB_PAGE), total: list.length };
+  }
+  async function submitBoard(board, payload){
+    const p = await profile();
+    if(!available()){
+      const entry = { displayName: p.nickname, score: payload.score, deathCh: payload.deathCh!=null?payload.deathCh:null, ending: payload.ending||'', ts: Date.now() };
+      return mockSaveBoard(board, entry);
+    }
+    return request('/leaderboard/submit', Object.assign({ board, displayName: p.nickname, avatar: p.avatar || undefined }, payload));
+  }
+  const LB = {
+    boards, todayStr,
+    available, auth, request, profile, submitBoard,
+    async submitResult(result){
+      const score = result.score, ending = result.ending;
+      const b = boards(); const out = {};
+      out[b.best] = await submitBoard(b.best, { score, ending });
+      out[b.dbest] = await submitBoard(b.dbest, { score, ending });
+      // 后端 worst 榜要求 deathCh 整数 1..19：止步第 20 战（亚军/冠军，exitBattle=20）不进最水榜
+      if(!result.champion && result.exitBattle<=19){
+        const deathCh = Math.min(19, Math.max(1, result.exitBattle));
+        out[b.worst] = await submitBoard(b.worst, { score, deathCh, ending });
+        out[b.dworst] = await submitBoard(b.dworst, { score, deathCh, ending });
+      }
+      return out;
+    },
+    async load(board){
+      if(!available()) return mockFetch(board);
+      try{
+        return await request('/leaderboard?board='+encodeURIComponent(board));
+      }catch(e){
+        return { entries: [], total: 0 };
+      }
+    },
+    _test: { mockSaveBoard, mockFetch }
+  };
+  window.BK_LB = LB;
+})();
+</script>
+<script>// 结局表（设计案 §8，优先级顺序即数组顺序）+ 巅峰赛季卡（§4.7）+ 12 人校准样本（§5 逐字原值）
+window.BK_ENDINGS = [
+ {id:'injury', name:'伤退陨落', bonus:0, desc:'健康归零，赛季报销。'},
+ {id:'exhausted', name:'拼至报销', bonus:0, desc:'亲为失败累积到极限，身体先于梦想倒下。'},
+ {id:'lying_champ', name:'饮水机躺冠', bonus:0.6, desc:'戒指是你的，比赛是别人打的。（反荣誉梗结局）'},
+ {id:'champion_top', name:'捧杯登顶', bonus:1.5, desc:'夺冠且个人贡献拉满——这一冠刻着你的名字。'},
+ {id:'champion_piece', name:'冠军拼图', bonus:1.2, desc:'夺冠，贡献普通——你是冠军拼图里扎实的一块。'},
+ {id:'uncrowned', name:'无冕之王', bonus:1.0, desc:'倒在总决赛，但功勋与高光无人能嘲。'},
+ {id:'one_team', name:'终老一城', bonus:0.9, desc:'没换过队，没躲过事，在一座城打到最后。'},
+ {id:'game7_loss', name:'抢七之殇', bonus:0.8, desc:'抢七输了，差一个回合。'},
+ {id:'one_step', name:'差一步登顶', bonus:0.7, desc:'止步分区决赛，贡献拉满。'},
+ {id:'gate_fall', name:'倒在门槛前', bonus:0.5, desc:'止步分区决赛。'},
+ {id:'wandering', name:'辗转流浪', bonus:0.4, desc:'申请过交易的人，在客场更衣室结束了赛季。'},
+ {id:'second_ceiling', name:'二轮天花板', bonus:0.5, desc:'止步分区半决赛，贡献高档。'},
+ {id:'second_out', name:'次轮出局', bonus:0.3, desc:'止步分区半决赛。'},
+ {id:'rookie_wall', name:'季后赛新丁', bonus:0.2, desc:'首轮出局，但个人贡献高档——新丁交的学费不亏。'},
+ {id:'first_round', name:'一轮游', bonus:0.1, desc:'止步首轮。'},
+ {id:'regular_out', name:'常规赛出局', bonus:0, desc:'功勋没够着季后赛门槛，赛季止步常规赛。'}
+];
+window.BK_PEAKS = [
+ {base:'魔术师约翰逊', year:1987, label:'1987 魔术师约翰逊'},
+ {base:'迈克尔·乔丹', year:1991, label:'1991 迈克尔·乔丹'},
+ {base:'哈基姆·奥拉朱旺', year:1994, label:'1994 哈基姆·奥拉朱旺'},
+ {base:'沙奎尔·奥尼尔', year:2000, label:'2000 沙奎尔·奥尼尔'},
+ {base:'姚明', year:2009, label:'2009 姚明'},
+ {base:'德克·诺维茨基', year:2011, label:'2011 德克·诺维茨基'},
+ {base:'勒布朗·詹姆斯', year:2016, label:'2016 勒布朗·詹姆斯'},
+ {base:'斯蒂芬·库里', year:2016, label:'2016 斯蒂芬·库里'}
+];
+// 12 维顺序：三分/中投/突破/扣篮/传球/控球/篮板/抢断/封盖/体能/球商/领袖（§5 原值，禁改）
+window.BK_SAMPLES = [
+ {name:'魔术师约翰逊', team:'80年代队', tier:'S', window:'1984–1988', stats:[68,84,90,82,99,96,88,80,62,90,99,99], special:{attr:4,kind:'floor',value:94}, note:'Showtime 发动机，传球天花板'},
+ {name:'拉里·伯德', team:'80年代队', tier:'S', window:'1984–1988', stats:[92,97,78,66,90,85,90,78,60,84,99,95], special:{attr:1,kind:'floor',value:90}, note:'全能锋线鼻祖，中投与球商双绝'},
+ {name:'迈克尔·乔丹', team:'90年代队', tier:'S', window:'1990–1994', stats:[78,99,99,99,86,95,72,96,78,97,97,96], special:{attr:2,kind:'floor',value:93}, note:'篮球之神，全表标尺'},
+ {name:'哈基姆·奥拉朱旺', team:'90年代队', tier:'S', window:'1992–1996', stats:[42,82,76,90,72,68,97,84,99,90,92,88], special:{attr:8,kind:'floor',value:94}, note:'大梦脚步，封盖历史第一'},
+ {name:'沙奎尔·奥尼尔', team:'00年代队', tier:'S', window:'1999–2002', stats:[24,48,72,99,74,64,98,62,92,86,88,90], special:{attr:3,kind:'floor',value:95}, note:'最具统治力中锋，扣篮与力量顶点'},
+ {name:'科比·布莱恩特', team:'00年代队', tier:'S', window:'2005–2009', stats:[86,98,95,92,82,94,68,88,66,96,94,93], special:{attr:1,kind:'floor',value:92}, note:'曼巴，中投与意志的图腾'},
+ {name:'勒布朗·詹姆斯', team:'10年代队', tier:'S', window:'2009–2013', stats:[80,86,99,97,98,93,86,84,76,99,99,97], special:{attr:2,kind:'floor',value:94}, note:'全能皇帝，峰值窗口官方范例'},
+ {name:'斯蒂芬·库里', team:'10年代队', tier:'S', window:'2014–2018', stats:[99,95,88,58,90,97,52,82,40,90,96,92], special:{attr:0,kind:'floor',value:95}, note:'三分革命本人'},
+ {name:'尼古拉·约基奇', team:'新世代队', tier:'S', window:'2020–2024', stats:[84,92,74,72,99,88,97,74,68,88,99,90], special:{attr:4,kind:'floor',value:94}, note:'约老师，中锋组织学革命'},
+ {name:'维克托·文班亚马', team:'新世代队', tier:'B', window:'2023–2026', stats:[80,82,76,90,74,72,94,70,99,82,86,74], special:{attr:8,kind:'floor',value:93}, note:'外星人，潜力签·窗口未关闭'},
+ {name:'姚明', team:'国际纵队', tier:'S', window:'2005–2009', stats:[30,90,58,84,72,60,94,56,94,74,90,86], special:{attr:1,kind:'floor',value:84}, note:'移动长城，中国篮球的图腾'},
+ {name:'史蒂夫·纳什', team:'国际纵队', tier:'S', window:'2004–2008', stats:[94,96,84,44,99,98,42,68,32,84,98,90], special:{attr:4,kind:'floor',value:93}, note:'风之子，两连 MVP 的组织上限'}
+];
+</script>
+<script>window.BK_DATA = { players: [{"name": "魔术师约翰逊", "team": "80年代队", "tier": "S", "window": "1984–1988", "stats": [68, 84, 90, 82, 99, 96, 88, 80, 62, 90, 99, 99], "special": {"attr": 4, "kind": "floor", "value": 94}, "note": "Showtime 发动机，传球天花板", "portrait": "por-00.webp"}, {"name": "拉里·伯德", "team": "80年代队", "tier": "S", "window": "1984–1988", "stats": [92, 97, 78, 66, 90, 85, 90, 78, 60, 84, 99, 95], "special": {"attr": 1, "kind": "floor", "value": 90}, "note": "全能锋线鼻祖，中投与球商双绝", "portrait": "por-01.webp"}, {"name": "卡里姆·贾巴尔", "team": "80年代队", "tier": "S", "window": "1980–1984", "stats": [38, 94, 68, 84, 76, 68, 96, 64, 93, 90, 90, 90], "special": {"attr": 1, "kind": "floor", "value": 88}, "note": "天勾，历史得分王底蕴", "portrait": "por-02.webp"}, {"name": "伊塞亚·托马斯", "team": "80年代队", "tier": "A", "window": "1984–1988", "stats": [70, 85, 89, 72, 93, 93, 46, 87, 34, 89, 91, 89], "special": {"attr": 4, "kind": "floor", "value": 88}, "note": "微笑刺客，小个控卫的硬度标杆", "portrait": "por-03.webp"}, {"name": "朱利叶斯·欧文", "team": "80年代队", "tier": "A", "window": "1980–1984", "stats": [56, 87, 91, 94, 76, 84, 72, 82, 74, 90, 86, 88], "special": {"attr": 3, "kind": "floor", "value": 89}, "note": "J 博士，飞翔美学的源头", "portrait": "por-04.webp"}, {"name": "摩西·马龙", "team": "80年代队", "tier": "A", "window": "1979–1983", "stats": [28, 78, 74, 84, 58, 60, 94, 68, 78, 92, 80, 84], "special": {"attr": 6, "kind": "floor", "value": 89}, "note": "篮板野兽，三届 MVP", "portrait": "por-05.webp"}, {"name": "凯文·麦克海尔", "team": "80年代队", "tier": "A", "window": "1984–1988", "stats": [36, 90, 68, 78, 64, 66, 86, 62, 88, 86, 90, 78], "special": {"attr": 1, "kind": "floor", "value": 85}, "note": "低位脚步教科书", "portrait": "por-06.webp"}, {"name": "詹姆斯·沃西", "team": "80年代队", "tier": "B", "window": "1986–1990", "stats": [52, 84, 86, 88, 72, 78, 66, 74, 62, 86, 82, 78], "special": {"attr": 3, "kind": "floor", "value": 83}, "note": "快攻终结点，眼镜蛇", "portrait": "por-07.webp"}, {"name": "罗伯特·帕里什", "team": "80年代队", "tier": "B", "window": "1981–1985", "stats": [24, 80, 62, 76, 58, 56, 88, 60, 84, 88, 78, 74], "special": {"attr": 6, "kind": "floor", "value": 83}, "note": "酋长，绿军铁三角的沉默中锋", "portrait": "por-08.webp"}, {"name": "多米尼克·威尔金斯", "team": "80年代队", "tier": "B", "window": "1985–1989", "stats": [66, 83, 87, 95, 68, 80, 68, 76, 58, 88, 80, 76], "special": {"attr": 3, "kind": "floor", "value": 90}, "note": "人类电影精华，扣篮与得分", "portrait": "por-09.webp"}, {"name": "阿历克斯·英格利什", "team": "80年代队", "tier": "B", "window": "1982–1986", "stats": [54, 88, 84, 78, 74, 82, 62, 72, 54, 88, 84, 78], "special": {"attr": 1, "kind": "floor", "value": 83}, "note": "得分机器，掘金队史标杆", "portrait": "por-10.webp"}, {"name": "克里斯·穆林", "team": "80年代队", "tier": "B", "window": "1987–1991", "stats": [88, 88, 78, 62, 78, 80, 56, 76, 48, 84, 86, 76], "special": {"attr": 0, "kind": "floor", "value": 83}, "note": "上帝左手，梦一队射手", "portrait": "por-11.webp"}, {"name": "比尔·兰比尔", "team": "80年代队", "tier": "C", "window": "1983–1987", "stats": [56, 74, 50, 62, 60, 56, 82, 56, 66, 82, 78, 72], "special": {"attr": 6, "kind": "floor", "value": 77}, "note": "坏小子军团的恶人，争议拉满型模板", "portrait": "por-12.webp"}, {"name": "乔·杜马斯", "team": "80年代队", "tier": "C", "window": "1988–1992", "stats": [76, 82, 76, 64, 74, 80, 44, 80, 42, 82, 82, 78], "special": {"attr": 1, "kind": "floor", "value": 77}, "note": "活塞冠军后场，攻防均衡", "portrait": "por-13.webp"}, {"name": "拜伦·斯科特", "team": "80年代队", "tier": "C", "window": "1984–1988", "stats": [80, 80, 78, 70, 64, 76, 42, 72, 38, 82, 74, 66], "special": {"attr": 0, "kind": "floor", "value": 75}, "note": "Showtime 的侧翼射手", "portrait": "por-14.webp"}, {"name": "迈克尔·乔丹", "team": "90年代队", "tier": "S", "window": "1990–1994", "stats": [78, 99, 99, 99, 86, 95, 72, 96, 78, 97, 97, 96], "special": {"attr": 2, "kind": "floor", "value": 93}, "note": "篮球之神，全表标尺", "portrait": "por-15.webp"}, {"name": "哈基姆·奥拉朱旺", "team": "90年代队", "tier": "S", "window": "1992–1996", "stats": [42, 82, 76, 90, 72, 68, 97, 84, 99, 90, 92, 88], "special": {"attr": 8, "kind": "floor", "value": 94}, "note": "大梦脚步，封盖历史第一", "portrait": "por-16.webp"}, {"name": "卡尔·马龙", "team": "90年代队", "tier": "S", "window": "1994–1998", "stats": [30, 90, 84, 88, 70, 68, 95, 74, 66, 98, 86, 90], "special": {"attr": 6, "kind": "floor", "value": 90}, "note": "邮差，力量与铁人属性", "portrait": "por-17.webp"}, {"name": "大卫·罗宾逊", "team": "90年代队", "tier": "A", "window": "1991–1995", "stats": [34, 85, 76, 89, 66, 64, 92, 72, 94, 90, 86, 88], "special": {"attr": 8, "kind": "floor", "value": 89}, "note": "海军上将，全能中锋", "portrait": "por-18.webp"}, {"name": "查尔斯·巴克利", "team": "90年代队", "tier": "A", "window": "1990–1994", "stats": [62, 84, 88, 90, 78, 80, 94, 78, 68, 90, 86, 88], "special": {"attr": 6, "kind": "floor", "value": 89}, "note": "飞猪，矮个大前锋的极限", "portrait": "por-19.webp"}, {"name": "约翰·斯托克顿", "team": "90年代队", "tier": "A", "window": "1989–1993", "stats": [82, 86, 84, 52, 94, 92, 44, 94, 30, 90, 94, 86], "special": {"attr": 4, "kind": "floor", "value": 89}, "note": "助攻抢断双史一，控卫模板", "portrait": "por-20.webp"}, {"name": "斯科蒂·皮蓬", "team": "90年代队", "tier": "A", "window": "1993–1997", "stats": [74, 84, 88, 88, 84, 84, 78, 94, 74, 92, 90, 82], "special": {"attr": 7, "kind": "floor", "value": 89}, "note": "历史最强二当家，防守大闸", "portrait": "por-21.webp"}, {"name": "帕特里克·尤因", "team": "90年代队", "tier": "B", "window": "1989–1993", "stats": [28, 86, 66, 82, 60, 58, 88, 64, 88, 84, 80, 84], "special": {"attr": 8, "kind": "floor", "value": 83}, "note": "纽约中锋，无冕代表", "portrait": "por-22.webp"}, {"name": "雷吉·米勒", "team": "90年代队", "tier": "B", "window": "1994–1998", "stats": [88, 86, 84, 58, 72, 80, 44, 70, 36, 86, 84, 82], "special": {"attr": 0, "kind": "floor", "value": 84}, "note": "米勒时刻，三分与大心脏", "portrait": "por-23.webp"}, {"name": "加里·佩顿", "team": "90年代队", "tier": "B", "window": "1994–1998", "stats": [68, 80, 82, 64, 86, 86, 52, 88, 40, 88, 84, 84], "special": {"attr": 7, "kind": "floor", "value": 83}, "note": "手套，控卫防守天花板", "portrait": "por-24.webp"}, {"name": "肖恩·坎普", "team": "90年代队", "tier": "B", "window": "1993–1997", "stats": [28, 74, 80, 94, 58, 62, 86, 68, 82, 86, 74, 70], "special": {"attr": 3, "kind": "floor", "value": 89}, "note": "雨人，暴力扣篮的图腾", "portrait": "por-25.webp"}, {"name": "阿伦佐·莫宁", "team": "90年代队", "tier": "B", "window": "1995–1999", "stats": [26, 74, 68, 84, 56, 54, 86, 62, 88, 84, 80, 84], "special": {"attr": 8, "kind": "floor", "value": 83}, "note": "肾斗士，铁血封盖", "portrait": "por-26.webp"}, {"name": "克莱德·德雷克斯勒", "team": "90年代队", "tier": "B", "window": "1988–1992", "stats": [62, 84, 87, 88, 76, 82, 66, 82, 60, 88, 84, 80], "special": {"attr": 2, "kind": "floor", "value": 82}, "note": "滑翔机，80 年代末崛起、峰值多数在 90 年代", "portrait": "por-27.webp"}, {"name": "迪肯贝·穆托姆博", "team": "90年代队", "tier": "C", "window": "1994–1998", "stats": [18, 58, 48, 72, 48, 44, 88, 54, 94, 82, 72, 70], "special": {"attr": 8, "kind": "floor", "value": 89}, "note": "摇手指，四届最佳防守", "portrait": "por-28.webp"}, {"name": "蒂姆·哈达威", "team": "90年代队", "tier": "C", "window": "1991–1995", "stats": [78, 78, 82, 56, 80, 82, 38, 76, 28, 80, 78, 74], "special": {"attr": 5, "kind": "floor", "value": 77}, "note": "变向鼻祖，胯下运球招牌", "portrait": "por-29.webp"}, {"name": "沙奎尔·奥尼尔", "team": "00年代队", "tier": "S", "window": "1999–2002", "stats": [24, 48, 72, 99, 74, 64, 98, 62, 92, 86, 88, 90], "special": {"attr": 3, "kind": "floor", "value": 95}, "note": "最具统治力中锋，扣篮与力量顶点", "portrait": "por-30.webp"}, {"name": "科比·布莱恩特", "team": "00年代队", "tier": "S", "window": "2005–2009", "stats": [86, 98, 95, 92, 82, 94, 68, 88, 66, 96, 94, 93], "special": {"attr": 1, "kind": "floor", "value": 92}, "note": "曼巴，中投与意志的图腾", "portrait": "por-31.webp"}, {"name": "蒂姆·邓肯", "team": "00年代队", "tier": "S", "window": "2001–2007", "stats": [30, 88, 74, 80, 80, 74, 95, 72, 92, 88, 94, 90], "special": {"attr": 6, "kind": "floor", "value": 90}, "note": "石佛，大基本功", "portrait": "por-32.webp"}, {"name": "凯文·加内特", "team": "00年代队", "tier": "A", "window": "2000–2004", "stats": [48, 88, 80, 86, 82, 76, 94, 82, 86, 94, 90, 94], "special": {"attr": 6, "kind": "floor", "value": 89}, "note": "狼王，全能大前与防守体系", "portrait": "por-33.webp"}, {"name": "德克·诺维茨基", "team": "00年代队", "tier": "A", "window": "2006–2010", "stats": [88, 94, 74, 68, 72, 78, 84, 64, 72, 86, 90, 88], "special": {"attr": 1, "kind": "floor", "value": 89}, "note": "金鸡独立，峰值窗口优先于国籍归队", "portrait": "por-34.webp"}, {"name": "阿伦·艾弗森", "team": "00年代队", "tier": "A", "window": "2000–2004", "stats": [76, 88, 94, 72, 82, 94, 42, 88, 32, 92, 84, 86], "special": {"attr": 2, "kind": "floor", "value": 89}, "note": "答案，小个得分手的神", "portrait": "por-35.webp"}, {"name": "德怀恩·韦德", "team": "00年代队", "tier": "A", "window": "2005–2009", "stats": [68, 88, 94, 88, 80, 90, 56, 86, 78, 90, 88, 90], "special": {"attr": 2, "kind": "floor", "value": 89}, "note": "闪电侠，2006 总决赛封神", "portrait": "por-36.webp"}, {"name": "特雷西·麦克格雷迪", "team": "00年代队", "tier": "A", "window": "2000–2004", "stats": [84, 92, 90, 92, 80, 90, 52, 78, 68, 82, 86, 82], "special": {"attr": 1, "kind": "floor", "value": 87}, "note": "35 秒 13 分，干拔美学", "portrait": "por-37.webp"}, {"name": "保罗·皮尔斯", "team": "00年代队", "tier": "A", "window": "2002–2006", "stats": [84, 90, 86, 76, 76, 86, 68, 76, 56, 88, 88, 90], "special": {"attr": 1, "kind": "floor", "value": 85}, "note": "真理，凯尔特人队魂", "portrait": "por-38.webp"}, {"name": "阿玛雷·斯塔德迈尔", "team": "00年代队", "tier": "A", "window": "2004–2008", "stats": [36, 82, 84, 94, 60, 66, 88, 64, 86, 86, 76, 72], "special": {"attr": 3, "kind": "floor", "value": 89}, "note": "小霸王，暴力终结型内线", "portrait": "por-39.webp"}, {"name": "文斯·卡特", "team": "00年代队", "tier": "B", "window": "1999–2003", "stats": [78, 84, 86, 99, 72, 82, 58, 72, 56, 84, 80, 76], "special": {"attr": 3, "kind": "floor", "value": 94}, "note": "半人半神，扣篮绝活顶格", "portrait": "por-40.webp"}, {"name": "贾森·基德", "team": "00年代队", "tier": "B", "window": "2001–2005", "stats": [74, 76, 80, 62, 88, 86, 68, 86, 42, 86, 88, 84], "special": {"attr": 4, "kind": "floor", "value": 83}, "note": "组织大师，三双型控卫", "portrait": "por-41.webp"}, {"name": "雷·阿伦", "team": "00年代队", "tier": "B", "window": "2000–2004", "stats": [88, 86, 80, 66, 72, 80, 44, 68, 34, 88, 82, 78], "special": {"attr": 0, "kind": "floor", "value": 84}, "note": "三分绝活位，历史级射手", "portrait": "por-42.webp"}, {"name": "克里斯·波什", "team": "00年代队", "tier": "B", "window": "2005–2009", "stats": [72, 86, 76, 80, 66, 70, 86, 62, 78, 84, 82, 76], "special": {"attr": 1, "kind": "floor", "value": 81}, "note": "龙王锚点，空间型内线", "portrait": "por-43.webp"}, {"name": "本·华莱士", "team": "00年代队", "tier": "C", "window": "2001–2005", "stats": [16, 52, 50, 74, 52, 48, 92, 72, 94, 90, 80, 78], "special": {"attr": 8, "kind": "floor", "value": 89}, "note": "大本，4 届最佳防守球员，防守型模板", "portrait": "por-44.webp"}, {"name": "勒布朗·詹姆斯", "team": "10年代队", "tier": "S", "window": "2009–2013", "stats": [80, 86, 99, 97, 98, 93, 86, 84, 76, 99, 99, 97], "special": {"attr": 2, "kind": "floor", "value": 94}, "note": "全能皇帝，峰值窗口官方范例", "portrait": "por-45.webp"}, {"name": "斯蒂芬·库里", "team": "10年代队", "tier": "S", "window": "2014–2018", "stats": [99, 95, 88, 58, 90, 97, 52, 82, 40, 90, 96, 92], "special": {"attr": 0, "kind": "floor", "value": 95}, "note": "三分革命本人", "portrait": "por-46.webp"}, {"name": "凯文·杜兰特", "team": "10年代队", "tier": "S", "window": "2013–2017", "stats": [92, 96, 93, 88, 84, 90, 72, 76, 78, 90, 90, 88], "special": {"attr": 1, "kind": "floor", "value": 91}, "note": "死神，无差别单打", "portrait": "por-47.webp"}, {"name": "科怀·伦纳德", "team": "10年代队", "tier": "A", "window": "2015–2019", "stats": [84, 90, 88, 84, 76, 84, 76, 94, 78, 86, 90, 84], "special": {"attr": 7, "kind": "floor", "value": 89}, "note": "机器人，两冠两 FMVP 的攻防一体", "portrait": "por-48.webp"}, {"name": "詹姆斯·哈登", "team": "10年代队", "tier": "A", "window": "2015–2019", "stats": [88, 86, 94, 76, 92, 94, 58, 78, 52, 88, 90, 84], "special": {"attr": 5, "kind": "floor", "value": 89}, "note": "大胡子，持球大核心打法开创者", "portrait": "por-49.webp"}, {"name": "拉塞尔·威斯布鲁克", "team": "10年代队", "tier": "A", "window": "2015–2019", "stats": [66, 80, 94, 92, 90, 88, 78, 78, 58, 94, 78, 80], "special": {"attr": 2, "kind": "floor", "value": 89}, "note": "三双机器，能量与争议并存", "portrait": "por-50.webp"}, {"name": "克里斯·保罗", "team": "10年代队", "tier": "A", "window": "2011–2015", "stats": [82, 92, 86, 58, 94, 94, 48, 88, 36, 84, 94, 90], "special": {"attr": 4, "kind": "floor", "value": 89}, "note": "控卫之神，组织与中投", "portrait": "por-51.webp"}, {"name": "卡梅隆·安东尼", "team": "10年代队", "tier": "A", "window": "2009–2013", "stats": [84, 92, 88, 82, 68, 84, 72, 64, 52, 84, 84, 86], "special": {"attr": 1, "kind": "floor", "value": 87}, "note": "甜瓜，进攻万花筒", "portrait": "por-52.webp"}, {"name": "德里克·罗斯", "team": "10年代队", "tier": "A", "window": "2009–2013", "stats": [68, 86, 94, 88, 72, 90, 44, 72, 48, 72, 84, 84], "special": {"attr": 2, "kind": "floor", "value": 89}, "note": "风城玫瑰，2011 MVP 锚点，巅峰定值、体能短板真实写", "portrait": "por-53.webp"}, {"name": "凯里·欧文", "team": "10年代队", "tier": "B", "window": "2015–2019", "stats": [86, 86, 87, 76, 78, 93, 44, 72, 40, 80, 82, 74], "special": {"attr": 5, "kind": "floor", "value": 88}, "note": "运球与终结美学", "portrait": "por-54.webp"}, {"name": "达米安·利拉德", "team": "10年代队", "tier": "B", "window": "2016–2020", "stats": [88, 84, 86, 72, 82, 86, 46, 68, 36, 86, 86, 84], "special": {"attr": 0, "kind": "floor", "value": 83}, "note": "表哥，超远三分与绝杀", "portrait": "por-55.webp"}, {"name": "吉米·巴特勒", "team": "10年代队", "tier": "B", "window": "2016–2020", "stats": [66, 82, 84, 80, 78, 80, 72, 86, 62, 88, 86, 88], "special": {"attr": 11, "kind": "floor", "value": 83}, "note": "硬汉，季后赛档位自动 +1 的男人", "portrait": "por-56.webp"}, {"name": "克莱·汤普森", "team": "10年代队", "tier": "B", "window": "2014–2018", "stats": [88, 84, 74, 62, 68, 76, 48, 78, 52, 84, 80, 72], "special": {"attr": 0, "kind": "floor", "value": 84}, "note": "G6 汤，三分与无球防守", "portrait": "por-57.webp"}, {"name": "德雷蒙德·格林", "team": "10年代队", "tier": "C", "window": "2014–2018", "stats": [60, 66, 66, 64, 82, 72, 74, 82, 72, 82, 86, 80], "special": {"attr": 4, "kind": "floor", "value": 77}, "note": "追梦，勇士体系轴心（争议型模板）", "portrait": "por-58.webp"}, {"name": "凯文·乐福", "team": "10年代队", "tier": "C", "window": "2010–2014", "stats": [80, 80, 68, 64, 74, 66, 82, 54, 52, 78, 80, 76], "special": {"attr": 6, "kind": "floor", "value": 77}, "note": "两双机器，骑士冠军拼图", "portrait": "por-59.webp"}, {"name": "尼古拉·约基奇", "team": "新世代队", "tier": "S", "window": "2020–2024", "stats": [84, 92, 74, 72, 99, 88, 97, 74, 68, 88, 99, 90], "special": {"attr": 4, "kind": "floor", "value": 94}, "note": "约老师，中锋组织学革命", "portrait": "por-60.webp"}, {"name": "维克托·文班亚马", "team": "新世代队", "tier": "B", "window": "2023–2026", "stats": [80, 82, 76, 90, 74, 72, 94, 70, 99, 82, 86, 74], "special": {"attr": 8, "kind": "floor", "value": 93}, "note": "外星人，潜力签·窗口未关闭", "portrait": "por-61.webp"}, {"name": "扬尼斯·阿德托昆博", "team": "新世代队", "tier": "S", "window": "2018–2022", "stats": [62, 74, 97, 96, 84, 86, 91, 78, 86, 95, 88, 90], "special": {"attr": 2, "kind": "floor", "value": 92}, "note": "字母哥，转换进攻的终极形态", "portrait": "por-62.webp"}, {"name": "卢卡·东契奇", "team": "新世代队", "tier": "S", "window": "2020–2024", "stats": [89, 89, 90, 68, 97, 95, 84, 72, 58, 84, 93, 90], "special": {"attr": 4, "kind": "floor", "value": 92}, "note": "持球大核现役版", "portrait": "por-63.webp"}, {"name": "谢伊·吉尔杰斯-亚历山大", "team": "新世代队", "tier": "A", "window": "2021–2025", "stats": [76, 94, 90, 78, 78, 90, 52, 84, 68, 88, 90, 86], "special": {"attr": 1, "kind": "floor", "value": 89}, "note": "SGA，中距离与造犯规的现代答案", "portrait": "por-64.webp"}, {"name": "杰森·塔图姆", "team": "新世代队", "tier": "A", "window": "2020–2024", "stats": [86, 88, 88, 80, 78, 84, 74, 74, 66, 88, 86, 88], "special": {"attr": 0, "kind": "floor", "value": 81}, "note": "獭兔，冠军锋线", "portrait": "por-65.webp"}, {"name": "乔尔·恩比德", "team": "新世代队", "tier": "A", "window": "2019–2023", "stats": [76, 89, 80, 84, 70, 72, 92, 64, 88, 72, 86, 84], "special": {"attr": 6, "kind": "floor", "value": 87}, "note": "大帝，健康条即战力的玻璃模板（体能短板显著）", "portrait": "por-66.webp"}, {"name": "安东尼·爱德华兹", "team": "新世代队", "tier": "A", "window": "2021–2025", "stats": [84, 86, 94, 94, 74, 86, 58, 80, 68, 90, 80, 82], "special": {"attr": 3, "kind": "floor", "value": 89}, "note": "华子，新生代门面", "portrait": "por-67.webp"}, {"name": "安东尼·戴维斯", "team": "新世代队", "tier": "A", "window": "2018–2024", "stats": [62, 86, 82, 88, 68, 70, 92, 72, 94, 80, 86, 88], "special": {"attr": 8, "kind": "floor", "value": 89}, "note": "浓眉，攻防一体内线", "portrait": "por-68.webp"}, {"name": "泰雷斯·哈利伯顿", "team": "新世代队", "tier": "B", "window": "2021–2025", "stats": [84, 80, 82, 64, 88, 86, 48, 76, 40, 82, 86, 76], "special": {"attr": 4, "kind": "floor", "value": 83}, "note": "传球魔术的现役传人", "portrait": "por-69.webp"}, {"name": "杰伦·布伦森", "team": "新世代队", "tier": "B", "window": "2021–2025", "stats": [80, 86, 88, 62, 82, 86, 44, 68, 32, 86, 84, 86], "special": {"attr": 2, "kind": "floor", "value": 83}, "note": "大头，纽约新王", "portrait": "por-70.webp"}, {"name": "德文·布克", "team": "新世代队", "tier": "B", "window": "2019–2023", "stats": [86, 88, 86, 78, 76, 84, 52, 68, 40, 84, 82, 78], "special": {"attr": 1, "kind": "floor", "value": 83}, "note": "得分后卫正统", "portrait": "por-71.webp"}, {"name": "多诺万·米切尔", "team": "新世代队", "tier": "B", "window": "2020–2024", "stats": [84, 84, 88, 88, 74, 84, 48, 72, 48, 86, 80, 76], "special": {"attr": 2, "kind": "floor", "value": 83}, "note": "蜘蛛侠，季后赛爆发户", "portrait": "por-72.webp"}, {"name": "贾马尔·穆雷", "team": "新世代队", "tier": "C", "window": "2019–2023", "stats": [82, 82, 82, 72, 76, 80, 42, 68, 36, 78, 80, 76], "special": {"attr": 1, "kind": "floor", "value": 77}, "note": "季后赛限定变身型模板", "portrait": "por-73.webp"}, {"name": "卡尔-安东尼·唐斯", "team": "新世代队", "tier": "C", "window": "2018–2022", "stats": [82, 80, 72, 78, 66, 68, 82, 54, 68, 80, 76, 70], "special": {"attr": 0, "kind": "floor", "value": 77}, "note": "空间型内线，防守是短板", "portrait": "por-74.webp"}, {"name": "姚明", "team": "国际纵队", "tier": "S", "window": "2005–2009", "stats": [30, 90, 58, 84, 72, 60, 94, 56, 94, 74, 90, 86], "special": {"attr": 1, "kind": "floor", "value": 84}, "note": "移动长城，中国篮球的图腾", "portrait": "por-75.webp"}, {"name": "史蒂夫·纳什", "team": "国际纵队", "tier": "S", "window": "2004–2008", "stats": [94, 96, 84, 44, 99, 98, 42, 68, 32, 84, 98, 90], "special": {"attr": 4, "kind": "floor", "value": 93}, "note": "风之子，两连 MVP 的组织上限", "portrait": "por-76.webp"}, {"name": "马努·吉诺比利", "team": "国际纵队", "tier": "S", "window": "2004–2008", "stats": [84, 86, 93, 82, 90, 92, 58, 84, 56, 84, 94, 88], "special": {"attr": 2, "kind": "floor", "value": 88}, "note": "妖刀，第六人位置的传奇模板", "portrait": "por-77.webp"}, {"name": "保罗·加索尔", "team": "国际纵队", "tier": "A", "window": "2006–2010", "stats": [58, 90, 72, 78, 86, 74, 90, 64, 86, 84, 92, 86], "special": {"attr": 4, "kind": "floor", "value": 81}, "note": "家嫂，策应型内线", "portrait": "por-78.webp"}, {"name": "托尼·帕克", "team": "国际纵队", "tier": "A", "window": "2007–2011", "stats": [64, 88, 94, 62, 88, 90, 40, 72, 28, 88, 88, 84], "special": {"attr": 2, "kind": "floor", "value": 89}, "note": "法国跑车，总决赛 MVP 控卫", "portrait": "por-79.webp"}, {"name": "德拉岑·彼得罗维奇", "team": "国际纵队", "tier": "A", "window": "1989–1993", "stats": [92, 92, 84, 58, 78, 86, 44, 68, 30, 82, 88, 80], "special": {"attr": 0, "kind": "floor", "value": 87}, "note": "篮球莫扎特，英年早逝的传奇", "portrait": "por-80.webp"}, {"name": "马克·加索尔", "team": "国际纵队", "tier": "A", "window": "2012–2016", "stats": [68, 84, 68, 72, 86, 70, 88, 68, 88, 82, 92, 84], "special": {"attr": 8, "kind": "floor", "value": 83}, "note": "小加，防守中枢＋策应", "portrait": "por-81.webp"}, {"name": "王治郅", "team": "国际纵队", "tier": "B", "window": "1999–2003", "stats": [74, 84, 72, 68, 62, 66, 78, 54, 74, 76, 78, 68], "special": {"attr": 1, "kind": "floor", "value": 79}, "note": "大郅，中国登陆 NBA 第一人，脚步内线", "portrait": "por-82.webp"}, {"name": "易建联", "team": "国际纵队", "tier": "B", "window": "2008–2012", "stats": [72, 82, 78, 84, 58, 64, 82, 58, 76, 82, 78, 70], "special": {"attr": 3, "kind": "floor", "value": 79}, "note": "阿联，空间型大前，中国男篮旗帜十年", "portrait": "por-83.webp"}, {"name": "阿维达斯·萨博尼斯", "team": "国际纵队", "tier": "B", "window": "1988–1992", "stats": [64, 84, 66, 72, 88, 62, 86, 58, 80, 72, 86, 76], "special": {"attr": 4, "kind": "floor", "value": 83}, "note": "老萨，世界屋脊的传球中锋", "portrait": "por-84.webp"}, {"name": "路易斯·斯科拉", "team": "国际纵队", "tier": "B", "window": "2007–2011", "stats": [42, 86, 74, 70, 68, 66, 80, 64, 54, 80, 84, 74], "special": {"attr": 1, "kind": "floor", "value": 81}, "note": "钻石，阿根廷黄金一代的轴", "portrait": "por-85.webp"}, {"name": "安德烈·基里连科", "team": "国际纵队", "tier": "B", "window": "2003–2007", "stats": [58, 74, 78, 80, 74, 76, 78, 88, 86, 84, 82, 70], "special": {"attr": 7, "kind": "floor", "value": 83}, "note": "AK47，全能防守的瑞士军刀", "portrait": "por-86.webp"}, {"name": "佩德拉格·斯托亚科维奇", "team": "国际纵队", "tier": "B", "window": "2000–2004", "stats": [88, 86, 72, 56, 68, 74, 52, 64, 36, 80, 80, 70], "special": {"attr": 0, "kind": "floor", "value": 84}, "note": "佩贾，纯射手位", "portrait": "por-87.webp"}, {"name": "鲍里斯·迪奥", "team": "国际纵队", "tier": "C", "window": "2005–2009", "stats": [64, 74, 70, 62, 80, 76, 62, 64, 58, 76, 82, 68], "special": {"attr": 4, "kind": "floor", "value": 75}, "note": "法国魔术师，什么都能打一点", "portrait": "por-88.webp"}, {"name": "孙悦", "team": "国际纵队", "tier": "C", "window": "2007–2011", "stats": [62, 68, 72, 74, 68, 72, 52, 72, 78, 76, 70, 62], "special": {"attr": 8, "kind": "floor", "value": 73}, "note": "孙大圣，中国后卫的 NBA 冠军戒指（话题型模板）", "portrait": "por-89.webp"}],
+ peaks: window.BK_PEAKS, endings: window.BK_ENDINGS };
+</script>
+<script>// 20 个赛季关键战役（设计案 §6 逐行落地；数值方向值，蒙特卡洛校准后回写本表）
+// kind: pro=亲为(查硬能力) plan=谋划(查软能力) fixed=固定结算 identity/finals=特例
+// win/lose 为账本增量（merit 由胜负档自动计，不写在此）
+window.BK_BATTLES = [
+ {id:1, name:'揭幕战', brief:'新赛季第一夜，全场等你亮相',
+  A:{label:'迎战对方箭头，单挑打成第一攻', attr:2, kind:'pro', win:{fame:2,power:150}, lose:{controversy:1}},
+  B:{label:'用战术跑出空位带动全队', attr:10, kind:'plan', win:{fame:1,power:100}, lose:{}},
+  C:{label:'稳扎稳打收着打', kind:'fixed', fixed:{power:80}}},
+ {id:2, name:'背靠背客场', brief:'昨晚打完，今天飞到高原客场',
+  A:{label:'带伤硬打满场', attr:9, kind:'pro', win:{fame:1}, lose:{health:-8}},
+  B:{label:'控制节奏省力打', attr:10, kind:'plan', win:{}, lose:{health:-3}},
+  C:{label:'轮休一场', kind:'fixed', fixed:{health:10,fame:-1}}},
+ {id:3, name:'战术身份·定调', brief:'赛季第三战，教练组要你定死本赛季的打法', special:'identity',
+  A:{label:'持球核心（控球/突破/传球/球商向）', kind:'identity', identity:'core', fixed:{}},
+  B:{label:'无球终结（三分/中投/体能向）', kind:'identity', identity:'shooter', fixed:{}},
+  C:{label:'防守体系（抢断/封盖/篮板向）', kind:'identity', identity:'defense', fixed:{}}},
+ {id:4, name:'弱旅练兵夜', brief:'摆烂队来访，是刷数据还是练替补',
+  A:{label:'亲自刷个大号数据', attr:3, kind:'pro', win:{fame:2}, lose:{fame:-1}},
+  B:{label:'喂球带新人', attr:4, kind:'plan', win:{rel:1,power:80}, lose:{fame:-1}},
+  C:{label:'半场打卡下班', kind:'fixed', fixed:{health:8}}},
+ {id:5, name:'交易流言前夜', brief:'你的名字上了交易流言头条',
+  A:{label:'用一场爆发堵嘴', attr:1, kind:'pro', win:{fame:2,controversy:-1}, lose:{controversy:2,fame:-1}},
+  B:{label:'找管理层谈心', attr:11, kind:'plan', win:{rel:1,controversy:-1}, lose:{controversy:1}},
+  C:{label:'躺平任嘲', kind:'fixed', fixed:{controversy:1}}},
+ {id:6, name:'榜首强强对话', brief:'东西部第一正面撞，全国直播',
+  A:{label:'锁死对方头牌', attr:7, kind:'pro', win:{fame:3,power:150}, lose:{}},
+  B:{label:'针对性布置包夹', attr:10, kind:'plan', win:{fame:2,power:100}, lose:{}},
+  C:{label:'保存体力打持久战', kind:'fixed', fixed:{health:5}}},
+ {id:7, name:'交易截止日', brief:'窗口今晚关闭，补强还是拆队', special:'trade',
+  A:{label:'公开表态留队带队', attr:11, kind:'plan', win:{rel:1,fame:1}, lose:{controversy:1}, flag:'loyal'},
+  B:{label:'向管理层递补强名单', attr:null, kind:'fixed', fixed:{rel:1,power:120}},
+  C:{label:'申请交易', kind:'fixed', fixed:{controversy:3,power:200}, flag:'transfer'}},
+ {id:8, name:'全明星周末', brief:'票王之夜，表演也是生意',
+  A:{label:'三分大赛冲冠', attr:0, kind:'pro', win:{fame:3}, lose:{}},
+  B:{label:'正赛串联全明星', attr:4, kind:'plan', win:{fame:2,rel:1}, lose:{}},
+  C:{label:'全程养身看秀', kind:'fixed', fixed:{health:8}}},
+ {id:9, name:'下半程首战', brief:'全明星后的第一场，最容易翻车',
+  A:{label:'强行接管比赛', attr:2, kind:'pro', win:{power:120}, lose:{controversy:1}},
+  B:{label:'老将会议定基调', attr:11, kind:'plan', win:{power:100,rel:1}, lose:{controversy:1}},
+  C:{label:'轮休主力一节', kind:'fixed', fixed:{health:8}}},
+ {id:10, name:'伤病潮', brief:'更衣室一半人贴着肌贴上场',
+  A:{label:'拖着伤腿带队（带伤硬上）', attr:9, kind:'pro', win:{fame:2}, lose:{health:-12}, flag:'injuryMark'},
+  B:{label:'缩短轮换打七人球', attr:10, kind:'plan', win:{power:80}, lose:{health:-5}},
+  C:{label:'主动进伤病名单', kind:'fixed', fixed:{health:14}, noMerit:true}},
+ {id:11, name:'卡位战', brief:'与卡位对手直面，输了掉两个胜场',
+  A:{label:'统治篮板', attr:6, kind:'pro', win:{power:150}, lose:{power:-80}},
+  B:{label:'造犯规罚下对方内线', attr:10, kind:'plan', win:{power:120}, lose:{power:-50}},
+  C:{label:'收着打避伤', kind:'fixed', fixed:{health:8}}},
+ {id:12, name:'媒体风暴场', brief:'一句赛后采访被剪成了热搜第一',
+  A:{label:'用表现回应', attr:1, kind:'pro', win:{controversy:-2,fame:1}, lose:{controversy:2}},
+  B:{label:'召开发布会灭火', attr:11, kind:'plan', win:{controversy:-2}, lose:{controversy:1}},
+  C:{label:'沉默是金', kind:'fixed', fixed:{controversy:1,fame:-1}}},
+ {id:13, name:'收官冲刺', brief:'收官阶段定生死，场场都是决赛',
+  A:{label:'关键球全自己来', attr:11, kind:'pro', win:{fame:1,power:100}, lose:{}},
+  B:{label:'分配球权激活射手群', attr:4, kind:'plan', win:{power:120}, lose:{}},
+  C:{label:'负荷管理保季后赛', kind:'fixed', fixed:{health:10}, noMerit:true}},
+ {id:14, name:'常规赛收官战', brief:'赢球锁定主场优势，输球掉半区', special:'gate',
+  A:{label:'带队冲主场优势', attr:2, kind:'pro', win:{power:150}, lose:{}},
+  B:{label:'演练季后赛阵容', attr:5, kind:'plan', win:{power:100}, lose:{}},
+  C:{label:'全主力轮休', kind:'fixed', fixed:{health:14}, noMerit:true}},
+ {id:15, name:'季后赛首轮·系列赛', brief:'首轮系列赛，客场关门局是其中关键一战', knockout:'round1',
+  A:{label:'关门战亲自收割', attr:2, kind:'pro', win:{fame:2,power:150}, lose:{health:-5}},
+  B:{label:'针对对方变阵出招', attr:10, kind:'plan', win:{power:120}, lose:{}},
+  C:{label:'雪藏一节养体能', kind:'fixed', fixed:{health:8}, playoffRest:true}},
+ {id:16, name:'分区半决赛·系列赛', brief:'对手是卫冕冠军，赢或回家钓鱼', knockout:'round2',
+  A:{label:'客场抢赛点', attr:0, kind:'pro', win:{fame:2,power:150}, lose:{health:-5}},
+  B:{label:'锁死对方二当家', attr:7, kind:'plan', win:{power:120}, lose:{}},
+  C:{label:'保存体力备决胜', kind:'fixed', fixed:{health:6}, playoffRest:true}},
+ {id:17, name:'分区决赛·系列赛', brief:'赢了进总决赛，输了回家', knockout:'confFinal',
+  A:{label:'主场封神局亲自接管', attr:11, kind:'pro', win:{fame:3,power:150}, lose:{}},
+  B:{label:'用犯规战术打乱节奏', attr:10, kind:'plan', win:{power:120}, lose:{}},
+  C:{label:'系列赛轮换调整（小扣健康换战力）', kind:'fixed', fixed:{health:-3,power:80}}},
+ {id:18, name:'总决赛·前两场', brief:'总决赛开局段，试探与立威', finalsSeg:true,
+  A:{label:'首战立威隔扣对方中锋', attr:3, kind:'pro', win:{fame:2}, lose:{controversy:1}},
+  B:{label:'试探对方轮换弱点', attr:10, kind:'plan', win:{power:100}, lose:{controversy:1}},
+  C:{label:'稳守反击', kind:'fixed', fixed:{power:60}}},
+ {id:19, name:'总决赛·中段', brief:'系列赛中段拉锯，谁先眨眼谁先输', finalsSeg:true,
+  A:{label:'中段接管', attr:1, kind:'pro', win:{fame:2}, lose:{health:-4}},
+  B:{label:'主防对方头牌', attr:8, kind:'plan', win:{power:100}, lose:{}},
+  C:{label:'把体能留给抢七', kind:'fixed', fixed:{health:8}, playoffRest:true}},
+ {id:20, name:'总决赛·抢七终局', brief:'一战定冠军', special:'finals',
+  A:{label:'自己绝杀', kind:'finals', finals:'A'},
+  B:{label:'传给空位队友', kind:'finals', finals:'B'},
+  C:{label:'信任教练布置', kind:'finals', finals:'C'}}
+];
+window.BK_EVENTS = [
+ {id:'trade_rumor', name:'交易流言升级版', brief:'记者点名三支下家，你的电话被打爆',
+  A:{label:'花人气平息（人气-2，争议-2）', fixed:{fame:-2,controversy:-2}},
+  B:{label:'用人脉压下（人脉-1，争议-1）', fixed:{rel:-1,controversy:-1}}},
+ {id:'locker', name:'更衣室矛盾', brief:'老将嫌你出手太多，当众摔了毛巾',
+  A:{label:'当面谈开（查领袖）', attr:11, kind:'pro', win:{power:100}, lose:{power:-80,controversy:1}},
+  B:{label:'冷处理（争议+1）', fixed:{controversy:1}}},
+ {id:'injury_wave', name:'伤病潮蔓延', brief:'队医报告又添两人',
+  A:{label:'硬扛（健康-6，战力+60）', fixed:{health:-6,power:60}},
+  B:{label:'全队轮休一轮（健康+6，战力-60；轮休可豁免）', fixed:{health:6,power:-60}}},
+ {id:'record_night', name:'纪录之夜', brief:'你距离某项纪录只差一场',
+  A:{label:'追纪录（查当家能力）', attr:'best', kind:'pro', win:{fame:3,scene:1}, lose:{controversy:1}},
+  B:{label:'顺其自然', fixed:{fame:1}}},
+ {id:'media_debt', name:'媒体风暴', brief:'名嘴在节目里说你被高估，片段上了热搜',
+  A:{label:'公开回应（人气+2，争议+1）', fixed:{fame:2,controversy:1}},
+  B:{label:'沉默（人气-1，争议-1）', fixed:{fame:-1,controversy:-1}}},
+ {id:'referee', name:'裁判争议', brief:'关键吹罚上了热搜，联盟开了罚单',
+  A:{label:'认罚消事（人气-1，争议-1）', fixed:{fame:-1,controversy:-1}},
+  B:{label:'硬刚联盟（人气+1，争议+2）', fixed:{fame:1,controversy:2}}},
+ {id:'fan_night', name:'球迷之夜', brief:'主场球迷自发为你拉 MVP 横幅',
+  A:{label:'签名合影回馈（人气+2，战力+40）', fixed:{fame:2,power:40}},
+  B:{label:'低调离场（人气+1）', fixed:{fame:1}}},
+ {id:'mentor', name:'老将传授', brief:'退役名宿来训练馆单练你一场',
+  A:{label:'虚心求教（随机一项能力历练+1）', train:true, fixed:{}},
+  B:{label:'婉拒专注当下', fixed:{}}},
+ {id:'rookie', name:'新秀挑衅', brief:'今年的热门新秀放话要拿你当垫脚石',
+  A:{label:'正面打服他（查突破）', attr:2, kind:'pro', win:{fame:2}, lose:{controversy:1}},
+  B:{label:'不跟小孩子计较', fixed:{}}},
+ {id:'revenge', name:'手刃旧主', brief:'赛程撞上老东家，全场都在等这一战', cond:'transferOrRumor',
+  A:{label:'全力打爆旧主（查中投）', attr:1, kind:'pro', win:{fame:3,controversy:-2}, lose:{controversy:2}},
+  B:{label:'平常心对待', fixed:{fame:1}}},
+ {id:'ball_rights', name:'球权谈判', brief:'队内二当家要求更多球权，更衣室在等你表态',
+  A:{label:'让球（战力+100，个人判定修正-3 持续3战）', fixed:{power:100}, debuff:{mod:-3,battles:3}},
+  B:{label:'争球（战力-60，个人判定修正+3 持续3战）', fixed:{power:-60}, buff:{mod:3,battles:3}}},
+ {id:'cold_bench', name:'内讧冷板凳', brief:'两名队友公开闹僵，必须冷板凳一个',
+  A:{label:'冷射手保内线（战力-40，三分相关判定+2 持续3战）', fixed:{power:-40}},
+  B:{label:'冷内线保射手（战力-40，篮板相关判定+2 持续3战）', fixed:{power:-40}}},
+ {id:'hurt_choice', name:'带伤抉择', brief:'队医说你这伤可打可休，就看今晚这场有多重要', playoffRestOption:true,
+  A:{label:'带伤硬上（埋掉点隐患）', fixed:{}, flag:'injuryMark'},
+  B:{label:'轮休（健康+8，自保计数+1）', fixed:{health:8}, restPlus:true}}
+];
+</script>
+<script>// 流程层：状态机核心（与 DOM 解耦，Node 可直接驱动跑 full_run/蒙特卡洛）。
+// 状态变更纪律：资源只走 Ledger，判定只走 Formulas，存档只走 Save。
+(function(){
+  const C = window.BK_CONFIG, F = window.BK_Formulas, L = window.BK_Ledger;
+  const D = window.BK_DATA;
+  let rng = null;
+  function ensureRng(state){
+    if(!rng) rng = window.BK_RNG.createRng(state.seed, state.rngState);
+    return rng;
+  }
+  function syncRng(state){ if(rng) state.rngState = rng.state(); }
+  function playerByName(name){ return D.players.find(p=>p.name===name); }
+
+  function newGame(opts){
+    opts = opts||{};
+    const seed = opts.seed || window.BK_RNG.makeSeedCode(C.SEED_PREFIX);
+    rng = window.BK_RNG.createRng(seed);
+    const s = window.BK_defaultState();
+    s.seed = seed;
+    const origin = C.ORIGINS.find(o=>o.id===opts.originId) || C.ORIGINS[1];
+    s.originId = origin.id; s.position = opts.positionId || 'SF';
+    // meta 商店生效（开局类）
+    const meta = window.BK_Meta.load(); s.shopOwned = meta.shopOwned||[];
+    let startHealth = C.START_HEALTH, extraSwap = 0;
+    for(const id of s.shopOwned){ const item = C.SHOP.find(x=>x.id===id); if(!item) continue;
+      if(item.effect.startHealth) startHealth += item.effect.startHealth;
+      if(item.effect.extraSwap) extraSwap += item.effect.extraSwap;
+    }
+    s.resources.health = startHealth;
+    s.resources.power = origin.power; s.resources.fame = origin.fame; s.resources.rel = origin.rel;
+    for(const id of s.shopOwned){ const item = C.SHOP.find(x=>x.id===id); if(!item) continue;
+      if(item.effect.startRel) s.resources.rel += item.effect.startRel;
+      if(item.effect.startFame) s.resources.fame += item.effect.startFame;
+      if(item.effect.startControversy) s.resources.controversy = Math.max(0, s.resources.controversy + item.effect.startControversy);
+    }
+    s.swapsLeft = C.SWAPS_FREE + extraSwap;
+    s.phase = 'draft';
+    genBatch(s);
+    syncRng(s);
+    return s;
+  }
+
+  // —— 选秀 ——
+  function teamForRound(s){
+    // 12 轮：六队各两轮，种子序
+    const order = rng.shuffle(C.TEAMS.slice());
+    return order[s.draftRound % order.length];
+  }
+  function genBatch(s, forcedTeam){
+    const team = forcedTeam || teamForRound(s);
+    const pool = D.players.filter(p=>p.team===team && !s.attrSrc.includes(p.name));
+    const picks = rng.shuffle(pool).slice(0, C.BATCH_SIZE);
+    const batch = picks.map(p=>({ name:p.name, peak:false }));
+    // 巅峰赛季卡：该队有巅峰卡且本体未被锁源时，按概率替换一席
+    const peaks = D.peaks.filter(pk=>{ const base = playerByName(pk.base); return base && base.team===team && !s.attrSrc.includes(pk.base); });
+    if(peaks.length && rng.next() < C.PEAK_CHANCE){
+      const pk = peaks[rng.int(peaks.length)];
+      const slot = rng.int(batch.length);
+      batch[slot] = { name: pk.base, peak:true, peakYear: pk.year, label: pk.label };
+    }
+    s.batch = batch; s.batchTeam = team;
+    return batch;
+  }
+  function candidateObj(entry){
+    const base = playerByName(entry.name);
+    if(!entry.peak) return base;
+    const stats = base.stats.slice();
+    const order = stats.map((v,i)=>[v,i]).sort((a,b)=>b[0]-a[0]).slice(0,3);
+    for(const [,i] of order) stats[i] = Math.min(99, stats[i]+C.PEAK_BOOST);
+    const special = { attr: base.special.attr, kind: base.special.kind, value: base.special.kind==='floor' ? Math.min(99, base.special.value+3) : base.special.value+2 };
+    return Object.assign({}, base, { stats, special, isPeak:true, peakLabel: entry.label });
+  }
+  function draftPick(s, batchIdx, attrIdx){
+    const entry = s.batch[batchIdx]; if(!entry) return { ok:false, reason:'no-batch' };
+    const cand = candidateObj(entry);
+    let val = cand.stats[attrIdx];
+    // 商店：投篮训练师——投篮三维（三分/中投/突破位中的射术维 0/1）下限
+    const shootItem = s.shopOwned.includes('trainer');
+    if(shootItem && (attrIdx===0||attrIdx===1)) val = Math.max(val, 0) // 占位：下限在锁定时以 floor 形式体现
+    s.attrs[attrIdx] = cand.stats[attrIdx];
+    s.attrSrc[attrIdx] = cand.name;
+    if(cand.special && cand.special.attr===attrIdx){
+      if(cand.special.kind==='floor') s.attrFloors[attrIdx] = cand.special.value;
+      else s.attrs[attrIdx] = Math.min(99, s.attrs[attrIdx] + cand.special.value);
+    }
+    if(shootItem && (attrIdx===0||attrIdx===1)) s.attrFloors[attrIdx] = Math.max(s.attrFloors[attrIdx]||0, cand.stats[attrIdx]-0);
+    s.lockedCount++; s.draftRound++;
+    s.batch = null;
+    if(s.draftRound >= C.DRAFT_ROUNDS){ s.phase='battle'; s.battleIdx=1; }
+    else genBatch(s);
+    syncRng(s);
+    return { ok:true, done: s.phase==='battle' };
+  }
+  function rerollBatch(s){
+    if(s.swapsLeft<=0) return { ok:false, reason:'no-swaps' };
+    s.swapsLeft--; genBatch(s); syncRng(s); return { ok:true };
+  }
+  function directedDraft(s, team){
+    if(!s.directedReady) return { ok:false, reason:'not-ready' };
+    s.directedReady = false; genBatch(s, team); syncRng(s); return { ok:true };
+  }
+
+  // —— 战斗判定 ——
+  function battleDef(s){ return window.BK_BATTLES[s.battleIdx-1]; }
+  function preBattle(s){
+    // 负荷冲突：每场首扣（在 choose 时结算一次，记录于 lastSettle.pre）
+    const lc = F.loadConflict(s.attrs);
+    return lc;
+  }
+  function scaleFx(fx, mult){
+    if(!fx) return {}; const out={}; for(const k in fx) out[k]=fx[k]*mult; return out;
+  }
+  function chooseBattle(s, key, opts){
+    opts = opts||{}; const gamble = !!opts.gamble;
+    const b = battleDef(s); if(!b) return { ok:false, reason:'no-battle' };
+    const opt = b[key]; if(!opt) return { ok:false, reason:'no-option' };
+    const rec = { kind:'battle', battle:b.id, key, gamble, pre:null, lines:[] };
+    // 负荷冲突场首结算
+    const lc = preBattle(s);
+    if(lc>0){ L.apply(s, { health: lc*C.LOAD_HEALTH_PER }, 'load-conflict'); rec.pre = { load: lc, health: lc*C.LOAD_HEALTH_PER }; }
+    let grade = 'fixed', success = null, roll = null, rate = null;
+    if(opt.kind==='identity'){
+      s.identity = opt.identity; grade='fixed';
+      L.apply(s, opt.fixed||{}, 'identity');
+    } else if(opt.kind==='finals'){
+      const fin = resolveFinals(s, opt.finals);
+      grade = fin.win ? 'win' : 'lose'; success = fin.win; rec.finals = fin;
+      if(fin.win){ L.apply(s, { merit: 0 }, 'finals'); }
+    } else if(opt.kind==='fixed'){
+      L.apply(s, opt.fixed||{}, 'battle-fixed');
+      if(opt.flag==='loyal'){ s.flags.loyal = true; }
+      if(opt.flag==='transfer'){ s.flags.transfer = true; }
+      if(opt.flag==='injuryMark'){ s.flags.injuryMark = true; }
+      if(opt.playoffRest){ s.playoffRest++; }
+    } else {
+      // 判定类
+      const mods = {};
+      if(s.checkMod && s.checkMod.battles>0) mods.mod = s.checkMod.value;
+      rate = F.checkRate(s, opt.attr, Object.assign({}, mods, { gamble }));
+      roll = Math.floor(rng.next()*100)+1;
+      success = roll <= rate;
+      grade = success ? F.gradeOf(roll, rate, true) : (opt.kind==='plan' && roll <= rate + C.GRADE_HOLD_MARGIN ? 'hold' : 'lose');
+      const mult = gamble ? 2 : 1;
+      if(success){
+        L.apply(s, scaleFx(opt.win, mult), 'battle-win');
+        let merit = C.MERIT[grade]*mult;
+        if(opt.noMerit) merit = 0;
+        L.apply(s, { merit }, 'battle-merit');
+        if(opt.kind==='pro'){
+          s.proSuccess++;
+          if(F.effAttr(s, opt.attr) >= C.SCENE_ATTR_MIN && rng.next()<0.9){ L.apply(s, { scene: 1 }, 'scene'); rec.scene = true; }
+        }
+      } else {
+        L.apply(s, scaleFx(opt.lose, mult), 'battle-lose');
+        if(gamble) L.apply(s, C.GAMBLE_FAIL_EXTRA, 'gamble-extra');
+        if(opt.kind==='plan' && grade==='hold'){ if(!opt.noMerit) L.apply(s, { merit: C.MERIT.hold*mult }, 'battle-merit'); }
+        if(opt.kind==='pro'){ s.personalFail++; }
+        if(opt.flag==='injuryMark'){ s.flags.injuryMark = true; }
+      }
+      rec.rate = rate; rec.roll = roll;
+    }
+    rec.grade = grade; rec.success = success;
+    if(s.checkMod && s.checkMod.battles>0){ s.checkMod.battles--; if(s.checkMod.battles<=0) s.checkMod=null; }
+    if(s.fateBuff>0) s.fateBuff--;
+    s.selfStreak = (opt.kind==='fixed') ? s.selfStreak+1 : 0;
+    if(s.selfStreak >= C.SELF_PENALTY_FROM){
+      L.apply(s, C.SELF_PENALTY, 'self-penalty');
+      if(s.selfStreak > C.SELF_PENALTY_FROM) L.apply(s, C.SELF_PENALTY_ESCALATE, 'self-penalty-esc');
+      rec.selfPenalty = true;
+    }
+    s.lastSettle = rec; s.phase='battle';
+    syncRng(s);
+    // 结算后推进（落盘由 UI 层在 choose 后立刻 Save.save('battle-settle')）
+    advanceAfterBattle(s, rec);
+    return { ok:true, rec };
+  }
+  function resolveFinals(s, path){
+    const r = s.resources;
+    // 终局门槛（校准定版）：须过判定且战力达标；亲为成功积累给判定加成（关键回合经验），无亲为积累的躺平构筑在此被拦
+    const proMod = Math.min(8, s.proSuccess*2);
+    if(path==='A'){
+      const best = Math.max(F.effAttr(s,1), F.effAttr(s,2), F.effAttr(s,0));
+      const rate = F.checkRate(s, best===F.effAttr(s,1)?1:(best===F.effAttr(s,2)?2:0), { mod: proMod });
+      const roll = Math.floor(rng.next()*100)+1;
+      return { win: roll<=rate && r.power>=C.FINALS.A_POWER, path, rate, roll, needPower: C.FINALS.A_POWER };
+    }
+    if(path==='B'){
+      const rate = Math.round((F.checkRate(s,4,{}) + F.checkRate(s,10,{}))/2) + proMod;
+      const roll = Math.floor(rng.next()*100)+1;
+      return { win: roll<=rate && r.power>=C.FINALS.B_POWER, path, rate, roll, needPower: C.FINALS.B_POWER };
+    }
+    // C 教练布置：固定结算，靠资源门槛
+    return { win: r.power>=C.FINALS.C_POWER && r.merit>=C.FINALS.C_MERIT, path, rate:null, roll:null, needPower: C.FINALS.C_POWER, needMerit: C.FINALS.C_MERIT };
+  }
+  function advanceAfterBattle(s, rec){
+    const b = battleDef(s);
+    // 伤退即时判定
+    if(s.resources.health<=0){ finishRun(s, 'injury'); return; }
+    // 季后赛淘汰
+    if(b.knockout && rec.success===false){ finishRun(s, knockoutEnding(b.knockout, s)); return; }
+    if(b.special==='gate' && s.battleIdx===14){
+      if(s.resources.merit < C.PLAYOFF_GATE_MERIT){ finishRun(s, 'regular_out'); return; }
+    }
+    if(b.id===20){ finishRun(s, championOrRunnerUp(s, rec)); return; }
+    // 拼至报销判定点：第19战末
+    if(b.id===C.PERSONAL_FAIL_CHECK_BATTLE){
+      if(s.personalFail>=C.PERSONAL_FAIL_END || (s.personalFail>=C.PERSONAL_FAIL_END_LOWHP && s.resources.health<C.PERSONAL_FAIL_HP_LINE)){ finishRun(s, 'exhausted'); return; }
+    }
+    // 休整点
+    if(C.REST_AFTER.includes(b.id)){ L.apply(s, { health: C.REST_HEALTH }, 'rest'); rec.rest = C.REST_HEALTH; }
+    // 事件点
+    if(C.EVENT_AFTER.includes(b.id) && !s.eDoneBattle.includes(b.id)){
+      const ev = drawEvent(s);
+      if(ev){ s.pendingEvent = ev.id; s.phase='event'; return; }
+    }
+    s.battleIdx++;
+  }
+  function knockoutEnding(kind, s){
+    if(kind==='round1') return F.contributionHigh(s) ? 'rookie_wall' : 'first_round';
+    if(kind==='round2') return s.flags.transfer ? 'wandering' : (F.contributionHigh(s) ? 'second_ceiling' : 'second_out');
+    if(kind==='confFinal') return (s.flags.loyal && !s.flags.transfer) ? 'one_team' : (F.contributionHigh(s) ? 'one_step' : 'gate_fall');
+    return 'first_round';
+  }
+  function championOrRunnerUp(s, rec){
+    if(rec.finals && rec.finals.win){
+      if(s.playoffRest>=C.LYING_CHAMP_REST_MIN && s.resources.merit<=C.LYING_CHAMP_MERIT_MAX) return 'lying_champ';
+      return F.contributionHigh(s) ? 'champion_top' : 'champion_piece';
+    }
+    // 亚军
+    if(s.flags.loyal && !s.flags.transfer) return 'one_team';
+    return F.contributionHigh(s) ? 'uncrowned' : 'game7_loss';
+  }
+  function drawEvent(s){
+    const pool = window.BK_EVENTS.filter(ev=>{
+      if(ev.cond==='transferOrRumor' && !(s.flags.transfer || s.resources.controversy>=2)) return false;
+      return true;
+    });
+    const ev = pool[rng.int(pool.length)];
+    return ev;
+  }
+  function chooseEvent(s, key){
+    const ev = window.BK_EVENTS.find(e=>e.id===s.pendingEvent);
+    if(!ev) { s.pendingEvent=null; s.phase='battle'; s.battleIdx++; return { ok:false, reason:'no-event' }; }
+    const opt = ev[key]; const rec = { kind:'event', event: ev.id, key, lines:[] };
+    if(opt.train){ const idx = rng.int(12); s.attrs[idx]=Math.min(99, s.attrs[idx]+1); rec.trainAttr = idx; }
+    if(opt.attr!=null || opt.kind==='pro'){
+      let attr = opt.attr;
+      if(attr==='best'){ let bi=0; for(let i=0;i<12;i++) if(F.effAttr(s,i)>F.effAttr(s,bi)) bi=i; attr=bi; }
+      const rate = F.checkRate(s, attr, {}); const roll = Math.floor(rng.next()*100)+1;
+      rec.rate=rate; rec.roll=roll; rec.success = roll<=rate;
+      L.apply(s, rec.success? (opt.win||{}) : (opt.lose||{}), 'event');
+    } else {
+      L.apply(s, opt.fixed||{}, 'event-fixed');
+    }
+    if(opt.buff){ s.checkMod = { value: opt.buff.mod, battles: opt.buff.battles }; }
+    if(opt.debuff){ s.checkMod = { value: opt.debuff.mod, battles: opt.debuff.battles }; }
+    if(opt.flag==='injuryMark') s.flags.injuryMark = true;
+    if(opt.restPlus && s.battleIdx>=15) s.playoffRest++;
+    s.eDoneBattle.push(s.battleIdx);
+    s.lastSettle = rec; s.pendingEvent = null; s.phase='battle';
+    s.battleIdx++;
+    syncRng(s);
+    if(s.resources.health<=0) finishRun(s, 'injury');
+    return { ok:true, rec };
+  }
+  // —— 结局 ——（§8 优先级顺序在 ENDINGS 表内以 priority 字段固化，此处按触发直达，顺序即代码顺序）
+  function finishRun(s, endingId){
+    s.phase='ending'; s.endingId = endingId;
+    const def = D.endings.find(e=>e.id===endingId);
+    const legend = F.legendValue(s, def?def.bonus:0);
+    s.legend = legend;
+    // 抱团标签
+    const sCount = s.attrSrc.filter(n=>{ const p=playerByName(n); return p && p.tier==='S'; }).length;
+    s.flags.bountyTag = sCount >= C.BOUNTY_CONCENTRATION_S_COUNT;
+    // meta 结算：生涯功勋点 = 本局功勋
+    const meta = window.BK_Meta.load();
+    meta.points += s.resources.merit; meta.runs += 1;
+    if(!meta.endingsSeen.includes(endingId)) meta.endingsSeen.push(endingId);
+    window.BK_Meta.save(meta);
+    return def;
+  }
+  // —— 广告 grant 分发 ——
+  function applyAdGrant(s, type){
+    if(type==='directed'){ s.directedReady = true; }
+    else if(type==='fate'){ s.fateBuff = C.FATE_BATTLES; }
+    else if(type==='heal'){ L.apply(s, { health: C.HEAL_AD_AMOUNT }, 'ad-heal'); }
+    else if(type==='extraSwap'){ s.swapsLeft += 1; }
+    else if(type==='rewind'){ s.rewindArmed = true; }
+  }
+  function useRewind(s){
+    if(!s.rewindArmed || !s.lastSettle || s.lastSettle.kind!=='battle') return { ok:false };
+    // 改命：回滚上一战的资源变动不可行（账本只进不退），采用母本外口径——清除上一战的个人失败计数并回健康8，标记本战重打
+    s.rewindArmed = false;
+    if(s.lastSettle.success===false) s.personalFail = Math.max(0, s.personalFail-1);
+    L.apply(s, { health: 8 }, 'rewind');
+    s.phase='battle';
+    return { ok:true };
+  }
+  window.BK_Game = { newGame, genBatch, candidateObj, draftPick, rerollBatch, directedDraft, chooseBattle, chooseEvent, applyAdGrant, useRewind, finishRun, playerByName, battleDef, ensureRng, syncRng };
+})();
+</script>
+<script>// 视图层：球探报告风。所有按钮显式设文字颜色（CSS .btn 已定色）；中文全为真实 HTML 文字。
+(function(){
+  const C = window.BK_CONFIG, F = window.BK_Formulas, G = window.BK_Game, Save = window.BK_Save, Ads = window.BK_Ads, LB = window.BK_LB;
+  const app = document.getElementById('app');
+  const SIL = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><rect width="120" height="120" fill="#ddd3b8"/><circle cx="60" cy="46" r="20" fill="#8a7c5c"/><path d="M22 120c4-26 20-38 38-38s34 12 38 38z" fill="#8a7c5c"/></svg>');
+  let S = null; let view = 'home'; let selCand = -1; let lbTab = 'best';
+  function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+  function portrait(p){ return p && p.portrait ? 'portraits/'+p.portrait : SIL; }
+  function saveNow(r){ Save.save(r||'ui'); }
+  function resBar(){
+    if(!S) return '';
+    const r = S.resources;
+    return '<div class="resbar"><span>健康 <b>'+r.health+'</b></span><span>战力 <b>'+r.power+'</b></span><span>人气 <b>'+r.fame+'</b></span><span>人脉 <b>'+r.rel+'</b></span><span>争议 <b>'+r.controversy+'</b></span><span>功勋 <b>'+r.merit+'</b></span><span>高光 <b>'+r.scene+'</b></span><span>总评 <b>'+F.overall(S)+'</b></span><span>传奇投影 <b>'+F.legendValue(S,0)+'</b></span></div>';
+  }
+  function slotsHtml(){
+    let h = '<div class="slots">';
+    for(let i=0;i<12;i++){
+      const filled = S && S.attrSrc[i];
+      h += '<div class="slot'+(filled?' filled':'')+'"><div>'+C.ATTRS[i]+'</div><div class="v">'+(filled?S.attrs[i]:'—')+'</div><div class="src">'+(filled?esc(S.attrSrc[i]):'待选秀')+'</div></div>';
+    }
+    return h+'</div>';
+  }
+  function timelineHtml(){
+    let h = '<div class="timeline">';
+    window.BK_BATTLES.forEach((b,i)=>{
+      const cls = S && S.phase!=='draft' ? (i+1 < S.battleIdx ? 'done' : (i+1===S.battleIdx?'now':'')) : '';
+      h += '<span class="'+cls+'">'+b.id+' '+esc(b.name)+'</span>';
+    });
+    return h+'</div>';
+  }
+  function modal(html){ document.getElementById('modal-root').innerHTML = '<div class="modal"><div class="box">'+html+'</div></div>'; }
+  function closeModal(){ document.getElementById('modal-root').innerHTML=''; }
+  window.BK_UI = { render, setState:(s)=>{S=s;} };
+  function render(){
+    if(view==='home') return renderHome();
+    if(view==='setup') return renderSetup();
+    if(view==='draft') return renderDraft();
+    if(view==='battle') return renderBattle();
+    if(view==='event') return renderEvent();
+    if(view==='ending') return renderEnding();
+    if(view==='gallery') return renderGallery();
+    if(view==='boards') return renderBoards();
+    if(view==='shop') return renderShop();
+    renderHome();
+  }
+  // —— 首页（选秀台：12 空槽 + 赛季时间轴先行）——
+  function renderHome(){
+    const has = !!Save.peek();
+    app.innerHTML =
+    '<div style="padding:16px 10px 4px"><div class="kicker">球探报告 · SCOUTING REPORT</div><h1 class="title">巨星拼图：巅峰王朝</h1><div class="sub" style="margin-left:0">12 轮选秀夺技，一局拼出历史第一人</div></div>'
+    + '<div class="paper"><h3>我的拼图（12 项能力）</h3>'+slotsHtml()+'<h3>赛季时间轴（20 个关键战役）</h3>'+timelineHtml()+'</div>'
+    + '<div style="margin:0 10px">'
+    + (has ? '<button class="btn primary" id="b-continue">继续赛季</button>' : '')
+    + '<button class="btn primary" id="b-new">开启新赛季</button>'
+    + '<div class="row"><button class="btn" id="b-gallery">球员图鉴</button><button class="btn" id="b-boards">传奇榜</button></div>'
+    + '<div class="row"><button class="btn" id="b-shop">生涯规划商店</button><button class="btn" id="b-code">存档码 / 种子</button></div>'
+    + '<button class="btn ghost" id="b-rules">归队规则与玩法</button></div>'
+    + '<div class="foot">'+C.GAME_NAME+' '+C.VERSION+'</div>';
+    bind('b-new', ()=>{ view='setup'; render(); });
+    if(has) bind('b-continue', ()=>{ S = Save.peek(); resumeView(); });
+    bind('b-gallery', ()=>{ if(!S){ S = Save.peek(); } view='gallery'; render(); });
+    bind('b-boards', ()=>{ view='boards'; render(); });
+    bind('b-shop', ()=>{ view='shop'; render(); });
+    bind('b-code', showCodeModal);
+    bind('b-rules', showRules);
+  }
+  function resumeView(){
+    if(!S){ view='home'; return render(); }
+    if(S.phase==='ending'){ view='ending'; }
+    else if(S.phase==='event'){ view='event'; }
+    else if(S.phase==='draft'){ view='draft'; }
+    else { view='battle'; }
+    render();
+  }
+  function bind(id, fn){ const el=document.getElementById(id); if(el) el.addEventListener('click', fn); }
+  // —— 开局设置 ——
+  function renderSetup(){
+    app.innerHTML = '<div class="paper"><h2>新赛季 · 选秀档案</h2>'
+    + '<p>出身（选秀顺位）</p><div id="origins">'
+    + C.ORIGINS.map(o=>'<button class="btn small" data-origin="'+o.id+'">'+o.name+'（战力'+o.power+' / 人气'+o.fame+'）</button>').join('')
+    + '</div><p>主打位置</p><div id="positions">'
+    + C.POSITIONS.map(p=>'<button class="btn small" data-pos="'+p.id+'">'+p.name+'</button>').join('')
+    + '</div><p>种子码（可空，留空随机）</p><input type="text" id="seed-in" placeholder="如 BKXXXXXX">'
+    + '<button class="btn primary" id="b-start">进入选秀台</button>'
+    + '<button class="btn ghost" id="b-back">返回</button></div>';
+    let originId='lottery', posId='SF';
+    app.querySelectorAll('[data-origin]').forEach(el=>el.addEventListener('click', ()=>{ originId=el.dataset.origin; markSel('[data-origin]', el); }));
+    app.querySelectorAll('[data-pos]').forEach(el=>el.addEventListener('click', ()=>{ posId=el.dataset.pos; markSel('[data-pos]', el); }));
+    bind('b-back', ()=>{ view='home'; render(); });
+    bind('b-start', ()=>{
+      const seedIn = document.getElementById('seed-in').value.trim();
+      S = G.newGame({ originId, positionId: posId, seed: seedIn || undefined });
+      Save.startNew(S); selCand=-1;
+      view='draft'; render();
+    });
+  }
+  function markSel(sel, el){ app.querySelectorAll(sel).forEach(x=>x.style.borderColor=''); el.style.borderColor='#b3402a'; }
+  // —— 选秀台 ——
+  function renderDraft(){
+    if(!S || !S.batch){ view='home'; return render(); }
+    const batch = S.batch.map(e=>G.candidateObj(e));
+    let h = '<div style="padding:12px 10px 0"><div class="kicker">选秀台 · 第 '+(S.draftRound+1)+' / '+C.DRAFT_ROUNDS+' 轮</div></div>'
+    + resBar()
+    + '<div class="paper"><h3>本轮：'+esc(S.batchTeam)+'（种子 '+esc(S.seed)+'）</h3><div class="cands">';
+    batch.forEach((p,i)=>{
+      h += '<div class="cand'+(selCand===i?' sel':'')+'" data-cand="'+i+'"><img src="'+portrait(p)+'" alt=""><div class="nm">'+esc(p.name)+(p.isPeak?' <span style="color:#b3402a">巅峰</span>':'')+'</div><div class="meta">'+esc(p.team)+' · '+p.tier+'档 · 峰值 '+esc(p.window)+'</div><div class="meta">'+esc(p.note)+'</div></div>';
+    });
+    h += '</div>';
+    if(selCand>=0){
+      const p = batch[selCand];
+      h += '<h3>锁定 '+esc(p.name)+' 的一项能力</h3><div class="attrgrid">';
+      for(let i=0;i<12;i++){
+        const taken = !!S.attrSrc[i];
+        h += '<button class="attrbtn" data-attr="'+i+'" '+(taken?'disabled':'')+'>'+C.ATTRS[i]+' <b>'+p.stats[i]+'</b>'+(p.special&&p.special.attr===i?'<br>绝活：'+(p.special.kind==='floor'?'下限 '+p.special.value:'加成 +'+p.special.value):'')+(taken?'<br>已锁定':'')+'</button>';
+      }
+      h += '</div>';
+    }
+    h += '<div class="row"><button class="btn" id="b-swap">🔀 换一批（余 '+S.swapsLeft+'）</button>'
+      + '<button class="btn green" id="b-directed">'+(S.directedReady?'🎯 定向招募已就绪':'🎯 定向招募·看广告')+'</button></div>'
+      + '<h3>我的拼图</h3>'+slotsHtml()+'</div>';
+    app.innerHTML = h;
+    app.querySelectorAll('[data-cand]').forEach(el=>el.addEventListener('click', ()=>{ selCand=+el.dataset.cand; render(); }));
+    app.querySelectorAll('[data-attr]').forEach(el=>el.addEventListener('click', ()=>{
+      const r = G.draftPick(S, selCand, +el.dataset.attr);
+      if(r.ok){ selCand=-1; saveNow('draft-pick'); if(S.phase==='battle'){ view='battle'; } render(); }
+    }));
+    bind('b-swap', ()=>{ const r=G.rerollBatch(S); if(r.ok){ selCand=-1; saveNow('draft-reroll'); render(); } else alert('免费换一批次数已用完'); });
+    bind('b-directed', async ()=>{
+      if(S.directedReady){ showTeamPicker(); return; }
+      const res = await Ads.watch('directed', (t)=>G.applyAdGrant(S,t));
+      saveNow('ad-directed'); if(S.directedReady){ showTeamPicker(); } render();
+    });
+  }
+  function showTeamPicker(){
+    modal('<h3>定向招募 · 自选时代</h3>' + C.TEAMS.map(t=>{
+      const left = window.BK_DATA.players.filter(p=>p.team===t && !S.attrSrc.includes(p.name)).length;
+      return '<button class="btn small" data-team="'+t+'" '+(left<=0?'disabled':'')+'>'+t+'（尚余 '+left+' 人）</button>';
+    }).join('') + '<button class="btn ghost" id="m-cancel">先不选（资格保留）</button>');
+    document.querySelectorAll('[data-team]').forEach(el=>el.addEventListener('click', ()=>{ G.directedDraft(S, el.dataset.team); selCand=-1; saveNow('directed-pick'); closeModal(); render(); }));
+    bind('m-cancel', closeModal);
+  }
+  // —— 战斗 ——
+  function settleHtml(rec){
+    if(!rec) return '';
+    let h = '<div class="settle"><b>结算</b>：';
+    if(rec.kind==='battle'){
+      const b = window.BK_BATTLES[rec.battle-1];
+      if(rec.pre) h += '负荷冲突 '+rec.pre.load+' 项，健康 '+rec.pre.health+'；';
+      if(rec.rate!=null) h += '判定 '+rec.roll+' / 成功率 '+rec.rate+'% → <b>'+(rec.success?'成功':'失败')+'</b>（'+({great:'大胜',win:'胜',hold:'僵持',lose:'败',fixed:'固定'})[rec.grade]+'）';
+      else h += '固定结算';
+      if(rec.scene) h += '；🌟 高光时刻 +1';
+      if(rec.rest) h += '；休整健康 +'+rec.rest;
+      if(rec.selfPenalty) h += '；⚠ 轮休流言触发';
+      if(rec.finals) h += '；终局门槛 战力需求 '+rec.finals.needPower+(rec.finals.needMerit?' / 功勋需求 '+rec.finals.needMerit:'');
+      h += '。结果已落盘，退出重进不会重打。';
+    } else if(rec.kind==='event'){
+      h += '事件「'+esc((window.BK_EVENTS.find(e=>e.id===rec.event)||{}).name||'')+'」已结算并落盘。';
+      if(rec.rate!=null) h += '判定 '+rec.roll+' / '+rec.rate+'% → '+(rec.success?'成功':'失败')+'。';
+      if(rec.trainAttr!=null) h += '历练：'+C.ATTRS[rec.trainAttr]+' +1。';
+    }
+    return h+'</div>';
+  }
+  function renderBattle(){
+    if(!S){ view='home'; return render(); }
+    if(S.phase==='ending'){ view='ending'; return render(); }
+    if(S.phase==='event'){ view='event'; return render(); }
+    const b = G.battleDef(S); if(!b){ view='ending'; return render(); }
+    let h = '<div style="padding:12px 10px 0"><div class="kicker">赛季战役 '+b.id+' / 20</div></div>' + resBar();
+    // 已落盘结算先行展示（恢复路径）
+    if(S.lastSettle && S._settleShown!==S.battleIdx && S.lastSettle.battle && S.lastSettle.battle < b.id){ h += settleHtml(S.lastSettle); }
+    else if(S.lastSettle && S.lastSettle.kind==='event' && S._settleShown!==S.battleIdx){ h += settleHtml(S.lastSettle); }
+    h += '<div class="paper"><h2>'+esc(b.name)+'</h2><p>'+esc(b.brief)+'</p>';
+    if(S.fateBuff>0) h += '<p>🌟 巨星时刻生效中（余 '+S.fateBuff+' 战，判定 +8）</p>';
+    if(S.checkMod) h += '<p>更衣室状态：判定修正 '+(S.checkMod.value>0?'+':'')+S.checkMod.value+'（余 '+S.checkMod.battles+' 战）</p>';
+    const lc = F.loadConflict(S.attrs); if(lc>0) h += '<p>⚠ 负荷冲突 '+lc+' 项：本场首扣健康 '+(lc*C.LOAD_HEALTH_PER)+'、判定 -'+(lc*3)+'%</p>';
+    ['A','B','C'].forEach(k=>{
+      const o = b[k]; if(!o) return;
+      let extra = '';
+      if(o.attr!=null){ const rate = F.checkRate(S, o.attr, {}); extra = '（查'+C.ATTRS[o.attr]+' '+F.effAttr(S,o.attr)+' · 基础成功率 '+rate+'%）'; }
+      if(o.kind==='identity') extra = '（战术身份，锁定后全季生效）';
+      if(o.kind==='finals') extra = '（终局抉择，见结局门槛）';
+      h += '<button class="btn" data-opt="'+k+'">'+k+' · '+esc(o.label)+extra+'</button>';
+    });
+    h += '<label class="chk"><input type="checkbox" id="gamble"> 拼一把（成功率减半，效果与功勋翻倍，失败额外 健康-3/战力-50）</label>';
+    h += '<div class="row"><button class="btn small green" id="ad-fate">🌟 巨星时刻（广告）</button><button class="btn small green" id="ad-heal">🩹 队医补给（广告）</button></div>';
+    if(S.lastSettle && S.lastSettle.kind==='battle' && S.lastSettle.success===false && !S.rewindArmed) h += '<button class="btn small" id="ad-rewind">↩ 改命（广告：免除上战亲为失败计数）</button>';
+    if(S.rewindArmed) h += '<button class="btn small primary" id="use-rewind">使用改命（回健康+8，消上战失败计数）</button>';
+    h += '<button class="btn ghost" id="b-home">回首页</button></div>';
+    app.innerHTML = h;
+    S._settleShown = S.battleIdx;
+    app.querySelectorAll('[data-opt]').forEach(el=>el.addEventListener('click', ()=>{
+      const gamble = document.getElementById('gamble').checked;
+      const r = G.chooseBattle(S, el.dataset.opt, { gamble });
+      if(r.ok){
+        Save.save('battle-settle'); // 判定落盘：结算即存
+        S._settleShown = -1;
+        if(S.phase==='ending'){ view='ending'; render(); }
+        else if(S.phase==='event'){ view='event'; render(); }
+        else render();
+      }
+    }));
+    bind('ad-fate', async ()=>{ await Ads.watch('fate', t=>G.applyAdGrant(S,t)); saveNow('ad-fate'); render(); });
+    bind('ad-heal', async ()=>{ await Ads.watch('heal', t=>G.applyAdGrant(S,t)); saveNow('ad-heal'); render(); });
+    bind('ad-rewind', async ()=>{ await Ads.watch('rewind', t=>G.applyAdGrant(S,t)); saveNow('ad-rewind'); render(); });
+    bind('use-rewind', ()=>{ G.useRewind(S); saveNow('rewind-use'); render(); });
+    bind('b-home', ()=>{ view='home'; render(); });
+  }
+  // —— 事件 ——
+  function renderEvent(){
+    const ev = window.BK_EVENTS.find(e=>e.id===S.pendingEvent);
+    if(!ev){ view='battle'; return render(); }
+    let h = '<div style="padding:12px 10px 0"><div class="kicker">赛后事件</div></div>' + resBar()
+    + '<div class="paper"><h2>'+esc(ev.name)+'</h2><p>'+esc(ev.brief)+'</p>';
+    ['A','B'].forEach(k=>{ const o=ev[k]; if(o) h += '<button class="btn" data-ev="'+k+'">'+k+' · '+esc(o.label)+'</button>'; });
+    h += '</div>';
+    app.innerHTML = h;
+    app.querySelectorAll('[data-ev]').forEach(el=>el.addEventListener('click', ()=>{
+      const r = G.chooseEvent(S, el.dataset.ev);
+      if(r.ok){ Save.save('event-settle'); S._settleShown=-1; if(S.phase==='ending'){ view='ending'; } else { view='battle'; } render(); }
+    }));
+  }
+  // —— 结局 ——
+  function renderEnding(){
+    const def = window.BK_ENDINGS.find(e=>e.id===S.endingId) || {};
+    let h = '<div style="padding:14px 10px 0"><div class="kicker">赛季结算</div></div>'
+    + '<div class="paper"><h2>'+esc(def.name||'赛季结束')+'</h2><p>'+esc(def.desc||'')+'</p>'
+    + (S.flags.bountyTag ? '<p>🏷 结算标签：<b>抱团夺冠</b>（所夺 S 档来源集中，争议照常计入传奇值）</p>' : '')
+    + ((S.endingId==='champion_top'||S.endingId==='champion_piece'||S.endingId==='lying_champ') ? '<p>📖 后记：<b>王朝序章</b>——二周目可挑战连冠。</p>' : '')
+    + '<p>传奇值 <b style="font-size:20px">'+S.legend+'</b> · 总评 '+F.overall(S)+' · 贡献 '+F.contribution(S)+'（功勋 '+S.resources.merit+' / 高光 '+S.resources.scene+' / 亲为成功 '+S.proSuccess+'）</p>'
+    + '<h3>我的拼图</h3>'+slotsHtml()
+    + '<div class="row"><button class="btn primary" id="b-poster">生成构筑海报</button><button class="btn" id="b-submit"'+(S.submitted?' disabled':'')+'>'+(S.submitted?'已提交上榜':'提交成绩上榜')+'</button></div>'
+    + '<div class="row"><button class="btn" id="b-boards2">看排行榜</button><button class="btn" id="b-again">再来一局</button></div>';
+    h += '</div>';
+    app.innerHTML = h;
+    bind('b-poster', drawPoster);
+    bind('b-submit', async ()=>{
+      const btn = document.getElementById('b-submit'); if(btn) btn.disabled = true;
+      try{
+        await LB.submitResult({ score: S.legend, ending: def.name, champion: ['champion_top','champion_piece','lying_champ'].includes(S.endingId), exitBattle: Math.min(20, S.battleIdx||20) });
+        S.submitted = true; saveNow('lb-submit'); render();
+      }catch(e){ if(btn) btn.disabled = false; }
+    });
+    bind('b-boards2', ()=>{ view='boards'; render(); });
+    bind('b-again', ()=>{ Save.clear(); S=null; view='setup'; render(); });
+  }
+  function drawPoster(){
+    const cv = document.createElement('canvas'); cv.width=750; cv.height=1080;
+    const x = cv.getContext('2d');
+    x.fillStyle='#f4efe3'; x.fillRect(0,0,750,1080);
+    x.fillStyle='#1d2733'; x.fillRect(0,0,750,120);
+    x.fillStyle='#f4efe3'; x.font='bold 40px sans-serif'; x.fillText('巨星拼图 · 构筑海报', 36, 62);
+    x.font='22px sans-serif'; x.fillText('12 项能力与来源球星 — '+esc('')+ (window.BK_ENDINGS.find(e=>e.id===S.endingId)||{}).name, 36, 98);
+    x.fillStyle='#1d2733'; x.font='24px sans-serif';
+    for(let i=0;i<12;i++){
+      const y = 190 + i*56;
+      x.fillText(C.ATTRS[i], 40, y);
+      x.font='bold 30px sans-serif'; x.fillText(String(S.attrs[i]), 150, y);
+      x.font='22px sans-serif'; x.fillText(S.attrSrc[i]||'—', 230, y);
+    }
+    x.font='bold 30px sans-serif'; x.fillText('传奇值 '+S.legend+' · 总评 '+F.overall(S), 40, 920);
+    x.font='20px sans-serif'; x.fillText('种子 '+S.seed+' · '+C.GAME_NAME+' '+C.VERSION, 40, 970);
+    modal('<h3>构筑海报</h3><img src="'+cv.toDataURL('image/png')+'" style="width:100%"><a class="btn primary" download="juxing-poster.png" href="'+cv.toDataURL('image/png')+'">下载海报 PNG</a><button class="btn ghost" id="m-close">关闭</button>');
+    bind('m-close', closeModal);
+  }
+  // —— 图鉴 ——
+  function renderGallery(){
+    const t0 = performance.now();
+    let h = '<div class="paper"><h2>球员图鉴（90 人）</h2><div class="grid2">';
+    for(const team of C.TEAMS){ /* 分队顺序即数据顺序 */ }
+    window.BK_DATA.players.forEach(p=>{
+      h += '<div class="gcard"><img src="'+portrait(p)+'" alt=""><div><b>'+esc(p.name)+'</b></div><div>'+esc(p.team)+' · '+p.tier+'档 · 峰值 '+esc(p.window)+'</div><div>'+esc(p.note)+'</div><div>强项：'+topAttrs(p)+'</div></div>';
+    });
+    h += '</div><button class="btn ghost" id="b-back2">返回</button></div>';
+    app.innerHTML = h;
+    const dt = performance.now()-t0;
+    app.querySelector('.paper').insertAdjacentHTML('beforeend', '<p style="font-size:12px">图鉴渲染耗时 '+dt.toFixed(1)+'ms（90 人）</p>');
+    bind('b-back2', ()=>{ view = S && S.phase!=='ending' && S.phase ? (S.phase==='draft'?'draft':'battle') : 'home'; if(!S) view='home'; render(); });
+  }
+  function topAttrs(p){ const idx = p.stats.map((v,i)=>[v,i]).sort((a,b)=>b[0]-a[0]).slice(0,3); return idx.map(([v,i])=>C.ATTRS[i]+v).join(' / '); }
+  // —— 排行榜 ——
+  function renderBoards(){
+    const b = LB.boards();
+    const tabs = [[b.best,'传奇总榜'],[b.worst,'最水榜'],[b.dbest,'今日最强'],[b.dworst,'今日最水']];
+    let h = '<div class="paper"><h2>传奇榜</h2><div class="row">'
+      + tabs.map(([id,nm])=>'<button class="btn small" data-tab="'+id+'">'+nm+'</button>').join('') + '</div><div id="lb-body">加载中…</div>'
+      + '<button class="btn ghost" id="b-back3">返回</button></div>';
+    app.innerHTML = h;
+    const load = async (board)=>{
+      const res = await LB.load(board);
+      const list = (res && res.entries) || [];
+      let t = '<table class="lb"><tr><th>#</th><th>玩家</th><th>传奇值</th><th>结局</th></tr>';
+      list.forEach((e,i)=>{ t += '<tr><td>'+(i+1)+'</td><td>'+esc(e.displayName)+'</td><td>'+e.score+'</td><td>'+esc(e.ending||'')+(typeof e.deathCh==='number'?' · 止步第 '+e.deathCh+' 战':'')+'</td></tr>'; });
+      if(!list.length) t += '<tr><td colspan="4">暂无记录，先打一局上榜</td></tr>';
+      document.getElementById('lb-body').innerHTML = t + '<p style="font-size:12px">共 '+((res&&res.total)||0)+' 条</p>';
+    };
+    app.querySelectorAll('[data-tab]').forEach(el=>el.addEventListener('click', ()=>load(el.dataset.tab)));
+    load(b.best);
+    bind('b-back3', ()=>{ view='home'; render(); });
+  }
+  // —— 商店 ——
+  function renderShop(){
+    const meta = window.BK_Meta.load();
+    let h = '<div class="paper"><h2>生涯规划商店</h2><p>生涯功勋点：<b>'+meta.points+'</b>（每局功勋结算入账）· 已购：'+(meta.shopOwned.length?meta.shopOwned.map(id=>(C.SHOP.find(x=>x.id===id)||{}).name).join('、'):'无')+'</p>';
+    C.SHOP.forEach(it=>{
+      const owned = meta.shopOwned.includes(it.id);
+      h += '<button class="btn small" data-buy="'+it.id+'" '+(owned||meta.points<it.price?'disabled':'')+'>'+it.name+' · '+it.price+' 点 — '+it.desc+(owned?'（已购）':'')+'</button>';
+    });
+    h += '<button class="btn ghost" id="b-back4">返回</button></div>';
+    app.innerHTML = h;
+    app.querySelectorAll('[data-buy]').forEach(el=>el.addEventListener('click', ()=>{
+      const it = C.SHOP.find(x=>x.id===el.dataset.buy); const m = window.BK_Meta.load();
+      if(m.points>=it.price && !m.shopOwned.includes(it.id)){ m.points-=it.price; m.shopOwned.push(it.id); window.BK_Meta.save(m); if(S) S.shopOwned = m.shopOwned; render(); }
+    }));
+    bind('b-back4', ()=>{ view='home'; render(); });
+  }
+  // —— 存档码 / 规则 ——
+  function showCodeModal(){
+    const cur = Save.peek();
+    const code = cur ? btoa(unescape(encodeURIComponent(JSON.stringify(cur)))) : '';
+    modal('<h3>存档码 / 种子</h3><p>种子：<b>'+(cur?esc(cur.seed):'无进行中存档')+'</b>（种子只定随机流，进度用存档码）</p>'
+    + '<p>导出存档码（长按手动复制，虎扑禁程序化剪贴板）：</p><textarea readonly>'+code+'</textarea>'
+    + '<p>导入存档码：</p><textarea id="imp"></textarea><button class="btn primary" id="m-import">导入并继续</button>'
+    + '<button class="btn ghost" id="m-close2">关闭</button>');
+    bind('m-close2', closeModal);
+    bind('m-import', ()=>{
+      try{ const obj = JSON.parse(decodeURIComponent(escape(atob(document.getElementById('imp').value.trim())))); S = Save.adopt(obj); Save.save('import'); closeModal(); resumeView(); }
+      catch(e){ alert('存档码无效'); }
+    });
+  }
+  function showRules(){
+    modal('<h3>玩法与归队规则</h3><p>12 轮选秀：每轮一支时代队出 5 人，选 1 人锁定他的 1 项能力拼到自己身上；打穿 20 个赛季关键战役，按止步轮次与个人贡献结算结局，传奇值上榜。</p>'
+    + '<p><b>归队规则</b>：五年峰值窗口多数决——取球员最好的连续五季，看落在哪十年占多数。官方范例：詹姆斯峰值窗口 2009–2013，归 10 年代队。交界人卡面有「崛起于 X 年代末」注脚；中国球员归国际纵队；新世代队为截至 2026 赛季的冻结快照，只加不换。</p>'
+    + '<p>判定：成功率 = 35+(属性-60)×0.8-负荷冲突×3+修正，亲为且属性≥85 成功可得高光时刻。</p><button class="btn ghost" id="m-close3">关闭</button>');
+    bind('m-close3', closeModal);
+  }
+  // —— 启动：先核对广告 PENDING，再恢复（平台计数刷新后再核对一次） ——
+  function bootGrant(t){ const s = Save.peek(); if(s){ G.applyAdGrant(s, t); Save.save('ad-settle-boot'); } }
+  Ads.settleAll(bootGrant);
+  Ads.refreshCount().then(()=>Ads.settleAll(bootGrant));
+  S = Save.peek();
+  if(S && S.phase && S.phase!=='origin'){ resumeView(); } else { view='home'; render(); }
+})();
+</script>
+</body>
+</html>
