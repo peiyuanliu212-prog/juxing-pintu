@@ -87,6 +87,19 @@ h1.title{font-size:24px;margin:0;letter-spacing:1px}
 .abar.top i,.abar.top span{color:#8a6d1f;font-weight:700}
 .abar.top em b{background:linear-gradient(90deg,#e3b341,#b8860b)}
 .abar span{width:19px;text-align:right;font-variant-numeric:tabular-nums}
+.cands2{display:flex;flex-direction:column;gap:8px}
+.cand2{text-align:left;padding:10px}
+.cand2 .chead{display:flex;gap:10px;align-items:center}
+.cand2 .chead img{width:54px;height:54px}
+.cand2 .cinfo{min-width:0}
+.cand2 .atext{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:8px}
+.cand2 .atext div{background:rgba(255,255,255,.55);border:1px solid #d8c894;border-radius:6px;padding:2px 0;font-size:11px;color:#7a6c4f;text-align:center;white-space:nowrap}
+.cand2 .atext b{font-size:13px;color:var(--ink)}
+.cand2 .atext .top{background:#fdf3d0;border-color:#c9a227}
+.cand2 .atext .top b{color:#a4760a}
+.cand2 .pick-panel{display:none;margin-top:8px;border-top:1px dashed #b7a26e;padding-top:8px}
+.cand2.open{border-color:var(--accent)}
+.cand2.open .pick-panel{display:block}
 .attrgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .attrbtn{background:linear-gradient(180deg,#fffdf6,#f1e5c6);border:1.5px solid #8a6d1f;border-radius:8px;padding:7px 4px;font-size:13px;color:var(--ink);cursor:pointer}
 .attrbtn b{font-size:15px}
@@ -1362,7 +1375,7 @@ window.BK_ensureArt = function(){
   }
   // —— 更新公告（母本 NOTICES 同款：未读红点，打开即已读）——
   const NOTICES = [
-    { v:'v1.4', d:'11月6日', t:'群福利上线', items:['🎁 群福利开放：交流群弹窗输码领取生涯功勋点 ×150＋定向招募资格 ×1（每人限领一次，码在群内发布）','生涯规划商店上新：队医补给、球探情报、录像分析','赛季结算新增「传奇值构成」明细，每一分都算得明明白白'] },
+    { v:'v1.4', d:'11月6日', t:'群福利上线', items:['🎁 群福利开放：交流群弹窗输码领取生涯功勋点 ×150＋定向招募资格 ×1（每人限领一次，码在群内发布）','生涯规划商店上新：队医补给、球探情报、录像分析','赛季结算新增「传奇值构成」明细，每一分都算得明明白白','选秀台手感大修：数值直接印在卡上，点卡原地夺技，不跳屏不来回滑'] },
     { v:'v1.3', d:'11月6日', t:'数值再校准', items:['档位细分：新增「传世」档（全池仅 6 人），传说 12、史诗 24、稀有 28、普通 20，各档数值带严格分开','选秀出率再校准：每批最多 1 张传世/传说，金卡不再满屏','巅峰改版：巅峰不再是另一张卡——抽到带巅峰形态的球星，看广告即可把这张卡唤醒为巅峰','选人不再跳屏，点选原地看数值'] },
     { v:'v1.2', d:'11月6日', t:'系统大补', items:['新增成就系统与图鉴成就墙，16 种结局收藏点亮','新增存档页：战绩聚合＋存档码','每局开局抽一条本局词缀，全程生效','打赢判定战役历练成长 +1/+2','排行榜玩家头像与我的名次'] },
     { v:'v1.1', d:'11月5日', t:'母本对齐修复', items:['新增入局加载页与首页主视觉','S/A 传说史诗卡面特效上线，候选数值直接上卡','13 个事件、20 场战役全部配上专属图','新增更新公告与拼将交流群入口'] },
@@ -1465,49 +1478,56 @@ window.BK_ensureArt = function(){
   function renderDraft(){
     if(!S || !S.batch){ view='home'; return render(); }
     const batch = S.batch.map(e=>G.candidateObj(e));
+    const locked = S.attrSrc.filter(Boolean).length;
+    const gl = v => v>=97?'SS':v>=93?'S':v>=88?'A+':v>=83?'A':v>=78?'B+':v>=72?'B':v>=65?'C':'D';
     let h = '<div style="padding:12px 10px 0"><div class="kicker">选秀台 · 第 '+(S.draftRound+1)+' / '+C.DRAFT_ROUNDS+' 轮</div></div>'
     + resBar()
-    + '<div class="paper"><h3>本轮：'+esc(S.batchTeam)+'（种子 '+esc(S.seed)+'）</h3>'
-    + (S.fate ? '<p>🏷 本局词缀抽定：<b>'+((C.FATES.find(f=>f.id===S.fate)||{}).name||'')+'</b>（全程生效，详情见对战页）</p>' : '<p>本局无词缀（旧档继续）</p>')
-    + '<h3>我的拼图</h3>'+slotsHtml()
-    + '<h3>本轮候选</h3><div class="cands">';
+    + '<div class="paper"><h3>我的拼图（已锁定 '+locked+' / 12）· 预估总评 '+F.overall(S)+'</h3>'+slotsHtml()
+    + '<div class="row"><button class="btn" id="b-swap">🔀 换一批（余 '+S.swapsLeft+'）</button>'
+    + '<button class="btn green" id="b-directed">'+(S.directedReady?'🎯 定向招募已就绪':'🎯 定向招募·看广告')+'</button></div>'
+    + '<h3>本轮候选 · '+esc(S.batchTeam)+'（种子 '+esc(S.seed)+'）· 点一张卡，原地夺技</h3>'
+    + (S.fate ? '<p class="meta" style="font-size:12px;color:#7a6c4f">🏷 本局词缀：<b>'+((C.FATES.find(f=>f.id===S.fate)||{}).name||'')+'</b>（全程生效，详情见对战页）</p>' : '<p class="meta" style="font-size:12px;color:#7a6c4f">本局无词缀（旧档继续）</p>')
+    + '<div class="cands2">';
     batch.forEach((p,i)=>{
       const top3 = p.stats.map((v,j)=>[v,j]).sort((a,b)=>b[0]-a[0]).slice(0,3).map(x=>x[1]);
-      let bars = '<div class="abar-grid">';
+      const rating = Math.round(top3.reduce((t,j)=>t+p.stats[j],0)/3);
+      let cells = '<div class="atext">';
       for(let j=0;j<12;j++){
-        bars += '<div class="abar'+(top3.includes(j)?' top':'')+'"><i>'+C.ATTRS[j]+'</i><em><b style="width:'+p.stats[j]+'%"></b></em><span>'+p.stats[j]+'</span></div>';
+        cells += '<div class="'+(top3.includes(j)?'top':'')+'">'+C.ATTRS[j]+' <b>'+p.stats[j]+'</b> '+gl(p.stats[j])+'</div>';
       }
-      bars += '</div>';
-      h += '<div class="cand tier-'+p.tier.toLowerCase()+(p.isPeak?' tier-peak':'')+(selCand===i?' sel':'')+'" data-cand="'+i+'">'
-        + (p.isPeak?'<span class="peak-ribbon">巅峰</span>':'')
-        + '<img src="'+portrait(p)+'" alt="" decoding="async"><div class="nm">'+esc(p.name)+'</div><div class="meta">'+esc(p.team)+' · '+p.tier+'档 · 峰值 '+esc(p.window)+'</div><div class="meta">'+esc(p.note)+'</div>'+bars+'</div>';
-    });
-    h += '</div>';
-    if(selCand>=0){
-      const p = batch[selCand];
-      h += '<h3 id="attr-panel">锁定 '+esc(p.name)+' 的一项能力</h3><div class="attrgrid">';
-      for(let i=0;i<12;i++){
-        const taken = !!S.attrSrc[i];
-        const pel = (S.perm ? (S.perm[i]||0) : 0);
-        h += '<button class="attrbtn" data-attr="'+i+'" '+(taken?'disabled':'')+'>'+C.ATTRS[i]+' <b>'+p.stats[i]+'</b>'+(p.special&&p.special.attr===i?'<br>绝活：'+(p.special.kind==='floor'?'下限 '+p.special.value:'加成 +'+p.special.value):'')+(taken?'<br>已锁 '+F.effAttr(S,i)+'（'+esc(S.attrSrc[i])+')'+(pel>0?' · 历练+'+pel:''):'')+'</button>';
-      }
-      h += '</div>';
-      const missing = C.ATTRS.filter((a,i)=>!S.attrSrc[i]);
-      h += '<p class="meta" style="font-size:12px;color:#7a6c4f;margin:8px 0 0">我的拼图还缺：'+(missing.length?missing.join('、'):'已拼满')+'</p>';
-      // BK-020 巅峰再临：巅峰不再是另一张卡——选中带巅峰形态的本体，看广告把这张卡升为巅峰
+      cells += '</div>';
       const pkDef = (window.BK_DATA.peaks||[]).find(x=>x.base===p.name);
+      let panel = '<div class="pick-panel">';
       if(pkDef){
-        if(S.batch[selCand].peak) h += '<p class="meta" style="font-size:12px;color:#a4760a;margin:8px 0 0">🌟 已唤醒巅峰形态：'+esc(pkDef.label)+'（最强三项 +'+(window.BK_CONFIG.PEAK_BOOST)+'、绝活同步强化，按上方巅峰数值锁定）</p>';
-        else h += '<p class="meta" style="font-size:12px;color:#7a6c4f;margin:8px 0 0">🌟 '+esc(p.name)+' 有巅峰赛季形态（'+esc(pkDef.label)+'）：最强三项 +'+(window.BK_CONFIG.PEAK_BOOST)+'、绝活同步强化。</p>'
-          + '<div class="row"><button class="btn green" id="b-peak">🌟 巅峰再临 · 看广告唤醒巅峰</button></div>';
+        if(S.batch[i].peak) panel += '<p class="meta" style="font-size:12px;color:#a4760a;margin:0 0 6px">🌟 已唤醒巅峰形态：'+esc(pkDef.label)+'（最强三项 +'+(window.BK_CONFIG.PEAK_BOOST)+'、绝活同步强化，按巅峰数值锁定）</p>';
+        else panel += '<button class="btn green b-peak" style="width:100%;margin-bottom:8px">🌟 巅峰再临 · 看广告唤醒巅峰（'+esc(pkDef.label)+'）</button>';
       }
-    }
-    h += '<div class="row"><button class="btn" id="b-swap">🔀 换一批（余 '+S.swapsLeft+'）</button>'
-      + '<button class="btn green" id="b-directed">'+(S.directedReady?'🎯 定向招募已就绪':'🎯 定向招募·看广告')+'</button></div>'
-      + '</div>';
+      panel += '<div class="attrgrid">';
+      for(let j=0;j<12;j++){
+        const taken = !!S.attrSrc[j];
+        const pel = (S.perm ? (S.perm[j]||0) : 0);
+        panel += '<button class="attrbtn" data-attr="'+j+'" '+(taken?'disabled':'')+'>'+C.ATTRS[j]+' <b>'+p.stats[j]+'</b>'+(p.special&&p.special.attr===j?'<br>绝活：'+(p.special.kind==='floor'?'下限 '+p.special.value:'加成 +'+p.special.value):'')+(taken?'<br>已锁 '+F.effAttr(S,j)+'（'+esc(S.attrSrc[j])+')'+(pel>0?' · 历练+'+pel:''):'')+'</button>';
+      }
+      panel += '</div>';
+      const missing = C.ATTRS.filter((a,j)=>!S.attrSrc[j]);
+      panel += '<p class="meta" style="font-size:12px;color:#7a6c4f;margin:8px 0 0">我的拼图还缺：'+(missing.length?missing.join('、'):'已拼满')+'</p></div>';
+      h += '<div class="cand cand2 tier-'+p.tier.toLowerCase()+(p.isPeak?' tier-peak':'')+(selCand===i?' open':'')+'" data-cand="'+i+'">'
+        + (p.isPeak?'<span class="peak-ribbon">巅峰</span>':'')
+        + '<div class="chead"><img src="'+portrait(p)+'" alt="" decoding="async"><div class="cinfo"><div class="nm">'+esc(p.name)+'</div><div class="meta">'+esc(p.team)+' · '+p.tier+'档 · 峰值 '+esc(p.window)+'</div><div class="meta">'+esc(p.note)+' · 强项总评 <b>'+rating+'</b></div></div></div>'
+        + cells + panel + '</div>';
+    });
+    h += '</div></div>';
     app.innerHTML = h;
-    app.querySelectorAll('[data-cand]').forEach(el=>el.addEventListener('click', ()=>{ selCand=+el.dataset.cand; render(); }));
+    // 母本选法：点卡只原地展开/收起夺技面板，不整页重渲（不闪屏、不跳屏、不丢滚动位置）
+    app.querySelectorAll('[data-cand]').forEach(el=>el.addEventListener('click', (e)=>{
+      if(e.target.closest('.pick-panel') || e.target.closest('button')) return;
+      const i = +el.dataset.cand;
+      const wasOpen = el.classList.contains('open');
+      app.querySelectorAll('.cand2.open').forEach(x=>x.classList.remove('open'));
+      if(!wasOpen){ el.classList.add('open'); selCand = i; } else selCand = -1;
+    }));
     app.querySelectorAll('[data-attr]').forEach(el=>el.addEventListener('click', ()=>{
+      const card = el.closest('[data-cand]'); if(card) selCand = +card.dataset.cand;
       const r = G.draftPick(S, selCand, +el.dataset.attr);
       if(r.ok){ selCand=-1; saveNow('draft-pick'); if(S.phase==='battle'){ view='battle'; } render(); }
     }));
@@ -1517,11 +1537,12 @@ window.BK_ensureArt = function(){
       const res = await Ads.watch('directed', (t)=>G.applyAdGrant(S,t));
       saveNow('ad-directed'); if(S.directedReady){ showTeamPicker(); } render();
     });
-    bind('b-peak', async ()=>{
+    app.querySelectorAll('.b-peak').forEach(el=>el.addEventListener('click', async ()=>{
+      const card = el.closest('[data-cand]'); if(card) selCand = +card.dataset.cand;
       S.peakPending = selCand; saveNow('peak-pending');
       await Ads.watch('peak', (t)=>G.applyAdGrant(S,t));
       saveNow('ad-peak'); render();
-    });
+    }));
   }
   function showTeamPicker(){
     modal('<h3>定向招募 · 自选时代</h3>' + C.TEAMS.map(t=>{
