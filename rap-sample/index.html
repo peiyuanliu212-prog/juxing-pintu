@@ -106,7 +106,7 @@
           attrs:Array(12).fill(null), src:Array(12).fill(null), used:[], options:[], sel:-1,
           chapter:0, wins:0, chapterLog:[], bonusNext:0, eventIdx:-1, usedEvents:[],
           resupplyLeft:0, replaced:[], lastResult:null, eventLog:[], acting:false, evResult:null,
-          pickLog:[], bonds:{}, bondNotes:[], iceUsed:false, actingX2:false, foeMarks:{}, befriended:{}, ads:{ reroll:0, consol:0, resup:0, evredo:0, befriend:0 } };
+          pickLog:[], bonds:{}, bondNotes:[], iceUsed:false, actingX2:false, foeMarks:{}, befriended:{}, devUsed:false, ads:{ reroll:0, consol:0, resup:0, evredo:0, befriend:0 } };
     save(); render();
   }
   function rng(){
@@ -124,6 +124,7 @@
       if(S.ads.befriend === undefined) S.ads.befriend = 0;
       if(!S.foeMarks) S.foeMarks = {};
       if(!S.befriended) S.befriended = {};
+      if(S.devUsed === undefined) S.devUsed = false;
       if(S.actingX2 === undefined) S.actingX2 = false;
       if(S.evResult === undefined) S.evResult = null;
       return true; } }catch(e){}
@@ -191,6 +192,9 @@
     else if(S.phase === 'end'){ renderEnd(); }
     app.querySelectorAll('[data-befriend]').forEach(function(el){
       el.onclick = function(){ doBefriend(el.getAttribute('data-befriend')); };
+    });
+    app.querySelectorAll('[data-devpower]').forEach(function(el){
+      el.onclick = function(){ doDevPower(); };
     });
   }
   function renderIntro(){
@@ -276,7 +280,19 @@
         if(B) h += '<button class="btn" data-befriend="' + id + '" style="background:#7a4fa3;margin:2px 0 8px">📺 广告·化敌为友：' + B.a + ' 与 ' + B.b + ' 的《宿敌》变《挚友》，能力各 +4</button>';
       }
     });
+    if(S.bonds.devpower && !S.devUsed && S.src.indexOf('张驰') >= 0){
+      h += '<button class="btn" data-devpower="1" style="background:#1d8aa5;margin:2px 0 8px">🔧 开发者神力：重抽张驰的数值（本局一次，新数值说了算）</button>';
+    }
     return h;
+  }
+  function doDevPower(){
+    var dz = S.src.indexOf('张驰');
+    if(dz < 0 || S.devUsed) return;
+    var old = S.attrs[dz];
+    S.attrs[dz] = rollMystery();
+    S.devUsed = true;
+    S.bondNotes.push('🔧 开发者神力：张驰的「' + CFG.dims[dz] + '」由 ' + old + ' 改为 ' + S.attrs[dz]);
+    save(); render();
   }
   function doBefriend(id){
     showAd(function(){
@@ -304,7 +320,8 @@
     { id:'ok', a:'科比·布莱恩特', b:'沙奎尔·奥尼尔', name:'OK组合', desc:'从两人身上夺走的能力各 +4——OK 一出，天下无解' },
     { id:'truth', a:'阿伦·艾弗森', b:'保罗·皮尔斯', name:'答案与真相', desc:'从两人身上夺走的能力各 +3，且下一场 +3——答案和真相，都在场上见' },
     { id:'goats', a:'迈克尔·乔丹', b:'勒布朗·詹姆斯', name:'神与王', desc:'全部能力 +1——神与王同队，全队升格' },
-    { id:'backstage', a:'张驰', b:'一只会唱跳rap的小鸡', name:'后台奇遇', desc:'从小鸡身上夺走的能力 +6；张驰那项再开一次，取两次里更大的——后台有奇遇' }
+    { id:'backstage', a:'张驰', b:'一只会唱跳rap的小鸡', name:'后台奇遇', desc:'张驰学会了小鸡的力量，唱跳rap能力得到了巨大提升，但是小鸡就受罪了……（小鸡被夺的能力 -1，张驰被夺的能力 +3）' },
+    { id:'devpower', a:'张驰', b:'张驰', name:'开发者神力', desc:'张驰短暂拥有开发者的力量，可以再次修改自己的数值（本局一次，点下方按钮重抽，重抽结果说了算）' }
   ];
   function personIn(name){ return S.src.indexOf(name) >= 0 || (name === '阿耶莎' && S.acting); }
   function checkBonds(){
@@ -321,7 +338,7 @@
       if(B.id === 'ok'){ [B.a, B.b].forEach(function(n){ var d = S.src.indexOf(n); if(d >= 0 && S.attrs[d] < 100) S.attrs[d] = Math.min(100, S.attrs[d] + 4); }); }
       if(B.id === 'truth'){ [B.a, B.b].forEach(function(n){ var d = S.src.indexOf(n); if(d >= 0 && S.attrs[d] < 100) S.attrs[d] = Math.min(100, S.attrs[d] + 3); }); S.bonusNext = (S.bonusNext || 0) + 3; }
       if(B.id === 'goats'){ S.attrs = S.attrs.map(function(v){ return (v === null || v >= 100) ? v : Math.min(100, v + 1); }); }
-      if(B.id === 'backstage'){ var dc = S.src.indexOf('一只会唱跳rap的小鸡'); if(dc >= 0 && S.attrs[dc] < 100) S.attrs[dc] = Math.min(100, S.attrs[dc] + 6); var dz = S.src.indexOf('张驰'); if(dz >= 0) S.attrs[dz] = Math.max(S.attrs[dz], rollMystery()); }
+      if(B.id === 'backstage'){ var dc = S.src.indexOf('一只会唱跳rap的小鸡'); if(dc >= 0) S.attrs[dc] = Math.max(0, S.attrs[dc] - 1); var dz2 = S.src.indexOf('张驰'); if(dz2 >= 0) S.attrs[dz2] = Math.min(100, S.attrs[dz2] + 3); }
       S.bondNotes.push('羁绊《' + B.name + '》触发：' + B.desc);
     });
   }
