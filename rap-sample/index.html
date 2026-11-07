@@ -157,7 +157,7 @@
     return h + '</div>';
   }
   function header(){
-    return '<div class="kicker">二 十 章 巡 演 · v3</div><h1>篮球有嘻哈</h1><div class="sub">从 116 位选手身上，夺走 12 项说唱本事<br>一路从天桥底下，唱到封神之夜</div>';
+    return '<div class="kicker">二 十 章 巡 演 · v3</div><h1>篮球有嘻哈</h1><div class="sub">从 118 位选手身上，夺走 12 项说唱本事<br>一路从天桥底下，唱到封神之夜</div>';
   }
   var AD_CAPS = { reroll: 3, consol: 2, resup: 2, evredo: 2, befriend: 2 };
   function showAd(cb){
@@ -227,7 +227,7 @@
     if(c === 'epic') return '<span class="badge e">史诗</span>';
     return '';
   }
-  var QUIPS = { '库里':'他来了——头发是绿的，格局是满的（100）。', '斯蒂芬·库里':'新秀库里来了，娃娃脸一个，但那投篮的手稳得不像新人', '一只会唱跳rap的小鸡':'一只小鸡空降了，全场目光都被它和它的球吸走了', '马保国':'马老师来了！全场起立——他说要教对面做人', 'AI 本人':'它来了。它说它已经把你的韵脚全算完了', '刘大妈':'大妈带着她的音响来了，气势上已经赢了一半', '勒布朗·詹姆斯':'SSSS 驾到！全维 99.99——格局那格，你就当没看见', '迈克尔·乔丹':'SSSSS 驾到——两顶王冠，全维 100，这还比什么', 'PG ONE':'？？？候选里混进来一个真唱的', '阿耶莎':'？？？她怎么也来了（手里还拿着菜谱）——她还藏着一项专属能力：演技 99', '假乃亮':'郑重声明：这位是假的，和本人没关系', '李小鹿':'？？？候选里混进了一只鹿', '张驰':'💎 钻石卡！数值全是 ??，夺走哪项，当场随机开数' };
+  var QUIPS = { '库里':'他来了——头发是绿的，格局是满的（100）。', '斯蒂芬·库里':'新秀库里来了，娃娃脸一个，但那投篮的手稳得不像新人', '一只会唱跳rap的小鸡':'一只小鸡空降了，全场目光都被它和它的球吸走了', '马保国':'马老师来了！全场起立——他说要教对面做人', 'AI 本人':'它来了。它说它已经把你的韵脚全算完了', '刘大妈':'大妈带着她的音响来了，气势上已经赢了一半', '勒布朗·詹姆斯':'SSSS 驾到！全维 99.99——格局那格，你就当没看见', '迈克尔·乔丹':'SSSSS 驾到——两顶王冠，全维 100，这还比什么', '姚明':'SS 长城驾到——2 米 26，站在那儿就是天赋', '易建联':'太空易来了，起飞从来不用助跑', '布朗尼·詹姆斯':'太子爷来了——数值不高，但他爹在场边看着呢', '林书豪':'林疯狂！那一周，他比谁都火', 'PG ONE':'？？？候选里混进来一个真唱的', '阿耶莎':'？？？她怎么也来了（手里还拿着菜谱）——她还藏着一项专属能力：演技 99', '假乃亮':'郑重声明：这位是假的，和本人没关系', '李小鹿':'？？？候选里混进了一只鹿', '张驰':'💎 钻石卡！数值全是 ??，夺走哪项，当场随机开数' };
   function quipHTML(){
     var quip = null;
     S.options.forEach(function(pi){ var nm = PLAYERS[pi].name; if(!quip && QUIPS[nm]) quip = QUIPS[nm]; });
@@ -321,7 +321,11 @@
     { id:'truth', a:'阿伦·艾弗森', b:'保罗·皮尔斯', name:'答案与真相', desc:'从两人身上夺走的能力各 +3，且下一场 +3——答案和真相，都在场上见' },
     { id:'goats', a:'迈克尔·乔丹', b:'勒布朗·詹姆斯', name:'神与王', desc:'全部能力 +1——神与王同队，全队升格' },
     { id:'backstage', a:'张驰', b:'一只会唱跳rap的小鸡', name:'后台奇遇', desc:'张驰学会了小鸡的力量，唱跳rap能力得到了巨大提升，但是小鸡就受罪了……（小鸡被夺的能力 -1，张驰被夺的能力 +3）' },
-    { id:'devpower', a:'张驰', b:'张驰', name:'开发者神力', desc:'张驰短暂拥有开发者的力量，可以再次修改自己的数值（本局一次，点下方按钮重抽，重抽结果说了算）' }
+    { id:'devpower', a:'张驰', b:'张驰', name:'开发者神力', desc:'张驰短暂拥有开发者的力量，可以再次修改自己的数值（本局一次，点下方按钮重抽，重抽结果说了算）' },
+    { id:'yaomai', a:'姚明', b:'特雷西·麦克格雷迪', name:'姚麦组合', desc:'从两人身上夺走的能力各 +4——姚麦一出，丰田中心沸腾' },
+    { id:'wall', a:'姚明', b:'易建联', name:'移动长城', desc:'从两人身上夺走的能力各 +3——长城内外，都是主场' },
+    { id:'father', a:'勒布朗·詹姆斯', b:'布朗尼·詹姆斯', name:'父子同台', desc:'从詹姆斯身上夺走的能力 +3，从布朗尼身上夺走的能力 +8——虎父带子，子也争气' },
+    { id:'msg', a:'林书豪', b:'卡梅隆·安东尼', name:'麦迪逊之光', desc:'从两人身上夺走的能力各 +3——那一年，纽约的灯为他亮过' }
   ];
   function personIn(name){ return S.src.indexOf(name) >= 0 || (name === '阿耶莎' && S.acting); }
   function checkBonds(){
@@ -338,6 +342,9 @@
       if(B.id === 'ok'){ [B.a, B.b].forEach(function(n){ var d = S.src.indexOf(n); if(d >= 0 && S.attrs[d] < 100) S.attrs[d] = Math.min(100, S.attrs[d] + 4); }); }
       if(B.id === 'truth'){ [B.a, B.b].forEach(function(n){ var d = S.src.indexOf(n); if(d >= 0 && S.attrs[d] < 100) S.attrs[d] = Math.min(100, S.attrs[d] + 3); }); S.bonusNext = (S.bonusNext || 0) + 3; }
       if(B.id === 'goats'){ S.attrs = S.attrs.map(function(v){ return (v === null || v >= 100) ? v : Math.min(100, v + 1); }); }
+      if(B.id === 'yaomai'){ [B.a, B.b].forEach(function(n){ var d = S.src.indexOf(n); if(d >= 0 && S.attrs[d] < 100) S.attrs[d] = Math.min(100, S.attrs[d] + 4); }); }
+      if(B.id === 'wall' || B.id === 'msg'){ [B.a, B.b].forEach(function(n){ var d = S.src.indexOf(n); if(d >= 0 && S.attrs[d] < 100) S.attrs[d] = Math.min(100, S.attrs[d] + 3); }); }
+      if(B.id === 'father'){ var dj = S.src.indexOf('勒布朗·詹姆斯'); if(dj >= 0 && S.attrs[dj] < 100) S.attrs[dj] = Math.min(100, S.attrs[dj] + 3); var db2 = S.src.indexOf('布朗尼·詹姆斯'); if(db2 >= 0 && S.attrs[db2] < 100) S.attrs[db2] = Math.min(100, S.attrs[db2] + 8); }
       if(B.id === 'backstage'){ var dc = S.src.indexOf('一只会唱跳rap的小鸡'); if(dc >= 0) S.attrs[dc] = Math.max(0, S.attrs[dc] - 1); var dz2 = S.src.indexOf('张驰'); if(dz2 >= 0) S.attrs[dz2] = Math.min(100, S.attrs[dz2] + 3); }
       S.bondNotes.push('羁绊《' + B.name + '》触发：' + B.desc);
     });
