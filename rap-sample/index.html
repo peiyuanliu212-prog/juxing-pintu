@@ -121,7 +121,7 @@
     return h + '</div>';
   }
   function header(){
-    return '<div class="kicker">小 样 试 玩 · v2</div><h1>篮球有嘻哈</h1><div class="sub">从 114 位选手身上，夺走 12 项说唱本事<br>拼到一个无名新秀身上，再去打三回合 Battle</div>';
+    return '<div class="kicker">小 样 试 玩 · v2</div><h1>篮球有嘻哈</h1><div class="sub">从 113 位选手身上，夺走 12 项说唱本事<br>拼到一个无名新秀身上，再去打三回合 Battle</div>';
   }
   function render(){
     if(S.phase === 'intro'){
@@ -150,7 +150,7 @@
     if(c === 'guest') return '<span class="badge gu">整活</span>';
     return '';
   }
-  var QUIPS = { '库里 · 绿发版':'他来了——头发是绿的，格局是满的。', 'PG ONE':'？？？候选里混进来一个真唱的', '阿耶莎':'？？？她怎么也来了（手里还拿着菜谱）', '假乃亮':'郑重声明：这位是假的，和本人没关系', '李小鹿':'？？？候选里混进了一只鹿', '张驰 · 库里yyds昂':'甲方本人亲自下场了，这把得给他个面子' };
+  var QUIPS = { '斯蒂芬·库里':'他来了——头发是绿的，格局是满的。', 'PG ONE':'？？？候选里混进来一个真唱的', '阿耶莎':'？？？她怎么也来了（手里还拿着菜谱）', '假乃亮':'郑重声明：这位是假的，和本人没关系', '李小鹿':'？？？候选里混进了一只鹿', '张驰':'甲方本人亲自下场了，这把得给他个面子' };
   function renderDraft(){
     var h = header() + '<div class="prog">第 <span>' + (S.draftIdx+1) + '</span> / 12 轮夺技 · 还剩换一批 <span>' + S.swaps + '</span> 次</div>';
     h += '<div class="card">' + slotsHTML() + '</div>';
@@ -159,7 +159,7 @@
     if(quip) h += '<div class="hint">' + quip + '</div>';
     if(S.sel >= 0){
       var p = PLAYERS[S.options[S.sel]];
-      if(p.name === '库里 · 绿发版' && S.attrs[11] === null){
+      if(p.name === '斯蒂芬·库里' && S.attrs[11] === null){
         h += '<div class="hint">格局 · 99 —— 这一项，全场没人够得着。</div>';
       }
       h += '<div class="detail"><div class="dt">' + p.name + tierBadge(p) + ' · 点一项能力夺走（夺走后他不会再出现）</div><div class="dims">';
@@ -261,7 +261,7 @@
   function renderEnd(){
     var e = RAP_CONFIG.endings.filter(function(x){ return x.wins === S.wins; })[0];
     var h = header() + '<div class="card"><div class="sub" style="margin-bottom:2px">三回合战绩 ' + S.wins + ' 胜 · 总评 ' + RapFormulas.total(S.attrs) + '</div><div class="end-name">' + e.name + '</div><div class="sub">' + e.desc + '</div>' + slotsHTML() + '</div>';
-    if(S.src[11] === '库里 · 绿发版'){
+    if(S.src[11] === '斯蒂芬·库里'){
       h += '<div class="hint">你抢到了格局 99——决胜回合的秘密武器，被你拿到了。</div>';
     }
     h += '<button class="btn" id="b-again">再来一局</button><div class="foot">截图这张结算，发回去说一句：好玩 / 一般 / 没意思<br>你的反馈决定这个模式做不做下去</div>';
