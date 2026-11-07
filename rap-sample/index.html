@@ -106,7 +106,7 @@
           attrs:Array(12).fill(null), src:Array(12).fill(null), used:[], options:[], sel:-1,
           chapter:0, wins:0, chapterLog:[], bonusNext:0, eventIdx:-1, usedEvents:[],
           resupplyLeft:0, replaced:[], lastResult:null, eventLog:[], acting:false, evResult:null,
-          pickLog:[], bonds:{}, bondNotes:[], iceUsed:false, actingX2:false, ads:{ reroll:0, consol:0, resup:0, evredo:0 } };
+          pickLog:[], bonds:{}, bondNotes:[], iceUsed:false, actingX2:false, foeMarks:{}, befriended:{}, ads:{ reroll:0, consol:0, resup:0, evredo:0, befriend:0 } };
     save(); render();
   }
   function rng(){
@@ -120,7 +120,10 @@
       if(!S.bonds) S.bonds = {};
       if(!S.bondNotes) S.bondNotes = [];
       if(S.iceUsed === undefined) S.iceUsed = false;
-      if(!S.ads) S.ads = { reroll:0, consol:0, resup:0, evredo:0 };
+      if(!S.ads) S.ads = { reroll:0, consol:0, resup:0, evredo:0, befriend:0 };
+      if(S.ads.befriend === undefined) S.ads.befriend = 0;
+      if(!S.foeMarks) S.foeMarks = {};
+      if(!S.befriended) S.befriended = {};
       if(S.actingX2 === undefined) S.actingX2 = false;
       if(S.evResult === undefined) S.evResult = null;
       return true; } }catch(e){}
@@ -155,7 +158,7 @@
   function header(){
     return '<div class="kicker">二 十 章 巡 演 · v3</div><h1>篮球有嘻哈</h1><div class="sub">从 116 位选手身上，夺走 12 项说唱本事<br>一路从天桥底下，唱到封神之夜</div>';
   }
-  var AD_CAPS = { reroll: 3, consol: 2, resup: 2, evredo: 2 };
+  var AD_CAPS = { reroll: 3, consol: 2, resup: 2, evredo: 2, befriend: 2 };
   function showAd(cb){
     var ov = document.createElement('div');
     ov.style.cssText = 'position:fixed;inset:0;background:rgba(20,14,8,.93);z-index:99;display:flex;align-items:center;justify-content:center';
@@ -186,6 +189,9 @@
     else if(S.phase === 'event'){ renderEvent(); }
     else if(S.phase === 'resupply'){ renderResupply(); }
     else if(S.phase === 'end'){ renderEnd(); }
+    app.querySelectorAll('[data-befriend]').forEach(function(el){
+      el.onclick = function(){ doBefriend(el.getAttribute('data-befriend')); };
+    });
   }
   function renderIntro(){
     app.innerHTML = header() +
@@ -263,7 +269,28 @@
     return S.acting ? '<div class="hint">🎭 已夺得专属夺技「演技」' + actValue() + '（来自阿耶莎）：后续每场战斗 +' + actBonus() + '、插曲判定 +' + actBonus() + (S.actingX2 ? '（羁绊《你情我愿》：效果翻倍）' : '') + '</div>' : '';
   }
   function bondsHTML(){
-    return (S.bondNotes || []).map(function(n){ return '<div class="hint" style="text-align:left">💞 ' + n + '</div>'; }).join('');
+    var h = (S.bondNotes || []).map(function(n){ return '<div class="hint" style="text-align:left">💞 ' + n + '</div>'; }).join('');
+    ['foe', 'foe2'].forEach(function(id){
+      if(S.bonds[id] && !(S.befriended || {})[id] && S.ads.befriend < AD_CAPS.befriend){
+        var B = null; BONDS.forEach(function(x){ if(x.id === id) B = x; });
+        if(B) h += '<button class="btn" data-befriend="' + id + '" style="background:#7a4fa3;margin:2px 0 8px">📺 广告·化敌为友：' + B.a + ' 与 ' + B.b + ' 的《宿敌》变《挚友》，能力各 +4</button>';
+      }
+    });
+    return h;
+  }
+  function doBefriend(id){
+    showAd(function(){
+      S.ads.befriend++;
+      if(!S.befriended) S.befriended = {};
+      S.befriended[id] = true;
+      (S.foeMarks[id] || []).forEach(function(m){
+        var d = m[0];
+        if(S.attrs[d] !== null && S.attrs[d] <= 100) S.attrs[d] = Math.min(100, S.attrs[d] + (m[1] - m[2]) + 4);
+      });
+      var B = null; BONDS.forEach(function(x){ if(x.id === id) B = x; });
+      S.bondNotes.push('🤝 化敌为友：《宿敌》→《挚友》——' + B.a + ' 与 ' + B.b + ' 冰释前嫌，能力各 +4');
+      save(); render();
+    });
   }
   var BONDS = [
     { id:'ice', a:'李小鹿', b:'假乃亮', name:'冰释前嫌', desc:'巡演插曲判定失败时，可以回到那次选择换一个重来（本局一次）' },
@@ -272,7 +299,12 @@
     { id:'peer', a:'李小鹿', b:'PG ONE', name:'惺惺相惜', desc:'从 PG ONE 身上夺走的能力 +3——惺惺相惜' },
     { id:'love', a:'库里', b:'阿耶莎', name:'你情我愿', desc:'库里的格局突破天际（110）；阿耶莎的演技效果翻倍' },
     { id:'model', a:'斯蒂芬·库里', b:'阿耶莎', name:'恩爱模范', desc:'从斯蒂芬·库里、阿耶莎身上夺走的能力各 +3——恩爱模范' },
-    { id:'side', a:'阿耶莎', b:'李小鹿', name:'并肩作战', desc:'从阿耶莎、李小鹿身上夺走的能力各 +3——并肩作战' }
+    { id:'side', a:'阿耶莎', b:'李小鹿', name:'并肩作战', desc:'从阿耶莎、李小鹿身上夺走的能力各 +3——并肩作战' },
+    { id:'splash', a:'库里', b:'克莱·汤普森', name:'水花兄弟', desc:'从两人身上夺走的能力，较低的一项 +8、较高的一项 +2——水花四溅，先补最弱的那一溅' },
+    { id:'ok', a:'科比·布莱恩特', b:'沙奎尔·奥尼尔', name:'OK组合', desc:'从两人身上夺走的能力各 +4——OK 一出，天下无解' },
+    { id:'truth', a:'阿伦·艾弗森', b:'保罗·皮尔斯', name:'答案与真相', desc:'从两人身上夺走的能力各 +3，且下一场 +3——答案和真相，都在场上见' },
+    { id:'goats', a:'迈克尔·乔丹', b:'勒布朗·詹姆斯', name:'神与王', desc:'全部能力 +1——神与王同队，全队升格' },
+    { id:'backstage', a:'张驰', b:'一只会唱跳rap的小鸡', name:'后台奇遇', desc:'从小鸡身上夺走的能力 +6；张驰那项再开一次，取两次里更大的——后台有奇遇' }
   ];
   function personIn(name){ return S.src.indexOf(name) >= 0 || (name === '阿耶莎' && S.acting); }
   function checkBonds(){
@@ -280,11 +312,16 @@
       if(S.bonds[B.id]) return;
       if(!personIn(B.a) || !personIn(B.b)) return;
       S.bonds[B.id] = true;
-      if(B.id === 'foe' || B.id === 'foe2'){ [B.a, B.b].forEach(function(n){ var d = S.src.indexOf(n); if(d >= 0) S.attrs[d] = Math.round(S.attrs[d] * 0.7); }); }
+      if(B.id === 'foe' || B.id === 'foe2'){ var marks = []; [B.a, B.b].forEach(function(n){ var d = S.src.indexOf(n); if(d >= 0){ var after = Math.round(S.attrs[d] * 0.7); marks.push([d, S.attrs[d], after]); S.attrs[d] = after; } }); if(!S.foeMarks) S.foeMarks = {}; S.foeMarks[B.id] = marks; }
       if(B.id === 'peer'){ var dp = S.src.indexOf('PG ONE'); if(dp >= 0) S.attrs[dp] = Math.min(100, S.attrs[dp] + 3); }
       if(B.id === 'love'){ if(S.src.indexOf('库里') === 11) S.attrs[11] = 110; if(S.acting) S.actingX2 = true; }
       if(B.id === 'model'){ ['斯蒂芬·库里', '阿耶莎'].forEach(function(n){ var d = S.src.indexOf(n); if(d >= 0) S.attrs[d] = Math.min(100, S.attrs[d] + 3); }); }
       if(B.id === 'side'){ ['阿耶莎', '李小鹿'].forEach(function(n){ var d = S.src.indexOf(n); if(d >= 0) S.attrs[d] = Math.min(100, S.attrs[d] + 3); }); }
+      if(B.id === 'splash'){ var da = S.src.indexOf(B.a), db = S.src.indexOf(B.b); if(da >= 0 && db >= 0){ var lo = S.attrs[da] <= S.attrs[db] ? da : db, hi = lo === da ? db : da; if(S.attrs[lo] < 100) S.attrs[lo] = Math.min(100, S.attrs[lo] + 8); if(S.attrs[hi] < 100) S.attrs[hi] = Math.min(100, S.attrs[hi] + 2); } }
+      if(B.id === 'ok'){ [B.a, B.b].forEach(function(n){ var d = S.src.indexOf(n); if(d >= 0 && S.attrs[d] < 100) S.attrs[d] = Math.min(100, S.attrs[d] + 4); }); }
+      if(B.id === 'truth'){ [B.a, B.b].forEach(function(n){ var d = S.src.indexOf(n); if(d >= 0 && S.attrs[d] < 100) S.attrs[d] = Math.min(100, S.attrs[d] + 3); }); S.bonusNext = (S.bonusNext || 0) + 3; }
+      if(B.id === 'goats'){ S.attrs = S.attrs.map(function(v){ return (v === null || v >= 100) ? v : Math.min(100, v + 1); }); }
+      if(B.id === 'backstage'){ var dc = S.src.indexOf('一只会唱跳rap的小鸡'); if(dc >= 0 && S.attrs[dc] < 100) S.attrs[dc] = Math.min(100, S.attrs[dc] + 6); var dz = S.src.indexOf('张驰'); if(dz >= 0) S.attrs[dz] = Math.max(S.attrs[dz], rollMystery()); }
       S.bondNotes.push('羁绊《' + B.name + '》触发：' + B.desc);
     });
   }
