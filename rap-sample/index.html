@@ -105,7 +105,8 @@
     S = { phase:'intro', seed:seed, rngState:seed, draftIdx:0, rerolls:CFG.rerolls,
           attrs:Array(12).fill(null), src:Array(12).fill(null), used:[], options:[], sel:-1,
           chapter:0, wins:0, chapterLog:[], bonusNext:0, eventIdx:-1, usedEvents:[],
-          resupplyLeft:0, replaced:[], lastResult:null, eventLog:[], acting:false, evResult:null };
+          resupplyLeft:0, replaced:[], lastResult:null, eventLog:[], acting:false, evResult:null,
+          pickLog:[], bonds:{}, bondNotes:[], iceUsed:false, actingX2:false };
     save(); render();
   }
   function rng(){
@@ -114,7 +115,14 @@
   }
   function save(){ try{ sessionStorage.setItem(CFG.sessionKey, JSON.stringify(S)); }catch(e){} }
   function load(){
-    try{ var s = sessionStorage.getItem(CFG.sessionKey); if(s){ S = JSON.parse(s); return true; } }catch(e){}
+    try{ var s = sessionStorage.getItem(CFG.sessionKey); if(s){ S = JSON.parse(s);
+      if(!S.pickLog) S.pickLog = [];
+      if(!S.bonds) S.bonds = {};
+      if(!S.bondNotes) S.bondNotes = [];
+      if(S.iceUsed === undefined) S.iceUsed = false;
+      if(S.actingX2 === undefined) S.actingX2 = false;
+      if(S.evResult === undefined) S.evResult = null;
+      return true; } }catch(e){}
     return false;
   }
   function drawOptions(){
@@ -158,7 +166,7 @@
   function renderIntro(){
     app.innerHTML = header() +
       '<img class="arcimg" src="art/arc1.jpg" alt="">' +
-      '<div class="card"><b>怎么玩</b><br><span style="font-size:13px;line-height:1.8;color:#6b5a44">先用 12 轮选人，从球星和嘉宾身上夺走 12 项说唱能力（选过的人不会再出现）。然后开启 <b>20 章巡演</b>：每一章一个场子、一位对手，选对打法才能赢；章节之间有随机插曲找上门，中途还有 3 次补给换人的机会。<br>卡面颜色有讲究：金卡是传说，还有粉卡、绿卡和一张数值全是 ?? 的<b style="color:#1d8aa5">钻石卡</b>——夺走它的能力时，数值当场随机开出。<br>小提示：库里的「格局」是 <b style="color:#b3352c">100</b>，全场唯一。看见他，别手软。还有，阿耶莎藏着一项专属夺技「演技」——夺走它，后面每场战斗和每次插曲判定都有加成。</span></div>' +
+      '<div class="card"><b>怎么玩</b><br><span style="font-size:13px;line-height:1.8;color:#6b5a44">先用 12 轮选人，从球星和嘉宾身上夺走 12 项说唱能力（选过的人不会再出现）。然后开启 <b>20 章巡演</b>：每一章一个场子、一位对手，选对打法才能赢；章节之间有随机插曲找上门，中途还有 3 次补给换人的机会。<br>卡面颜色有讲究：金卡是传说，还有粉卡、绿卡和一张数值全是 ?? 的<b style="color:#1d8aa5">钻石卡</b>——夺走它的能力时，数值当场随机开出。<br>小提示：库里的「格局」是 <b style="color:#b3352c">100</b>，全场唯一。看见他，别手软。还有，阿耶莎藏着一项专属夺技「演技」——夺走它，后面每场战斗和每次插曲判定都有加成。<br>特定的两个人同一局都被你夺过，还会触发隐藏<b>「羁绊」</b>：有加成，也有坑，触发当场结算。</span></div>' +
       '<button class="btn" id="b-start">开始拼人</button>' +
       '<div class="foot">内部试玩 · 二十章巡演版</div>';
     document.getElementById('b-start').onclick = function(){ S.phase='draft'; drawOptions(); save(); render(); };
@@ -223,8 +231,33 @@
       el.onclick = function(){ onDim(parseInt(el.getAttribute('data-dim'),10)); };
     });
   }
+  function actBonus(){ return S.acting ? (S.actingX2 ? 6 : 3) : 0; }
+  function actValue(){ return 99 + (S.bonds && S.bonds.model ? 3 : 0); }
   function actingHTML(){
-    return S.acting ? '<div class="hint">🎭 已夺得专属夺技「演技」99（来自阿耶莎）：后续每场战斗 +3、插曲判定 +3</div>' : '';
+    return S.acting ? '<div class="hint">🎭 已夺得专属夺技「演技」' + actValue() + '（来自阿耶莎）：后续每场战斗 +' + actBonus() + '、插曲判定 +' + actBonus() + (S.actingX2 ? '（羁绊《你情我愿》：效果翻倍）' : '') + '</div>' : '';
+  }
+  function bondsHTML(){
+    return (S.bondNotes || []).map(function(n){ return '<div class="hint" style="text-align:left">💞 ' + n + '</div>'; }).join('');
+  }
+  var BONDS = [
+    { id:'ice', a:'李小鹿', b:'假乃亮', name:'冰释前嫌', desc:'本局获得一次「退回上一次选择」的机会（夺技阶段点按钮使用）' },
+    { id:'foe', a:'假乃亮', b:'PG ONE', name:'宿敌', desc:'从假乃亮、PG ONE 身上夺走的能力同时降低 30%——宿敌见面，分外眼红' },
+    { id:'peer', a:'李小鹿', b:'PG ONE', name:'惺惺相惜', desc:'从 PG ONE 身上夺走的能力 +3——惺惺相惜' },
+    { id:'love', a:'库里', b:'阿耶莎', name:'你情我愿', desc:'库里的格局突破天际（110）；阿耶莎的演技效果翻倍' },
+    { id:'model', a:'斯蒂芬·库里', b:'阿耶莎', name:'恩爱模范', desc:'从斯蒂芬·库里、阿耶莎身上夺走的能力各 +3——恩爱模范' }
+  ];
+  function personIn(name){ return S.src.indexOf(name) >= 0 || (name === '阿耶莎' && S.acting); }
+  function checkBonds(){
+    BONDS.forEach(function(B){
+      if(S.bonds[B.id]) return;
+      if(!personIn(B.a) || !personIn(B.b)) return;
+      S.bonds[B.id] = true;
+      if(B.id === 'foe'){ [B.a, B.b].forEach(function(n){ var d = S.src.indexOf(n); if(d >= 0) S.attrs[d] = Math.round(S.attrs[d] * 0.7); }); }
+      if(B.id === 'peer'){ var dp = S.src.indexOf('PG ONE'); if(dp >= 0) S.attrs[dp] = Math.min(100, S.attrs[dp] + 3); }
+      if(B.id === 'love'){ if(S.src.indexOf('库里') === 11) S.attrs[11] = 110; if(S.acting) S.actingX2 = true; }
+      if(B.id === 'model'){ ['斯蒂芬·库里', '阿耶莎'].forEach(function(n){ var d = S.src.indexOf(n); if(d >= 0) S.attrs[d] = Math.min(100, S.attrs[d] + 3); }); }
+      S.bondNotes.push('羁绊《' + B.name + '》触发：' + B.desc);
+    });
   }
   function bindExtra(mode){
     var el = app.querySelector('[data-extra]');
@@ -233,13 +266,14 @@
       var pi = S.options[S.sel];
       S.acting = true;
       S.used.push(pi);
+      checkBonds();
       drawOptions();
       save(); render();
     };
   }
   function renderDraft(){
     var h = header() + '<div class="prog">第 <span>' + (S.draftIdx+1) + '</span> / 12 轮夺技 · 还剩换一批 <span>' + S.rerolls + '</span> 次</div>';
-    h += '<div class="card">' + slotsHTML() + '</div>' + quipHTML() + actingHTML();
+    h += '<div class="card">' + slotsHTML() + '</div>' + quipHTML() + actingHTML() + bondsHTML();
     if(S.sel >= 0){
       var p = PLAYERS[S.options[S.sel]];
       if(p.name === '库里' && S.attrs[11] === null) h += '<div class="hint">格局 · 100 —— 这一项，全场没人够得着。</div>';
@@ -248,6 +282,7 @@
       h += '<div class="sub">先点一位选手，看他的 12 项说唱能力</div>';
     }
     h += optionsHTML();
+    if(S.bonds.ice && !S.iceUsed && S.pickLog.length > 0) h += '<div class="rowbtn"><button class="btn ghost small" id="b-undo">↩️ 冰释前嫌：退回上一次选择（本局一次）</button></div>';
     h += '<div class="rowbtn"><button class="btn ghost small" id="b-swap"' + (S.rerolls<=0?' disabled style="opacity:.4"':'') + '>换一批</button><button class="btn ghost small" id="b-restart">重开</button></div>';
     app.innerHTML = h;
     bindExtra('draft');
@@ -257,11 +292,21 @@
       S.attrs[d] = (p.name === MYSTERY) ? rollMystery() : p.rap[d];
       S.src[d] = p.name;
       S.used.push(pi);
+      S.pickLog.push({ dim:d, pi:pi });
+      checkBonds();
       S.draftIdx++;
       if(S.draftIdx >= 12){ S.phase = 'chapter'; }
       else { drawOptions(); }
       save(); render();
     });
+    var bu = document.getElementById('b-undo');
+    if(bu) bu.onclick = function(){
+      var last = S.pickLog.pop();
+      S.attrs[last.dim] = null; S.src[last.dim] = null;
+      S.used = S.used.filter(function(u){ return u !== last.pi; });
+      S.draftIdx--; S.iceUsed = true;
+      drawOptions(); save(); render();
+    };
     var sw = document.getElementById('b-swap');
     if(sw) sw.onclick = function(){ if(S.rerolls>0){ S.rerolls--; drawOptions(); save(); render(); } };
     document.getElementById('b-restart').onclick = function(){ sessionStorage.removeItem(CFG.sessionKey); newGame(); };
@@ -274,7 +319,7 @@
       '<div class="chtitle">第' + (S.chapter+1) + '章 · ' + ch.title + '</div>' +
       '<div class="sub">' + ch.place + ' · 对手：' + ch.oppName + '（强度 ' + ch.oppBase + '）</div>' +
       '<div class="card"><div class="chintro">' + ch.intro + '</div></div>' +
-      '<div class="card">' + slotsHTML() + '</div>' + actingHTML() +
+      '<div class="card">' + slotsHTML() + '</div>' + actingHTML() + bondsHTML() +
       '<button class="btn" id="b-fight">开唱</button>' +
       '<div class="rowbtn" style="margin-top:8px"><button class="btn ghost small" id="b-restart2">放弃巡演重开</button></div>';
     app.innerHTML = h;
@@ -298,7 +343,7 @@
       document.getElementById('b-next').onclick = function(){ advance(); };
       return;
     }
-    h += '<div class="card vs">对手强度 <b>' + ch.oppBase + '</b>' + (S.bonusNext ? ' · 插曲加成 <b style="color:#b3352c">' + (S.bonusNext>0?'+':'') + S.bonusNext + '</b>' : '') + (S.acting ? ' · 🎭 演技加成 <b style="color:#b3352c">+3</b>' : '') + '</div>';
+    h += '<div class="card vs">对手强度 <b>' + ch.oppBase + '</b>' + (S.bonusNext ? ' · 插曲加成 <b style="color:#b3352c">' + (S.bonusNext>0?'+':'') + S.bonusNext + '</b>' : '') + (S.acting ? ' · 🎭 演技加成 <b style="color:#b3352c">+' + actBonus() + '</b>' : '') + '</div>';
     h += '<div class="sub">选一个打法开麦：</div>';
     CFG.tacticSets[ch.set].forEach(function(t, ti){
       var mine = RapFormulas.composite(S.attrs, t.dims);
@@ -308,7 +353,7 @@
     app.querySelectorAll('[data-tac]').forEach(function(el){
       el.onclick = function(){
         var t = CFG.tacticSets[ch.set][parseInt(el.getAttribute('data-tac'),10)];
-        var r = RapFormulas.battleRound(S.attrs, ch, t, rng, S.bonusNext + (S.acting ? 3 : 0));
+        var r = RapFormulas.battleRound(S.attrs, ch, t, rng, S.bonusNext + actBonus());
         S.bonusNext = 0;
         if(r.win) S.wins++;
         S.chapterLog.push({ n:S.chapter+1, title:ch.title, win:r.win });
@@ -342,7 +387,7 @@
       var hh = header() + '<div class="prog">巡演插曲 · 判定结果</div>' +
         '<div class="evt"><div class="et">' + ev.title + '</div>' +
         '<div class="ex">你选了「' + c2.name + '」。</div>' +
-        (c2.dims ? '<div class="ex">比拼 ' + c2.dims.map(function(d){ return DIMS[d]; }).join('＋') + '：你的数值 <b>' + R.mine + '</b> · 门槛 <b>' + c2.threshold + '</b>' + (S.acting ? '（含 🎭 演技判定 +3）' : '') + '</div>' : '') +
+        (c2.dims ? '<div class="ex">比拼 ' + c2.dims.map(function(d){ return DIMS[d]; }).join('＋') + '：你的数值 <b>' + R.mine + '</b> · 门槛 <b>' + c2.threshold + '</b>' + (S.acting ? '（含 🎭 演技判定 +' + actBonus() + '）' : '') + '</div>' : '') +
         '<div style="text-align:center;font-size:22px;font-weight:900;margin:12px 0">' + (c2.dims ? (R.ok ? '<span class="win">成了！</span>' : '<span style="color:#b3352c">没成</span>') : '<span class="win">稳稳生效</span>') + '</div>' +
         '<div class="ex" style="text-align:center">下一场加成 <b style="color:#b3352c">' + (R.bonus > 0 ? '+' + R.bonus : '' + R.bonus) + '</b></div></div>' +
         '<button class="btn" id="b-evgo">继续巡演</button>';
@@ -361,7 +406,7 @@
     app.querySelectorAll('[data-evt]').forEach(function(el){
       el.onclick = function(){
         var c = ev.choices[parseInt(el.getAttribute('data-evt'),10)];
-        var r = RapFormulas.eventResult(S.attrs, c, rng, S.acting ? 3 : 0);
+        var r = RapFormulas.eventResult(S.attrs, c, rng, actBonus());
         S.bonusNext = r.bonus;
         S.usedEvents.push(S.eventIdx);
         S.eventLog.push(ev.title.replace('插曲 · ','') + '：你选了「' + c.name + '」——' + (c.dims ? (r.ok ? '成了，下一场 +' : '没成，下一场 ') + r.bonus : '下一场 +' + r.bonus));
@@ -403,6 +448,7 @@
     if(S.src[11] === '勒布朗·詹姆斯') h += '<div class="hint">你抢了詹姆斯的格局：0。抢了个寂寞，但节目效果拉满。</div>';
     if(S.src.indexOf(MYSTERY) >= 0) h += '<div class="hint">这支队伍里有张驰开出来的数值——从组建那天起，命运就是薛定谔的。</div>';
     if(S.acting) h += '<div class="hint">🎭 你带着阿耶莎的演技走完了巡演——哭戏说来就来，好几个裁判都看哭了。</div>';
+    h += bondsHTML();
     h += '<div class="card"><b>巡演战报</b><div style="margin-top:6px">';
     S.chapterLog.forEach(function(L){
       h += '<div class="logrow"><span>第' + L.n + '章 · ' + L.title + '</span><span class="' + (L.win?'win':'') + '">' + (L.win ? '胜' : '负') + '</span></div>';
