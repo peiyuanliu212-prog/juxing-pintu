@@ -67,8 +67,9 @@
   .pcard.rare { border-color:#4a7dbb; background:#eef5ff; }
   .pcard.pink { border:2px solid #d63384; background:linear-gradient(135deg,#ffe9f3,#ffc2d9 60%,#ffe9f3); }
   .pcard.pink img { box-shadow:0 0 0 2px #d63384, 0 0 8px rgba(214,51,132,.5); }
-  .pcard.green { border:2px solid #2e9e4f; background:linear-gradient(135deg,#eafbee,#a9dfb0 60%,#eafbee); }
-  .pcard.green img { box-shadow:0 0 0 2px #2e9e4f, 0 0 8px rgba(46,158,79,.55); }
+  .pcard.green { border:2.5px solid #22c55e; background:linear-gradient(135deg,#f2fff3,#8bf79b 45%,#c9ffd1 70%,#8bf79b); box-shadow:0 0 14px rgba(34,197,94,.55), inset 0 0 18px rgba(255,255,255,.65); }
+  .pcard.green img { box-shadow:0 0 0 2.5px #22c55e, 0 0 14px rgba(34,197,94,.9); }
+  .pcard.green::after { content:''; position:absolute; top:-60%; left:-90%; width:45%; height:220%; background:linear-gradient(100deg,transparent,rgba(255,255,255,.75),transparent); transform:rotate(20deg); animation:shine 2.2s ease-in-out infinite; pointer-events:none; }
   .pcard.diamond { border:2px solid #2fb9d8; background:linear-gradient(135deg,#f2feff,#bdeef8 55%,#f2feff); }
   .pcard.diamond img { box-shadow:0 0 0 2px #2fb9d8, 0 0 12px rgba(47,185,216,.8); }
   .badge { font-size:10px; font-weight:800; padding:1px 6px; border-radius:8px; margin-left:6px; vertical-align:2px; color:#fff; }
