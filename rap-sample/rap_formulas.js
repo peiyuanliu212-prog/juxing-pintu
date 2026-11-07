@@ -25,9 +25,9 @@ var RapFormulas = (function () {
     return { mine: mine, opp: opp, win: mine >= opp };
   }
   // Event choice resolution. dims null = safe option, always applies its (win) value.
-  function eventResult(attrs, choice, rng) {
+  function eventResult(attrs, choice, rng, bonus) {
     if (!choice.dims) return { ok: true, bonus: choice.win };
-    var ok = composite(attrs, choice.dims) + rng() * 6 >= choice.threshold + rng() * 6;
+    var ok = composite(attrs, choice.dims) + (bonus || 0) + rng() * 6 >= choice.threshold + rng() * 6;
     return { ok: ok, bonus: ok ? choice.win : choice.lose };
   }
   function total(attrs) { return attrs.reduce(function (a, b) { return a + (b || 0); }, 0); }
