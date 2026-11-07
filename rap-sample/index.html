@@ -174,7 +174,7 @@
     if(c === 'epic') return '<span class="badge e">史诗</span>';
     return '';
   }
-  var QUIPS = { '绿发库里':'他来了——头发是绿的，格局是满的（100）。', '斯蒂芬·库里':'新秀库里来了，娃娃脸一个，但那投篮的手稳得不像新人', '蔡徐坤':'唱跳嘉宾空降，全场目光都被他和他的球吸走了', '马保国':'马老师来了！全场起立——他说要教对面做人', 'AI 本人':'它来了。它说它已经把你的韵脚全算完了', '刘大妈':'大妈带着她的音响来了，气势上已经赢了一半', '勒布朗·詹姆斯':'SSSS 驾到！全维 99 满分——格局那格，你就当没看见', 'PG ONE':'？？？候选里混进来一个真唱的', '阿耶莎':'？？？她怎么也来了（手里还拿着菜谱）', '假乃亮':'郑重声明：这位是假的，和本人没关系', '李小鹿':'？？？候选里混进了一只鹿', '张驰':'💎 钻石卡！数值全是 ??，夺走哪项，当场随机开数' };
+  var QUIPS = { '绿发库里':'他来了——头发是绿的，格局是满的（100）。', '斯蒂芬·库里':'新秀库里来了，娃娃脸一个，但那投篮的手稳得不像新人', '一只会唱跳rap的小鸡':'一只小鸡空降了，全场目光都被它和它的球吸走了', '马保国':'马老师来了！全场起立——他说要教对面做人', 'AI 本人':'它来了。它说它已经把你的韵脚全算完了', '刘大妈':'大妈带着她的音响来了，气势上已经赢了一半', '勒布朗·詹姆斯':'SSSS 驾到！全维 99 满分——格局那格，你就当没看见', 'PG ONE':'？？？候选里混进来一个真唱的', '阿耶莎':'？？？她怎么也来了（手里还拿着菜谱）', '假乃亮':'郑重声明：这位是假的，和本人没关系', '李小鹿':'？？？候选里混进了一只鹿', '张驰':'💎 钻石卡！数值全是 ??，夺走哪项，当场随机开数' };
   function quipHTML(){
     var quip = null;
     S.options.forEach(function(pi){ var nm = PLAYERS[pi].name; if(!quip && QUIPS[nm]) quip = QUIPS[nm]; });
@@ -199,7 +199,7 @@
     var h = '';
     S.options.forEach(function(pi, oi){
       var p = PLAYERS[pi];
-      h += '<div class="pcard pop ' + tierClass(p) + (S.sel===oi?' sel':'') + '" data-pick="' + oi + '"><img src="portraits/' + p.portrait + '" alt=""><div><div class="pn">' + p.name + tierBadge(p) + '</div><div class="pt">' + p.team + ' · ' + p.note + '</div><div class="ptop">' + topDims(p) + '</div></div></div>';
+      h += '<div class="pcard pop ' + tierClass(p) + (S.sel===oi?' sel':'') + '" data-pick="' + oi + '"><img src="portraits/' + p.portrait + '" alt=""><div><div class="pn">' + p.name + tierBadge(p) + '</div><div class="pt">' + p.note + '</div><div class="ptop">' + topDims(p) + '</div></div></div>';
     });
     return h;
   }

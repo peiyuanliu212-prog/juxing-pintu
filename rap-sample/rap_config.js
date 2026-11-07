@@ -95,7 +95,7 @@ window.RAP_CONFIG = {
         { name: '卷！连夜再练两小时', desc: '比 气息 · 成了下一场 +4，砸了 -2（卷过头也累）', dims: [5], threshold: 82, win: 4, lose: -2 },
         { name: '听妈妈的话，早点睡', desc: '不比 · 下一场 +2（妈妈的话要听）', dims: null, threshold: 0, win: 2, lose: 2 }
       ] },
-    { title: '插曲 · 坤坤在后台练球', text: '后台化妆间，蔡徐坤正对着镜子练运球，球感居然意外地丝滑。他抬头问你：要不要切磋一下唱跳？',
+    { title: '插曲 · 小鸡在后台练球', text: '后台化妆间，一只会唱跳rap的小鸡正对着镜子练运球，球感居然意外地丝滑。它抬头问你：要不要切磋一下唱跳？',
       choices: [
         { name: '跟他学两招唱跳', desc: '比 感染力 · 成了下一场 +4，砸了 -2（学劈叉了）', dims: [9], threshold: 82, win: 4, lose: -2 },
         { name: '约他打一场球', desc: '比 爆发 · 成了下一场 +3，砸了 0（友谊第一）', dims: [8], threshold: 84, win: 3, lose: 0 },
