@@ -153,7 +153,7 @@
   function renderIntro(){
     app.innerHTML = header() +
       '<img class="arcimg" src="art/arc1.jpg" alt="">' +
-      '<div class="card"><b>怎么玩</b><br><span style="font-size:13px;line-height:1.8;color:#6b5a44">先用 12 轮选人，从球星和嘉宾身上夺走 12 项说唱能力（选过的人不会再出现）。然后开启 <b>20 章巡演</b>：每一章一个场子、一位对手，选对打法才能赢；章节之间有随机插曲找上门，中途还有 3 次补给换人的机会。<br>卡面颜色有讲究：金卡是传说，还有粉卡、绿卡和一张数值全是 ?? 的<b style="color:#1d8aa5">钻石卡</b>——夺走它的能力时，数值当场随机开出。<br>小提示：绿发库里的「格局」是 <b style="color:#b3352c">100</b>，全场唯一。看见他，别手软。还有，阿耶莎藏着一项专属夺技「演技」——夺走它，后面每场战斗和每次插曲判定都有加成。</span></div>' +
+      '<div class="card"><b>怎么玩</b><br><span style="font-size:13px;line-height:1.8;color:#6b5a44">先用 12 轮选人，从球星和嘉宾身上夺走 12 项说唱能力（选过的人不会再出现）。然后开启 <b>20 章巡演</b>：每一章一个场子、一位对手，选对打法才能赢；章节之间有随机插曲找上门，中途还有 3 次补给换人的机会。<br>卡面颜色有讲究：金卡是传说，还有粉卡、绿卡和一张数值全是 ?? 的<b style="color:#1d8aa5">钻石卡</b>——夺走它的能力时，数值当场随机开出。<br>小提示：库里的「格局」是 <b style="color:#b3352c">100</b>，全场唯一。看见他，别手软。还有，阿耶莎藏着一项专属夺技「演技」——夺走它，后面每场战斗和每次插曲判定都有加成。</span></div>' +
       '<button class="btn" id="b-start">开始拼人</button>' +
       '<div class="foot">内部试玩 · 二十章巡演版</div>';
     document.getElementById('b-start').onclick = function(){ S.phase='draft'; drawOptions(); save(); render(); };
@@ -161,7 +161,7 @@
   function tierClass(p){
     if(p.name === MYSTERY) return 'diamond';
     if(p.name === '李小鹿') return 'pink';
-    if(p.name === '绿发库里') return 'green';
+    if(p.name === '库里') return 'green';
     if(p.tier === 'SSSS') return 'gold king';
     if(p.tier === 'SS' || p.tier === 'S') return 'gold';
     if(p.tier === 'A') return 'epic';
@@ -176,7 +176,7 @@
     if(c === 'epic') return '<span class="badge e">史诗</span>';
     return '';
   }
-  var QUIPS = { '绿发库里':'他来了——头发是绿的，格局是满的（100）。', '斯蒂芬·库里':'新秀库里来了，娃娃脸一个，但那投篮的手稳得不像新人', '一只会唱跳rap的小鸡':'一只小鸡空降了，全场目光都被它和它的球吸走了', '马保国':'马老师来了！全场起立——他说要教对面做人', 'AI 本人':'它来了。它说它已经把你的韵脚全算完了', '刘大妈':'大妈带着她的音响来了，气势上已经赢了一半', '勒布朗·詹姆斯':'SSSS 驾到！全维 99 满分——格局那格，你就当没看见', 'PG ONE':'？？？候选里混进来一个真唱的', '阿耶莎':'？？？她怎么也来了（手里还拿着菜谱）——她还藏着一项专属能力：演技 99', '假乃亮':'郑重声明：这位是假的，和本人没关系', '李小鹿':'？？？候选里混进了一只鹿', '张驰':'💎 钻石卡！数值全是 ??，夺走哪项，当场随机开数' };
+  var QUIPS = { '库里':'他来了——头发是绿的，格局是满的（100）。', '斯蒂芬·库里':'新秀库里来了，娃娃脸一个，但那投篮的手稳得不像新人', '一只会唱跳rap的小鸡':'一只小鸡空降了，全场目光都被它和它的球吸走了', '马保国':'马老师来了！全场起立——他说要教对面做人', 'AI 本人':'它来了。它说它已经把你的韵脚全算完了', '刘大妈':'大妈带着她的音响来了，气势上已经赢了一半', '勒布朗·詹姆斯':'SSSS 驾到！全维 99 满分——格局那格，你就当没看见', 'PG ONE':'？？？候选里混进来一个真唱的', '阿耶莎':'？？？她怎么也来了（手里还拿着菜谱）——她还藏着一项专属能力：演技 99', '假乃亮':'郑重声明：这位是假的，和本人没关系', '李小鹿':'？？？候选里混进了一只鹿', '张驰':'💎 钻石卡！数值全是 ??，夺走哪项，当场随机开数' };
   function quipHTML(){
     var quip = null;
     S.options.forEach(function(pi){ var nm = PLAYERS[pi].name; if(!quip && QUIPS[nm]) quip = QUIPS[nm]; });
@@ -241,7 +241,7 @@
     h += '<div class="card">' + slotsHTML() + '</div>' + quipHTML();
     if(S.sel >= 0){
       var p = PLAYERS[S.options[S.sel]];
-      if(p.name === '绿发库里' && S.attrs[11] === null) h += '<div class="hint">格局 · 100 —— 这一项，全场没人够得着。</div>';
+      if(p.name === '库里' && S.attrs[11] === null) h += '<div class="hint">格局 · 100 —— 这一项，全场没人够得着。</div>';
       h += detailHTML('draft');
     } else {
       h += '<div class="sub">先点一位选手，看他的 12 项说唱能力</div>';
@@ -386,7 +386,7 @@
     var best = CFG.endings.filter(function(x){ return S.wins >= x.min; }).sort(function(a,b){ return b.min - a.min; })[0];
     var h = header() + '<img class="arcimg" src="art/arc5.jpg" alt="">' +
       '<div class="card"><div class="sub" style="margin-bottom:2px">二十章战绩 ' + S.wins + ' 胜 ' + (20 - S.wins) + ' 负 · 总评 ' + RapFormulas.total(S.attrs) + '</div><div class="end-name">' + best.name + '</div><div class="sub">' + best.desc + '</div>' + slotsHTML() + '</div>';
-    if(S.src[11] === '绿发库里') h += '<div class="hint">你抢到了格局 100——封神之夜的秘密武器，被你拿到了。</div>';
+    if(S.src[11] === '库里') h += '<div class="hint">你抢到了格局 100——封神之夜的秘密武器，被你拿到了。</div>';
     if(S.src[11] === '勒布朗·詹姆斯') h += '<div class="hint">你抢了詹姆斯的格局：0。抢了个寂寞，但节目效果拉满。</div>';
     if(S.src.indexOf(MYSTERY) >= 0) h += '<div class="hint">这支队伍里有张驰开出来的数值——从组建那天起，命运就是薛定谔的。</div>';
     if(S.acting) h += '<div class="hint">🎭 你带着阿耶莎的演技走完了巡演——哭戏说来就来，好几个裁判都看哭了。</div>';
