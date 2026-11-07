@@ -70,6 +70,11 @@
   .pcard.green { border:2.5px solid #22c55e; background:linear-gradient(135deg,#f2fff3,#8bf79b 45%,#c9ffd1 70%,#8bf79b); box-shadow:0 0 14px rgba(34,197,94,.55), inset 0 0 18px rgba(255,255,255,.65); }
   .pcard.green img { box-shadow:0 0 0 2.5px #22c55e, 0 0 14px rgba(34,197,94,.9); }
   .pcard.green::after { content:''; position:absolute; top:-60%; left:-90%; width:45%; height:220%; background:linear-gradient(100deg,transparent,rgba(255,255,255,.75),transparent); transform:rotate(20deg); animation:shine 2.2s ease-in-out infinite; pointer-events:none; }
+  .pcard.orange { border:2.5px solid #f97316; background:linear-gradient(135deg,#fff7ed,#fdba74 45%,#ffedd5 70%,#fdba74); box-shadow:0 0 14px rgba(249,115,22,.55), inset 0 0 18px rgba(255,255,255,.6); }
+  .pcard.orange::after { content:''; position:absolute; top:-60%; left:-90%; width:45%; height:220%; background:linear-gradient(100deg,transparent,rgba(255,255,255,.7),transparent); transform:rotate(20deg); animation:shine 2.4s ease-in-out infinite; pointer-events:none; }
+  .badge.o { background:#f97316; color:#fff; }
+  .chip.extra { background:linear-gradient(135deg,#ffb066,#f97316); border-color:#ea580c; color:#fff; }
+  .chip.extra .cn { color:#fff; }
   .pcard.diamond { border:2px solid #2fb9d8; background:linear-gradient(135deg,#f2feff,#bdeef8 55%,#f2feff); }
   .pcard.diamond img { box-shadow:0 0 0 2px #2fb9d8, 0 0 12px rgba(47,185,216,.8); }
   .badge { font-size:10px; font-weight:800; padding:1px 6px; border-radius:8px; margin-left:6px; vertical-align:2px; color:#fff; }
@@ -100,7 +105,7 @@
     S = { phase:'intro', seed:seed, rngState:seed, draftIdx:0, rerolls:CFG.rerolls,
           attrs:Array(12).fill(null), src:Array(12).fill(null), used:[], options:[], sel:-1,
           chapter:0, wins:0, chapterLog:[], bonusNext:0, eventIdx:-1, usedEvents:[],
-          resupplyLeft:0, replaced:[], lastResult:null, eventLog:[], acting:false };
+          resupplyLeft:0, replaced:[], lastResult:null, eventLog:[], acting:false, evResult:null };
     save(); render();
   }
   function rng(){
@@ -162,6 +167,7 @@
     if(p.name === MYSTERY) return 'diamond';
     if(p.name === '李小鹿') return 'pink';
     if(p.name === '库里') return 'green';
+    if(p.name === '阿耶莎') return 'orange';
     if(p.tier === 'SSSS') return 'gold king';
     if(p.tier === 'SS' || p.tier === 'S') return 'gold';
     if(p.tier === 'A') return 'epic';
@@ -170,6 +176,7 @@
   }
   function tierBadge(p){
     if(p.name === MYSTERY) return '<span class="badge dia">💎钻石</span>';
+    if(p.name === '阿耶莎') return '<span class="badge o">专属</span>';
     if(p.tier === 'SSSS') return '<span class="badge g">SSSS 👑</span>';
     var c = tierClass(p);
     if(c === 'gold' || c === 'green') return '<span class="badge g">传说</span>';
@@ -196,7 +203,7 @@
       h += '<div class="chip' + (off?' off':'') + '" data-dim="' + i + '"><div class="cn">' + DIMS[i] + (label ? ' ' + label : '') + '</div><div class="cv">' + (isM ? '??' : p.rap[i]) + '</div></div>';
     }
     if(p.extra && !S.acting){
-      h += '<div class="chip extra" data-extra="1"><div class="cn">专属夺技 · ' + p.extra.dim + '（夺走后：后续每场战斗 +3、插曲判定 +3）</div><div class="cv">' + p.extra.value + '</div></div>';
+      h += '<div class="chip extra" data-extra="1"><div class="cn">专属夺技 · ' + p.extra.dim + '（不占夺技名额 · 夺走后：后续每场战斗 +3、插曲判定 +3）</div><div class="cv">' + p.extra.value + '</div></div>';
     }
     return h + '</div></div>';
   }
@@ -226,19 +233,13 @@
       var pi = S.options[S.sel];
       S.acting = true;
       S.used.push(pi);
-      if(mode === 'draft'){
-        S.draftIdx++;
-        if(S.draftIdx >= 12){ S.phase = 'chapter'; } else { drawOptions(); }
-      } else {
-        S.resupplyLeft--;
-        if(S.resupplyLeft <= 0){ S.phase = 'chapter'; } else { drawOptions(); }
-      }
+      drawOptions();
       save(); render();
     };
   }
   function renderDraft(){
     var h = header() + '<div class="prog">第 <span>' + (S.draftIdx+1) + '</span> / 12 轮夺技 · 还剩换一批 <span>' + S.rerolls + '</span> 次</div>';
-    h += '<div class="card">' + slotsHTML() + '</div>' + quipHTML();
+    h += '<div class="card">' + slotsHTML() + '</div>' + quipHTML() + actingHTML();
     if(S.sel >= 0){
       var p = PLAYERS[S.options[S.sel]];
       if(p.name === '库里' && S.attrs[11] === null) h += '<div class="hint">格局 · 100 —— 这一项，全场没人够得着。</div>';
@@ -336,6 +337,19 @@
   }
   function renderEvent(){
     var ev = CFG.events[S.eventIdx];
+    if(S.evResult){
+      var R = S.evResult, c2 = ev.choices[R.ci];
+      var hh = header() + '<div class="prog">巡演插曲 · 判定结果</div>' +
+        '<div class="evt"><div class="et">' + ev.title + '</div>' +
+        '<div class="ex">你选了「' + c2.name + '」。</div>' +
+        (c2.dims ? '<div class="ex">比拼 ' + c2.dims.map(function(d){ return DIMS[d]; }).join('＋') + '：你的数值 <b>' + R.mine + '</b> · 门槛 <b>' + c2.threshold + '</b>' + (S.acting ? '（含 🎭 演技判定 +3）' : '') + '</div>' : '') +
+        '<div style="text-align:center;font-size:22px;font-weight:900;margin:12px 0">' + (c2.dims ? (R.ok ? '<span class="win">成了！</span>' : '<span style="color:#b3352c">没成</span>') : '<span class="win">稳稳生效</span>') + '</div>' +
+        '<div class="ex" style="text-align:center">下一场加成 <b style="color:#b3352c">' + (R.bonus > 0 ? '+' + R.bonus : '' + R.bonus) + '</b></div></div>' +
+        '<button class="btn" id="b-evgo">继续巡演</button>';
+      app.innerHTML = hh;
+      document.getElementById('b-evgo').onclick = function(){ S.evResult = null; S.eventIdx = -1; S.phase = 'chapter'; save(); render(); };
+      return;
+    }
     var h = header() + '<div class="prog">巡演插曲</div>' +
       '<div class="evt"><div class="et">' + ev.title + '</div><div class="ex">' + ev.text + '</div>';
     ev.choices.forEach(function(c, ci){
@@ -351,15 +365,14 @@
         S.bonusNext = r.bonus;
         S.usedEvents.push(S.eventIdx);
         S.eventLog.push(ev.title.replace('插曲 · ','') + '：你选了「' + c.name + '」——' + (c.dims ? (r.ok ? '成了，下一场 +' : '没成，下一场 ') + r.bonus : '下一场 +' + r.bonus));
-        S.eventIdx = -1;
-        S.phase = 'chapter';
+        S.evResult = { ci: parseInt(el.getAttribute('data-evt'),10), ok: r.ok, bonus: r.bonus, mine: c.dims ? Math.round(RapFormulas.composite(S.attrs, c.dims)) : null };
         save(); render();
       };
     });
   }
   function renderResupply(){
     var h = header() + '<div class="prog">巡演补给 · 还能换 <span>' + S.resupplyLeft + '</span> 项能力</div>';
-    h += '<div class="card">' + slotsHTML() + '</div>' + quipHTML();
+    h += '<div class="card">' + slotsHTML() + '</div>' + quipHTML() + actingHTML();
     if(S.sel >= 0){ h += detailHTML('resupply'); }
     else { h += '<div class="sub">点一位新选手，再点你想换掉的能力（现值会标在格子上）</div>'; }
     h += optionsHTML();
