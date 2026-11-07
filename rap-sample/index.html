@@ -152,7 +152,7 @@
     return h + '</div>';
   }
   function header(){
-    return '<div class="kicker">二 十 章 巡 演 · v3</div><h1>篮球有嘻哈</h1><div class="sub">从 118 位选手身上，夺走 12 项说唱本事<br>一路从天桥底下，唱到封神之夜</div>';
+    return '<div class="kicker">二 十 章 巡 演 · v3</div><h1>篮球有嘻哈</h1><div class="sub">从 116 位选手身上，夺走 12 项说唱本事<br>一路从天桥底下，唱到封神之夜</div>';
   }
   function render(){
     if(S.phase === 'intro'){ renderIntro(); }
@@ -176,6 +176,7 @@
     if(p.name === '李小鹿') return 'pink';
     if(p.name === '库里') return 'green';
     if(p.name === '阿耶莎') return 'orange';
+    if(p.tier === 'SSSSS') return 'gold king';
     if(p.tier === 'SSSS') return 'gold king';
     if(p.tier === 'SS' || p.tier === 'S') return 'gold';
     if(p.tier === 'A') return 'epic';
@@ -185,13 +186,14 @@
   function tierBadge(p){
     if(p.name === MYSTERY) return '<span class="badge dia">💎钻石</span>';
     if(p.name === '阿耶莎') return '<span class="badge o">专属</span>';
+    if(p.tier === 'SSSSS') return '<span class="badge g">SSSSS 👑👑</span>';
     if(p.tier === 'SSSS') return '<span class="badge g">SSSS 👑</span>';
     var c = tierClass(p);
     if(c === 'gold' || c === 'green') return '<span class="badge g">传说</span>';
     if(c === 'epic') return '<span class="badge e">史诗</span>';
     return '';
   }
-  var QUIPS = { '库里':'他来了——头发是绿的，格局是满的（100）。', '斯蒂芬·库里':'新秀库里来了，娃娃脸一个，但那投篮的手稳得不像新人', '一只会唱跳rap的小鸡':'一只小鸡空降了，全场目光都被它和它的球吸走了', '马保国':'马老师来了！全场起立——他说要教对面做人', 'AI 本人':'它来了。它说它已经把你的韵脚全算完了', '刘大妈':'大妈带着她的音响来了，气势上已经赢了一半', '勒布朗·詹姆斯':'SSSS 驾到！全维 99 满分——格局那格，你就当没看见', 'PG ONE':'？？？候选里混进来一个真唱的', '阿耶莎':'？？？她怎么也来了（手里还拿着菜谱）——她还藏着一项专属能力：演技 99', '假乃亮':'郑重声明：这位是假的，和本人没关系', '李小鹿':'？？？候选里混进了一只鹿', '张驰':'💎 钻石卡！数值全是 ??，夺走哪项，当场随机开数' };
+  var QUIPS = { '库里':'他来了——头发是绿的，格局是满的（100）。', '斯蒂芬·库里':'新秀库里来了，娃娃脸一个，但那投篮的手稳得不像新人', '一只会唱跳rap的小鸡':'一只小鸡空降了，全场目光都被它和它的球吸走了', '马保国':'马老师来了！全场起立——他说要教对面做人', 'AI 本人':'它来了。它说它已经把你的韵脚全算完了', '刘大妈':'大妈带着她的音响来了，气势上已经赢了一半', '勒布朗·詹姆斯':'SSSS 驾到！全维 99.99——格局那格，你就当没看见', '迈克尔·乔丹':'SSSSS 驾到——两顶王冠，全维 100，这还比什么', 'PG ONE':'？？？候选里混进来一个真唱的', '阿耶莎':'？？？她怎么也来了（手里还拿着菜谱）——她还藏着一项专属能力：演技 99', '假乃亮':'郑重声明：这位是假的，和本人没关系', '李小鹿':'？？？候选里混进了一只鹿', '张驰':'💎 钻石卡！数值全是 ??，夺走哪项，当场随机开数' };
   function quipHTML(){
     var quip = null;
     S.options.forEach(function(pi){ var nm = PLAYERS[pi].name; if(!quip && QUIPS[nm]) quip = QUIPS[nm]; });
@@ -232,7 +234,7 @@
     });
   }
   function actBonus(){ return S.acting ? (S.actingX2 ? 6 : 3) : 0; }
-  function actValue(){ return 99 + (S.bonds && S.bonds.model ? 3 : 0); }
+  function actValue(){ return 99 + (S.bonds && S.bonds.model ? 3 : 0) + (S.bonds && S.bonds.side ? 3 : 0); }
   function actingHTML(){
     return S.acting ? '<div class="hint">🎭 已夺得专属夺技「演技」' + actValue() + '（来自阿耶莎）：后续每场战斗 +' + actBonus() + '、插曲判定 +' + actBonus() + (S.actingX2 ? '（羁绊《你情我愿》：效果翻倍）' : '') + '</div>' : '';
   }
@@ -240,11 +242,13 @@
     return (S.bondNotes || []).map(function(n){ return '<div class="hint" style="text-align:left">💞 ' + n + '</div>'; }).join('');
   }
   var BONDS = [
-    { id:'ice', a:'李小鹿', b:'假乃亮', name:'冰释前嫌', desc:'本局获得一次「退回上一次选择」的机会（夺技阶段点按钮使用）' },
+    { id:'ice', a:'李小鹿', b:'假乃亮', name:'冰释前嫌', desc:'巡演插曲判定失败时，可以回到那次选择换一个重来（本局一次）' },
     { id:'foe', a:'假乃亮', b:'PG ONE', name:'宿敌', desc:'从假乃亮、PG ONE 身上夺走的能力同时降低 30%——宿敌见面，分外眼红' },
+    { id:'foe2', a:'勒布朗·詹姆斯', b:'库里', name:'宿敌', desc:'从詹姆斯、库里身上夺走的能力同时降低 30%——皇帝和国王，命中宿敌' },
     { id:'peer', a:'李小鹿', b:'PG ONE', name:'惺惺相惜', desc:'从 PG ONE 身上夺走的能力 +3——惺惺相惜' },
     { id:'love', a:'库里', b:'阿耶莎', name:'你情我愿', desc:'库里的格局突破天际（110）；阿耶莎的演技效果翻倍' },
-    { id:'model', a:'斯蒂芬·库里', b:'阿耶莎', name:'恩爱模范', desc:'从斯蒂芬·库里、阿耶莎身上夺走的能力各 +3——恩爱模范' }
+    { id:'model', a:'斯蒂芬·库里', b:'阿耶莎', name:'恩爱模范', desc:'从斯蒂芬·库里、阿耶莎身上夺走的能力各 +3——恩爱模范' },
+    { id:'side', a:'阿耶莎', b:'李小鹿', name:'并肩作战', desc:'从阿耶莎、李小鹿身上夺走的能力各 +3——并肩作战' }
   ];
   function personIn(name){ return S.src.indexOf(name) >= 0 || (name === '阿耶莎' && S.acting); }
   function checkBonds(){
@@ -252,10 +256,11 @@
       if(S.bonds[B.id]) return;
       if(!personIn(B.a) || !personIn(B.b)) return;
       S.bonds[B.id] = true;
-      if(B.id === 'foe'){ [B.a, B.b].forEach(function(n){ var d = S.src.indexOf(n); if(d >= 0) S.attrs[d] = Math.round(S.attrs[d] * 0.7); }); }
+      if(B.id === 'foe' || B.id === 'foe2'){ [B.a, B.b].forEach(function(n){ var d = S.src.indexOf(n); if(d >= 0) S.attrs[d] = Math.round(S.attrs[d] * 0.7); }); }
       if(B.id === 'peer'){ var dp = S.src.indexOf('PG ONE'); if(dp >= 0) S.attrs[dp] = Math.min(100, S.attrs[dp] + 3); }
       if(B.id === 'love'){ if(S.src.indexOf('库里') === 11) S.attrs[11] = 110; if(S.acting) S.actingX2 = true; }
       if(B.id === 'model'){ ['斯蒂芬·库里', '阿耶莎'].forEach(function(n){ var d = S.src.indexOf(n); if(d >= 0) S.attrs[d] = Math.min(100, S.attrs[d] + 3); }); }
+      if(B.id === 'side'){ ['阿耶莎', '李小鹿'].forEach(function(n){ var d = S.src.indexOf(n); if(d >= 0) S.attrs[d] = Math.min(100, S.attrs[d] + 3); }); }
       S.bondNotes.push('羁绊《' + B.name + '》触发：' + B.desc);
     });
   }
@@ -282,7 +287,6 @@
       h += '<div class="sub">先点一位选手，看他的 12 项说唱能力</div>';
     }
     h += optionsHTML();
-    if(S.bonds.ice && !S.iceUsed && S.pickLog.length > 0) h += '<div class="rowbtn"><button class="btn ghost small" id="b-undo">↩️ 冰释前嫌：退回上一次选择（本局一次）</button></div>';
     h += '<div class="rowbtn"><button class="btn ghost small" id="b-swap"' + (S.rerolls<=0?' disabled style="opacity:.4"':'') + '>换一批</button><button class="btn ghost small" id="b-restart">重开</button></div>';
     app.innerHTML = h;
     bindExtra('draft');
@@ -299,14 +303,6 @@
       else { drawOptions(); }
       save(); render();
     });
-    var bu = document.getElementById('b-undo');
-    if(bu) bu.onclick = function(){
-      var last = S.pickLog.pop();
-      S.attrs[last.dim] = null; S.src[last.dim] = null;
-      S.used = S.used.filter(function(u){ return u !== last.pi; });
-      S.draftIdx--; S.iceUsed = true;
-      drawOptions(); save(); render();
-    };
     var sw = document.getElementById('b-swap');
     if(sw) sw.onclick = function(){ if(S.rerolls>0){ S.rerolls--; drawOptions(); save(); render(); } };
     document.getElementById('b-restart').onclick = function(){ sessionStorage.removeItem(CFG.sessionKey); newGame(); };
@@ -390,9 +386,12 @@
         (c2.dims ? '<div class="ex">比拼 ' + c2.dims.map(function(d){ return DIMS[d]; }).join('＋') + '：你的数值 <b>' + R.mine + '</b> · 门槛 <b>' + c2.threshold + '</b>' + (S.acting ? '（含 🎭 演技判定 +' + actBonus() + '）' : '') + '</div>' : '') +
         '<div style="text-align:center;font-size:22px;font-weight:900;margin:12px 0">' + (c2.dims ? (R.ok ? '<span class="win">成了！</span>' : '<span style="color:#b3352c">没成</span>') : '<span class="win">稳稳生效</span>') + '</div>' +
         '<div class="ex" style="text-align:center">下一场加成 <b style="color:#b3352c">' + (R.bonus > 0 ? '+' + R.bonus : '' + R.bonus) + '</b></div></div>' +
+        (R.mine !== null && !R.ok && S.bonds.ice && !S.iceUsed ? '<button class="btn" id="b-ice" style="background:#2e7d4f;margin-bottom:8px">💞 冰释前嫌：回到这次选择，换一个（本局一次）</button>' : '') +
         '<button class="btn" id="b-evgo">继续巡演</button>';
       app.innerHTML = hh;
       document.getElementById('b-evgo').onclick = function(){ S.evResult = null; S.eventIdx = -1; S.phase = 'chapter'; save(); render(); };
+      var bi = document.getElementById('b-ice');
+      if(bi) bi.onclick = function(){ S.iceUsed = true; S.evResult = null; S.usedEvents.pop(); save(); render(); };
       return;
     }
     var h = header() + '<div class="prog">巡演插曲</div>' +
