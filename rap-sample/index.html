@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Rap 拼将 · 小样试玩</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { background:#efe6d0; color:#2b2118; font-family:"PingFang SC","Microsoft YaHei",sans-serif; }
+  .wrap { max-width:430px; margin:0 auto; padding:14px 12px 40px; }
+  .kicker { text-align:center; color:#b3352c; font-weight:700; letter-spacing:4px; font-size:12px; margin-top:8px; }
+  h1 { text-align:center; font-size:30px; letter-spacing:2px; margin:4px 0 2px; font-family:"Songti SC","SimSun",serif; }
+  .sub { text-align:center; color:#6b5a44; font-size:13px; line-height:1.6; margin-bottom:12px; }
+  .card { background:#fffdf7; border:1.5px solid #d8c9a8; border-radius:10px; padding:12px; margin-bottom:10px; box-shadow:0 1px 3px rgba(90,70,30,.12); }
+  .btn { display:block; width:100%; background:#b3352c; color:#fff; border:none; border-radius:8px; padding:13px; font-size:16px; font-weight:700; letter-spacing:2px; cursor:pointer; }
+  .btn:active { opacity:.85; }
+  .btn.ghost { background:#fffdf7; color:#b3352c; border:1.5px solid #b3352c; }
+  .btn.small { padding:9px; font-size:14px; }
+  .dims { display:flex; flex-wrap:wrap; gap:5px; }
+  .slot { flex:0 0 calc(25% - 4px); background:#f4ecd9; border:1px solid #ddd0ae; border-radius:6px; padding:5px 2px; text-align:center; }
+  .slot.filled { background:#2b2118; color:#f4ecd9; border-color:#2b2118; }
+  .slot .dn { font-size:11px; opacity:.75; }
+  .slot .dv { font-size:16px; font-weight:800; line-height:1.15; }
+  .slot .ds { font-size:9px; opacity:.65; white-space:nowrap; overflow:hidden; }
+  .prog { text-align:center; font-weight:700; font-size:15px; margin:8px 0; }
+  .prog span { color:#b3352c; }
+  .pcard { display:flex; gap:10px; align-items:center; background:#fffdf7; border:1.5px solid #d8c9a8; border-radius:10px; padding:9px; margin-bottom:8px; cursor:pointer; }
+  .pcard.sel { border-color:#b3352c; box-shadow:0 0 0 1.5px #b3352c; }
+  .pcard img { width:52px; height:52px; border-radius:8px; object-fit:cover; background:#e8dcbc; }
+  .pcard .pn { font-weight:800; font-size:15px; }
+  .pcard .pt { color:#8a7757; font-size:11px; }
+  .pcard .ptop { color:#6b5a44; font-size:11px; margin-top:2px; }
+  .detail { background:#2b2118; color:#f4ecd9; border-radius:10px; padding:12px; margin-bottom:10px; }
+  .detail .dt { font-weight:800; margin-bottom:8px; font-size:15px; }
+  .chip { flex:0 0 calc(25% - 4px); background:#453723; color:#f4ecd9; border:1px solid #6b573a; border-radius:6px; padding:6px 2px; text-align:center; cursor:pointer; }
+  .chip:active { background:#b3352c; }
+  .chip.off { opacity:.32; cursor:default; }
+  .chip .cv { font-size:16px; font-weight:800; }
+  .chip .cn { font-size:11px; opacity:.8; }
+  .hint { background:#fdf3d8; border:1px dashed #c9a227; color:#7a5b12; border-radius:8px; padding:9px; font-size:13px; margin-bottom:10px; text-align:center; font-weight:700; }
+  .vs { text-align:center; font-size:15px; line-height:1.9; }
+  .vs .big { font-size:22px; font-weight:800; }
+  .win { color:#b3352c; font-weight:800; }
+  .rowbtn { display:flex; gap:8px; } .rowbtn .btn { flex:1; }
+  .end-name { text-align:center; font-size:26px; font-weight:800; font-family:"Songti SC","SimSun",serif; margin:6px 0; }
+  .foot { text-align:center; color:#a08c66; font-size:11px; margin-top:14px; line-height:1.7; }
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script src="rap_config.js"></script>
+<script src="rap_data.js"></script>
+<script src="rap_formulas.js"></script>
+<script>
+(function(){
+  var DIMS = RAP_CONFIG.dims, PLAYERS = RAP_CONFIG && window.RAP_DATA.players;
+  var app = document.getElementById('app');
+  var S = null;
+
+  function newGame(){
+    var seed = (Date.now() % 100000000) + Math.floor(Math.random()*1000);
+    S = { phase:'intro', seed:seed, rngState:seed, draftIdx:0, swaps:RAP_CONFIG.swapsPerGame,
+          attrs:Array(12).fill(null), src:Array(12).fill(null), options:[], sel:-1,
+          battleIdx:0, wins:0, battleLog:[] };
+    save(); render();
+  }
+  function rng(){
+    // advance a stored seed counter so refresh resumes deterministically-ish
+    S.rngState = (S.rngState * 1664525 + 1013904223) >>> 0;
+    return (S.rngState >>> 8) / 16777216;
+  }
+  function save(){ try{ sessionStorage.setItem(RAP_CONFIG.sessionKey, JSON.stringify(S)); }catch(e){} }
+  function load(){ try{ var s = sessionStorage.getItem(RAP_CONFIG.sessionKey); if(s){ S = JSON.parse(s); return true; } }catch(e){} return false; }
+  function drawOptions(){
+    var idx = new Set();
+    while(idx.size < RAP_CONFIG.draftOptions){ idx.add(Math.floor(rng()*PLAYERS.length)); }
+    S.options = Array.from(idx); S.sel = -1;
+  }
+  function topDims(p){
+    return p.rap.map(function(v,i){return [v,i];}).sort(function(a,b){return b[0]-a[0];}).slice(0,3)
+      .map(function(x){ return DIMS[x[1]] + x[0]; }).join(' · ');
+  }
+  function slotsHTML(){
+    var h = '<div class="dims">';
+    for(var i=0;i<12;i++){
+      var f = S.attrs[i] !== null;
+      h += '<div class="slot' + (f?' filled':'') + '"><div class="dn">' + DIMS[i] + '</div><div class="dv">' +
+           (f ? S.attrs[i] : '—') + '</div><div class="ds">' + (f ? S.src[i] : '待夺') + '</div></div>';
+    }
+    return h + '</div>';
+  }
+  function header(){
+    return '<div class="kicker">小 样 试 玩</div><h1>Rap 拼将</h1><div class="sub">从 90 位球星身上，夺走 12 项说唱本事<br>拼到一个无名新秀身上，再去打三回合 Battle</div>';
+  }
+  function render(){
+    if(S.phase === 'intro'){
+      app.innerHTML = header() +
+        '<div class="card"><b>怎么玩</b><br><span style="font-size:13px;line-height:1.8;color:#6b5a44">12 轮选人，每轮从 5 位球星里挑 1 人、夺走他的一项能力（同一个位置只能夺一次）。夺满 12 项后打 3 回合 Battle：街头即兴场、录音室场、决胜格局场。<br>小提示：有一项能力，有个人是 <b style="color:#b3352c">99</b>，全场没人够得着。看见他，别手软。</span></div>' +
+        '<div class="card">' + slotsHTML() + '</div>' +
+        '<button class="btn" id="b-start">开始拼人</button>' +
+        '<div class="foot">内部小样 · 不计榜单 · 玩完说一句好不好玩就行</div>';
+      document.getElementById('b-start').onclick = function(){ S.phase='draft'; drawOptions(); save(); render(); };
+    }
+    else if(S.phase === 'draft'){ renderDraft(); }
+    else if(S.phase === 'battle'){ renderBattle(); }
+    else if(S.phase === 'end'){ renderEnd(); }
+  }
+  function renderDraft(){
+    var h = header() + '<div class="prog">第 <span>' + (S.draftIdx+1) + '</span> / 12 轮夺技 · 还剩换一批 <span>' + S.swaps + '</span> 次</div>';
+    h += '<div class="card">' + slotsHTML() + '</div>';
+    if(S.sel >= 0){
+      var p = PLAYERS[S.options[S.sel]];
+      if(p.name === '斯蒂芬·库里' && S.attrs[11] === null){
+        h += '<div class="hint">格局 · 99 —— 这一项，全场没人够得着。</div>';
+      }
+      h += '<div class="detail"><div class="dt">' + p.name + ' · 点一项能力夺走（已夺过的位置不可再夺）</div><div class="dims">';
+      for(var i=0;i<12;i++){
+        var off = S.attrs[i] !== null;
+        h += '<div class="chip' + (off?' off':'') + '" data-dim="' + i + '"><div class="cn">' + DIMS[i] + '</div><div class="cv">' + p.rap[i] + '</div></div>';
+      }
+      h += '</div></div>';
+    } else {
+      h += '<div class="sub">先点一位球星，看他的 12 项说唱能力</div>';
+    }
+    S.options.forEach(function(pi, oi){
+      var p = PLAYERS[pi];
+      h += '<div class="pcard' + (S.sel===oi?' sel':'') + '" data-pick="' + oi + '"><img src="portraits/' + p.portrait + '" alt=""><div><div class="pn">' + p.name + '</div><div class="pt">' + p.team + ' · ' + p.note + '</div><div class="ptop">' + topDims(p) + '</div></div></div>';
+    });
+    h += '<div class="rowbtn"><button class="btn ghost small" id="b-swap"' + (S.swaps<=0?' disabled style="opacity:.4"':'') + '>换一批</button><button class="btn ghost small" id="b-restart">重开</button></div>';
+    app.innerHTML = h;
+    app.querySelectorAll('[data-pick]').forEach(function(el){
+      el.onclick = function(){ S.sel = parseInt(el.getAttribute('data-pick'),10); save(); render(); };
+    });
+    app.querySelectorAll('[data-dim]').forEach(function(el){
+      el.onclick = function(){
+        var d = parseInt(el.getAttribute('data-dim'),10);
+        if(S.attrs[d] !== null) return;
+        var p = PLAYERS[S.options[S.sel]];
+        S.attrs[d] = p.rap[d]; S.src[d] = p.name;
+        S.draftIdx++;
+        if(S.draftIdx >= 12){ S.phase = 'battle'; }
+        else { drawOptions(); }
+        save(); render();
+      };
+    });
+    var sw = document.getElementById('b-swap');
+    if(sw) sw.onclick = function(){ if(S.swaps>0){ S.swaps--; drawOptions(); save(); render(); } };
+    document.getElementById('b-restart').onclick = function(){ sessionStorage.removeItem(RAP_CONFIG.sessionKey); newGame(); };
+  }
+  function renderBattle(){
+    var h = header() + '<div class="card"><div class="prog" style="margin-top:0">你的拼将 · 总评 <span>' + RapFormulas.total(S.attrs) + '</span></div>' + slotsHTML() + '</div>';
+    S.battleLog.forEach(function(L){
+      h += '<div class="card vs">' + L.name + '<br><span class="big">' + L.mine.toFixed(1) + ' : ' + L.opp.toFixed(1) + '</span><br>' + (L.win ? '<span class="win">拿下这一回合</span>' : '这一回合输了') + '</div>';
+    });
+    if(S.battleIdx < RAP_CONFIG.battles.length){
+      var b = RAP_CONFIG.battles[S.battleIdx];
+      h += '<div class="card vs"><b>' + b.name + '</b><br><span style="color:#6b5a44;font-size:13px">' + b.desc + '</span><br>对手：' + b.oppName + '（基准 ' + b.oppBase + '）· 你比的是：' + b.dims.map(function(d){return DIMS[d] + S.attrs[d];}).join(' / ') + '</div>' +
+           '<button class="btn" id="b-fight">开麦 · 打这一回合</button>';
+    }
+    app.innerHTML = h;
+    var f = document.getElementById('b-fight');
+    if(f) f.onclick = function(){
+      var b = RAP_CONFIG.battles[S.battleIdx];
+      var r = RapFormulas.battleRound(S.attrs, b, rng);
+      S.battleLog.push({ name:b.name, mine:r.mine, opp:r.opp, win:r.win });
+      if(r.win) S.wins++;
+      S.battleIdx++;
+      if(S.battleIdx >= RAP_CONFIG.battles.length) S.phase = 'end';
+      save(); render();
+    };
+  }
+  function renderEnd(){
+    var e = RAP_CONFIG.endings.filter(function(x){ return x.wins === S.wins; })[0];
+    var h = header() + '<div class="card"><div class="sub" style="margin-bottom:2px">三回合战绩 ' + S.wins + ' 胜 · 总评 ' + RapFormulas.total(S.attrs) + '</div><div class="end-name">' + e.name + '</div><div class="sub">' + e.desc + '</div>' + slotsHTML() + '</div>';
+    if(S.src[11] === '斯蒂芬·库里'){
+      h += '<div class="hint">你抢到了格局 99——决胜回合的秘密武器，被你拿到了。</div>';
+    }
+    h += '<button class="btn" id="b-again">再来一局</button><div class="foot">截图这张结算，发回去说一句：好玩 / 一般 / 没意思<br>你的反馈决定这个模式做不做下去</div>';
+    app.innerHTML = h;
+    document.getElementById('b-again').onclick = function(){ sessionStorage.removeItem(RAP_CONFIG.sessionKey); newGame(); };
+  }
+  if(!load() || !S || S.phase === 'end' && false){ if(!S) newGame(); else render(); }
+  else render();
+})();
+</script>
+</body>
+</html>
