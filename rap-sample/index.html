@@ -106,7 +106,7 @@
           attrs:Array(12).fill(null), src:Array(12).fill(null), used:[], options:[], sel:-1,
           chapter:0, wins:0, chapterLog:[], bonusNext:0, eventIdx:-1, usedEvents:[],
           resupplyLeft:0, replaced:[], lastResult:null, eventLog:[], acting:false, evResult:null,
-          pickLog:[], bonds:{}, bondNotes:[], iceUsed:false, actingX2:false };
+          pickLog:[], bonds:{}, bondNotes:[], iceUsed:false, actingX2:false, ads:{ reroll:0, consol:0, resup:0, evredo:0 } };
     save(); render();
   }
   function rng(){
@@ -120,6 +120,7 @@
       if(!S.bonds) S.bonds = {};
       if(!S.bondNotes) S.bondNotes = [];
       if(S.iceUsed === undefined) S.iceUsed = false;
+      if(!S.ads) S.ads = { reroll:0, consol:0, resup:0, evredo:0 };
       if(S.actingX2 === undefined) S.actingX2 = false;
       if(S.evResult === undefined) S.evResult = null;
       return true; } }catch(e){}
@@ -154,6 +155,29 @@
   function header(){
     return '<div class="kicker">二 十 章 巡 演 · v3</div><h1>篮球有嘻哈</h1><div class="sub">从 116 位选手身上，夺走 12 项说唱本事<br>一路从天桥底下，唱到封神之夜</div>';
   }
+  var AD_CAPS = { reroll: 3, consol: 2, resup: 2, evredo: 2 };
+  function showAd(cb){
+    var ov = document.createElement('div');
+    ov.style.cssText = 'position:fixed;inset:0;background:rgba(20,14,8,.93);z-index:99;display:flex;align-items:center;justify-content:center';
+    ov.innerHTML = '<div style="background:#f4ecd9;border-radius:14px;padding:26px 22px;width:82%;max-width:340px;text-align:center">'
+      + '<div style="font-size:40px">📺</div><div style="font-weight:800;font-size:17px;margin:8px 0 4px">模拟广告</div>'
+      + '<div style="font-size:12.5px;color:#6b5a43;line-height:1.7">小样里是占位演示，正式版接平台激励视频<br>看完才发奖励，中途退出不发</div>'
+      + '<div style="height:8px;background:#e2d5b8;border-radius:4px;margin:16px 0 6px;overflow:hidden"><div id="ad-bar" style="height:100%;width:0%;background:#b03a2e;border-radius:4px;transition:width 1s linear"></div></div>'
+      + '<div id="ad-sec" style="font-size:12px;color:#6b5a43">广告播放中 · 3 秒</div>'
+      + '<button class="btn" id="ad-get" disabled style="opacity:.4;margin-top:12px">领取奖励</button>'
+      + '<div><button class="btn ghost small" id="ad-x" style="margin-top:8px">放弃奖励离开</button></div></div>';
+    document.body.appendChild(ov);
+    var left = 3;
+    var bar = ov.querySelector('#ad-bar'), sec = ov.querySelector('#ad-sec'), get = ov.querySelector('#ad-get');
+    var timer = setInterval(function(){
+      left--;
+      bar.style.width = ((3 - left) / 3 * 100) + '%';
+      if(left <= 0){ clearInterval(timer); sec.textContent = '广告播放完毕'; get.disabled = false; get.style.opacity = '1'; }
+      else sec.textContent = '广告播放中 · ' + left + ' 秒';
+    }, 1000);
+    get.onclick = function(){ document.body.removeChild(ov); cb(); };
+    ov.querySelector('#ad-x').onclick = function(){ clearInterval(timer); document.body.removeChild(ov); };
+  }
   function render(){
     if(S.phase === 'intro'){ renderIntro(); }
     else if(S.phase === 'draft'){ renderDraft(); }
@@ -166,7 +190,7 @@
   function renderIntro(){
     app.innerHTML = header() +
       '<img class="arcimg" src="art/arc1.jpg" alt="">' +
-      '<div class="card"><b>怎么玩</b><br><span style="font-size:13px;line-height:1.8;color:#6b5a44">先用 12 轮选人，从球星和嘉宾身上夺走 12 项说唱能力（选过的人不会再出现）。然后开启 <b>20 章巡演</b>：每一章一个场子、一位对手，选对打法才能赢；章节之间有随机插曲找上门，中途还有 3 次补给换人的机会。<br>卡面颜色有讲究：金卡是传说，还有粉卡、绿卡和一张数值全是 ?? 的<b style="color:#1d8aa5">钻石卡</b>——夺走它的能力时，数值当场随机开出。<br>小提示：库里的「格局」是 <b style="color:#b3352c">100</b>，全场唯一。看见他，别手软。还有，阿耶莎藏着一项专属夺技「演技」——夺走它，后面每场战斗和每次插曲判定都有加成。<br>特定的两个人同一局都被你夺过，还会触发隐藏<b>「羁绊」</b>：有加成，也有坑，触发当场结算。</span></div>' +
+      '<div class="card"><b>怎么玩</b><br><span style="font-size:13px;line-height:1.8;color:#6b5a44">先用 12 轮选人，从球星和嘉宾身上夺走 12 项说唱能力（选过的人不会再出现）。然后开启 <b>20 章巡演</b>：每一章一个场子、一位对手，选对打法才能赢；章节之间有随机插曲找上门，中途还有 3 次补给换人的机会。<br>卡面颜色有讲究：金卡是传说，还有粉卡、绿卡和一张数值全是 ?? 的<b style="color:#1d8aa5">钻石卡</b>——夺走它的能力时，数值当场随机开出。<br>小提示：格局能到 <b style="color:#b3352c">100</b> 的只有库里和乔丹。看见他们，别手软。还有，阿耶莎藏着一项专属夺技「演技」——夺走它，后面每场战斗和每次插曲判定都有加成。<br>特定的两个人同一局都被你夺过，还会触发隐藏<b>「羁绊」</b>：有加成，也有坑，触发当场结算。<br>换一批、补给、判定重选这些机会，除了局内免费次数，还能看广告追加（小样里是模拟广告）。</span></div>' +
       '<button class="btn" id="b-start">开始拼人</button>' +
       '<div class="foot">内部试玩 · 二十章巡演版</div>';
     document.getElementById('b-start').onclick = function(){ S.phase='draft'; drawOptions(); save(); render(); };
@@ -287,7 +311,11 @@
       h += '<div class="sub">先点一位选手，看他的 12 项说唱能力</div>';
     }
     h += optionsHTML();
-    h += '<div class="rowbtn"><button class="btn ghost small" id="b-swap"' + (S.rerolls<=0?' disabled style="opacity:.4"':'') + '>换一批</button><button class="btn ghost small" id="b-restart">重开</button></div>';
+    var swapBtn;
+    if(S.rerolls > 0) swapBtn = '<button class="btn ghost small" id="b-swap">换一批</button>';
+    else if(S.ads.reroll < AD_CAPS.reroll) swapBtn = '<button class="btn ghost small" id="b-swapad">📺 看广告换一批（剩 ' + (AD_CAPS.reroll - S.ads.reroll) + ' 次）</button>';
+    else swapBtn = '<button class="btn ghost small" disabled style="opacity:.4">换一批已用完</button>';
+    h += '<div class="rowbtn">' + swapBtn + '<button class="btn ghost small" id="b-restart">重开</button></div>';
     app.innerHTML = h;
     bindExtra('draft');
     bindPicks(function(d){
@@ -305,6 +333,8 @@
     });
     var sw = document.getElementById('b-swap');
     if(sw) sw.onclick = function(){ if(S.rerolls>0){ S.rerolls--; drawOptions(); save(); render(); } };
+    var sa = document.getElementById('b-swapad');
+    if(sa) sa.onclick = function(){ showAd(function(){ S.ads.reroll++; drawOptions(); save(); render(); }); };
     document.getElementById('b-restart').onclick = function(){ sessionStorage.removeItem(CFG.sessionKey); newGame(); };
   }
   function renderChapter(){
@@ -334,9 +364,12 @@
     if(S.lastResult){
       var L = S.lastResult;
       h += '<div class="card vs">' + ch.title + ' · 你选了「' + L.tactic + '」<br><span class="big">' + L.mine.toFixed(1) + ' : ' + L.opp.toFixed(1) + '</span><br>' + (L.win ? '<span class="win">拿下这一章！</span>' : '这一章输了') + '<div style="font-size:13px;line-height:1.75;color:#6b5a44;margin-top:6px;text-align:left">' + (L.win ? ch.win : ch.lose) + '</div></div>';
+      if(!L.win && S.ads.consol < AD_CAPS.consol) h += '<button class="btn" id="b-consol" style="background:#2e7d4f;margin-bottom:8px">📺 看广告：下一章 +5 状态（本局剩 ' + (AD_CAPS.consol - S.ads.consol) + ' 次）</button>';
       h += '<button class="btn" id="b-next">' + (S.chapter >= 19 ? '揭晓结局' : '前往下一章') + '</button>';
       app.innerHTML = h;
       document.getElementById('b-next').onclick = function(){ advance(); };
+      var bc = document.getElementById('b-consol');
+      if(bc) bc.onclick = function(){ showAd(function(){ S.ads.consol++; S.bonusNext = (S.bonusNext || 0) + 5; save(); render(); }); };
       return;
     }
     h += '<div class="card vs">对手强度 <b>' + ch.oppBase + '</b>' + (S.bonusNext ? ' · 插曲加成 <b style="color:#b3352c">' + (S.bonusNext>0?'+':'') + S.bonusNext + '</b>' : '') + (S.acting ? ' · 🎭 演技加成 <b style="color:#b3352c">+' + actBonus() + '</b>' : '') + '</div>';
@@ -387,11 +420,14 @@
         '<div style="text-align:center;font-size:22px;font-weight:900;margin:12px 0">' + (c2.dims ? (R.ok ? '<span class="win">成了！</span>' : '<span style="color:#b3352c">没成</span>') : '<span class="win">稳稳生效</span>') + '</div>' +
         '<div class="ex" style="text-align:center">下一场加成 <b style="color:#b3352c">' + (R.bonus > 0 ? '+' + R.bonus : '' + R.bonus) + '</b></div></div>' +
         (R.mine !== null && !R.ok && S.bonds.ice && !S.iceUsed ? '<button class="btn" id="b-ice" style="background:#2e7d4f;margin-bottom:8px">💞 冰释前嫌：回到这次选择，换一个（本局一次）</button>' : '') +
+        (R.mine !== null && !R.ok && !(S.bonds.ice && !S.iceUsed) && S.ads.evredo < AD_CAPS.evredo ? '<button class="btn" id="b-evredo" style="background:#8a6d1f;margin-bottom:8px">📺 看广告：回到这次选择重选（本局剩 ' + (AD_CAPS.evredo - S.ads.evredo) + ' 次）</button>' : '') +
         '<button class="btn" id="b-evgo">继续巡演</button>';
       app.innerHTML = hh;
       document.getElementById('b-evgo').onclick = function(){ S.evResult = null; S.eventIdx = -1; S.phase = 'chapter'; save(); render(); };
       var bi = document.getElementById('b-ice');
       if(bi) bi.onclick = function(){ S.iceUsed = true; S.evResult = null; S.usedEvents.pop(); save(); render(); };
+      var be = document.getElementById('b-evredo');
+      if(be) be.onclick = function(){ showAd(function(){ S.ads.evredo++; S.evResult = null; S.usedEvents.pop(); save(); render(); }); };
       return;
     }
     var h = header() + '<div class="prog">巡演插曲</div>' +
@@ -420,9 +456,11 @@
     if(S.sel >= 0){ h += detailHTML('resupply'); }
     else { h += '<div class="sub">点一位新选手，再点你想换掉的能力（现值会标在格子上）</div>'; }
     h += optionsHTML();
-    h += '<div class="rowbtn"><button class="btn ghost small" id="b-skip">不换了，继续巡演</button></div>';
+    h += '<div class="rowbtn"><button class="btn ghost small" id="b-skip">不换了，继续巡演</button>' + (S.ads.resup < AD_CAPS.resup ? '<button class="btn ghost small" id="b-resupad">📺 看广告再补给一项（剩 ' + (AD_CAPS.resup - S.ads.resup) + ' 次）</button>' : '') + '</div>';
     app.innerHTML = h;
     bindExtra('resupply');
+    var br = document.getElementById('b-resupad');
+    if(br) br.onclick = function(){ showAd(function(){ S.ads.resup++; S.resupplyLeft++; save(); render(); }); };
     bindPicks(function(d){
       if(S.replaced.indexOf(d) >= 0) return;
       var pi = S.options[S.sel], p = PLAYERS[pi];
