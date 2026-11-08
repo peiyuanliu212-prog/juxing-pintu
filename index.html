@@ -44,8 +44,11 @@ h1.title{font-size:31px;font-weight:900;margin:4px 0 2px;letter-spacing:2px;text
 .row{display:flex;gap:8px}.row>.btn{flex:1}
 .resbar{display:flex;flex-wrap:wrap;gap:4px 10px;background:#fffdf6;color:var(--ink);border:1px solid var(--line2);border-radius:10px;padding:8px 10px;margin:10px;font-size:12.5px}
 .bond-strip{display:flex;flex-wrap:wrap;gap:6px;background:#fdf3d8;color:var(--ink);border:1.5px solid var(--gold2);border-radius:10px;padding:8px 10px;margin:10px;font-size:14px}
-.bond-chip{background:#fffdf6;border:1.5px solid var(--gold2);border-radius:999px;padding:3px 10px;color:#b3402a;font-weight:700;font-size:14px;line-height:1.5}
+.bond-chip{background:#fffdf6;border:1.5px solid var(--gold2);border-radius:14px;padding:4px 10px 5px;color:#b3402a;font-weight:700;font-size:14px;line-height:1.5;display:inline-flex;flex-direction:column}
+.bond-chip .bc-t{white-space:nowrap}
+.bond-chip .bc-d{font-size:11px;font-weight:400;line-height:1.45;color:#7a6c4f}
 .bond-chip.done{background:var(--accent2);border-color:var(--accent2);color:#fff}
+.bond-chip.done .bc-d{color:rgba(255,255,255,.93)}
 .resbar b{color:#b3402a;font-weight:700}
 .slots{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}
 .slot{background:#fffaf0;border:1.5px dashed #cbbd93;border-radius:8px;padding:6px 4px;text-align:center;font-size:12px;color:var(--ink);min-width:0}
@@ -1529,25 +1532,46 @@ window.BK_ensureArt = function(){
       return '💞 '+B.name+' '+n+'/2';
     }).join(' ');
   }
-  // BK-029 羁绊横条：选秀页（进行中进度＋已达成）与对战页（已达成＋仍生效标记）共用；无任何内容时返回空串、整条不占位
+  // BK-031 已达成明细（只读展示）：数值一律取结算后真实 attrs 与 baseAttrs 的逐人差值——硬顶截断/全队叠加/宿敌回滚后的最终口径，禁止按配置模板反推
+  function bondFxText(B, mode){
+    if(B.type==='team') return '全队未满 '+C.BOND_TEAM_LINE+' 的项 +1';
+    if(B.type==='foe' && S.befriended && S.befriended[B.id]) return '化敌为友：两人各 +'+C.BOND_BEFRIEND_BONUS;
+    const parts = [];
+    for(const name of [B.a, B.b]){
+      const sl = S.attrSrc.indexOf(name);
+      if(sl<0 || !S.baseAttrs || S.baseAttrs[sl]==null || S.attrs[sl]==null) continue;
+      const d = S.attrs[sl] - S.baseAttrs[sl];
+      parts.push(esc(name)+' '+C.ATTRS[sl]+' '+S.baseAttrs[sl]+'→'+S.attrs[sl]+'（'+(d>0?'+':'')+d+'）');
+    }
+    if(B.type==='temp'){
+      if(mode==='battle') parts.push((S.bondBuffBattles||0)>0 && (S.bondBuff||0)>0 ? '本战全队判定 +'+C.BOND_TEMP_VALUE : '全队判定 +'+C.BOND_TEMP_VALUE+' 已生效（首战）');
+      else parts.push('下一战全队判定 +'+C.BOND_TEMP_VALUE);
+    }
+    if(B.type==='mech') parts.push('免费换一批 1 次（'+((S.freeReroll||0)>0?'待用':'已用')+'）');
+    return parts.join('；');
+  }
+  // BK-031 进行中预期模板：按 BONDS 配置 cls/ref 现算，与配置表逐字对齐（答案与真相 ref 92 例外走 B.ref）
+  function bondGoalText(B){
+    if(B.type==='foe') return '凑齐：两人被夺能力各 -'+Math.round(C.BOND_FOE_RATE*100)+'%（单项最多 -'+C.BOND_FOE_CAP+'）';
+    if(B.type==='team') return '凑齐：全队未满 '+C.BOND_TEAM_LINE+' 的项 +1';
+    const spec = C.BOND_FILL[B.cls] || C.BOND_FILL.BASE;
+    let t = (!spec.cap) ? '凑齐：两人各 +'+C.BOND_BASE_BONUS : '凑齐：两人弱项补到 '+(B.ref||spec.ref)+'（单项最多 +'+spec.cap+'）＋保底 +'+C.BOND_BASE_BONUS;
+    if(B.type==='temp') t += '；下一战全队判定 +'+C.BOND_TEMP_VALUE;
+    if(B.type==='mech') t += '；另送免费换一批 1 次';
+    return t;
+  }
+  // BK-029/031 羁绊横条：选秀页（进行中进度＋预期效果／已达成＋实际效果）与对战页（已达成＋实际效果）共用；chip 两段式，无任何内容时返回空串、整条不占位
   function bondStripHtml(mode){
     if(!S || !S.attrSrc) return '';
     const chips = [];
     for(const B of C.BONDS){
       if(S.bonds && S.bonds[B.id]){
-        let label = '💞 '+esc(B.name)+' ✓ 已达成';
-        if(mode==='battle'){
-          if(B.type==='foe') label += (S.befriended && S.befriended[B.id]) ? ' · 已化敌为友' : ' · 扣减生效中';
-          else if(B.type==='team') label += ' · 全队共鸣生效中';
-          else if(B.type==='temp' && (S.bondBuffBattles||0)>0 && (S.bondBuff||0)>0) label += ' · 本战全队判定 +'+C.BOND_TEMP_VALUE;
-          else if(B.type==='mech' && (S.freeReroll||0)>0) label += ' · 免费换一批余 '+S.freeReroll+' 次';
-        }
-        chips.push('<span class="bond-chip done">'+label+'</span>');
+        chips.push('<span class="bond-chip done"><span class="bc-t">💞 '+esc(B.name)+' ✓ 已达成</span><span class="bc-d">'+bondFxText(B, mode)+'</span></span>');
       } else if(mode==='draft'){
         const locked = [B.a,B.b].filter(x=>S.attrSrc.includes(x));
         if(locked.length===1){
           const wait = locked[0]===B.a ? B.b : B.a;
-          chips.push('<span class="bond-chip">💞 '+esc(B.name)+' '+locked.length+'/2（待：'+esc(wait)+'）</span>');
+          chips.push('<span class="bond-chip"><span class="bc-t">💞 '+esc(B.name)+' '+locked.length+'/2（待：'+esc(wait)+'）</span><span class="bc-d">'+bondGoalText(B)+'</span></span>');
         }
       }
     }
@@ -1574,7 +1598,7 @@ window.BK_ensureArt = function(){
   }
   function modal(html){ document.getElementById('modal-root').innerHTML = '<div class="modal"><div class="box">'+html+'</div></div>'; }
   function closeModal(){ document.getElementById('modal-root').innerHTML=''; }
-  window.BK_UI = { render, setState:(s)=>{S=s;} };
+  window.BK_UI = { render, setState:(s)=>{S=s;}, bondStripHtml };
   function render(){
     if(view==='home') return renderHome();
     if(view==='setup') return renderSetup();
