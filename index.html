@@ -225,8 +225,8 @@ window.BK_CONFIG = {
   GRADE_GREAT_MARGIN: 25,   // roll <= rate-25 大胜
   GRADE_HOLD_MARGIN: 15,    // 失败但 roll <= rate+15 时 B 类按僵持
   MERIT: {great:3, win:2, hold:1, lose:0},
-  GAMBLE_RATE_FACTOR: 0.5,  // 拼一把：成功率减半、效果与功勋翻倍、失败额外代价
-  GAMBLE_FAIL_EXTRA: {health:-3, power:-50},
+  // BK-033 羁绊扩展 A 拼一把（主线执行解释定版）：下注即扣令、双掷净胜率 p² 定价、押赢回补
+  GAMBLE: { startTokens:1, tokenCap:3, perChapter:1, requireBond:true, earnChapterEvery:5, earnOnBondTrigger:true, rewardK:1.0, clampMin:0.25, clampMax:1.5, feelTiers:[0.7,0.45], tokenRefundOnWin:1, rateBonus:8 },
   LOAD_FORMULA_DIV: 2, LOAD_FORMULA_ADD: 30, LOAD_HEALTH_PER: -2, LOAD_RATE_PER: -3,
   SCENE_ATTR_MIN: 85,
   REST_AFTER: [4,8,12,16], REST_HEALTH: 12,
@@ -387,7 +387,7 @@ window.BK_CONFIG = {
     if(!state.fate) return null;
     return C.FATES.find(f=>f.id===state.fate) || null;
   }
-  // 判定成功率（母本）：clamp(35+(attr-60)*0.8 - 负荷*3 + 修正, 10, 90)；拼一把减半，上限95口径同母本锦囊位——本作无锦囊，封顶90
+  // 判定成功率（母本）：clamp(35+(attr-60)*0.8 - 负荷*3 + 修正, 10, 90)；封顶90
   function checkRate(state, idx, opts){
     opts = opts||{};
     let rate = C.CHECK_BASE + (effAttr(state, idx)-C.CHECK_PIVOT)*C.CHECK_PER_POINT + loadConflict(state.attrs, state)*C.LOAD_RATE_PER;
@@ -397,7 +397,6 @@ window.BK_CONFIG = {
     rate += fateMod(state, idx);
     if(opts.mod) rate += opts.mod;
     rate = clamp(rate, C.CHECK_MIN, C.CHECK_MAX);
-    if(opts.gamble) rate = Math.round(rate*C.GAMBLE_RATE_FACTOR);
     return Math.round(rate*10)/10; // BK-025：统一一位小数——判定与展示同源，杜绝 53.4000…006% 浮点尾巴
   }
   function gradeOf(roll, rate, success){
@@ -492,6 +491,9 @@ window.BK_CONFIG = {
       personalFail: 0, proSuccess: 0, selfStreak: 0, playoffRest: 0,
       flags: { loyal:false, transfer:false, injuryMark:false, bountyTag:false },
       battleIdx: 0, pendingEvent: null, lastSettle: null, eDoneBattle: [],
+      // BK-033 拼一把：拼令/频率闸/里程碑防重发/本局押赢累计/首次高光挣令记账/遥测（normalize 按默认表自动补齐旧档）
+      gambleTokens: C.GAMBLE.startTokens, gambleCh: 0, gambleEarnPaid: 0, wagerPoints: 0, wagerScenePaid: false,
+      tele: { wager:0, wagerWin:0, wagerFlip:0, eWeakShow:0, eWeakPick:0, eStrongShow:0, eStrongPick:0, bondEvent:0 },
       ledgerLog: [], shopOwned: [], gambleNote: null, checkMod: null, finalsWins: 0,
       endingId: null, legend: null, submitted: false
     };
@@ -514,6 +516,10 @@ window.BK_CONFIG = {
     if(!s.foeMarks || typeof s.foeMarks!=='object') s.foeMarks = {};
     if(!s.befriended || typeof s.befriended!=='object') s.befriended = {};
     if(!Array.isArray(s.eDoneBattle)) s.eDoneBattle = [];
+    // BK-033：tele 子键补齐（旧档/半新档均不丢计数）
+    if(!s.tele || typeof s.tele!=='object') s.tele = d.tele;
+    else { for(const k in d.tele){ if(typeof s.tele[k]!=='number') s.tele[k]=d.tele[k]; } }
+    if(typeof s.gambleTokens==='number') s.gambleTokens = Math.max(0, Math.min(C.GAMBLE.tokenCap, s.gambleTokens));
     s.ver = 1;
     // phase 归一：settle 类 phase 恢复时统一回到 battle 流（靠 lastSettle 分发重建）——母本 settle 修复实锤口径
     if(s.phase==='chapter-settle' || s.phase==='event-settle') s.phase='battle';
@@ -960,13 +966,19 @@ window.BK_EVENTS = [
   B:{label:'用人脉压下（人脉-1，争议-1）', fixed:{rel:-1,controversy:-1}}},
  {id:'locker', name:'更衣室矛盾', brief:'老将嫌你出手太多，当众摔了毛巾',
   A:{label:'当面谈开（查领袖）', attr:11, kind:'pro', win:{power:100}, lose:{power:-80,controversy:1}},
-  B:{label:'冷处理（争议+1）', fixed:{controversy:1}}},
+  B:{label:'冷处理（争议+1）', fixed:{controversy:1}},
+  bondRewrite:{bond:'ok', weakType:'risk-up', strongType:'branch',
+    weak:{label:'💞 OK 组合：双核之一出面调停（查领袖）', attr:11, kind:'pro', win:{power:80}, lose:{power:-40,controversy:1}},
+    strong:{label:'💞 OK 组合：OK 和解，双核联手表态（查领袖）', attr:11, kind:'pro', win:{power:150,fame:1}, lose:{power:-80,controversy:1}}}},
  {id:'injury_wave', name:'伤病潮蔓延', brief:'队医报告又添两人',
   A:{label:'硬扛（健康-6，战力+60）', fixed:{health:-6,power:60}},
   B:{label:'全队轮休一轮（健康+6，战力-60；轮休可豁免）', fixed:{health:6,power:-60}}},
  {id:'record_night', name:'纪录之夜', brief:'你距离某项纪录只差一场',
   A:{label:'追纪录（查当家能力）', attr:'best', kind:'pro', win:{fame:3,scene:1}, lose:{controversy:1}},
-  B:{label:'顺其自然', fixed:{fame:1}}},
+  B:{label:'顺其自然', fixed:{fame:1}},
+  bondRewrite:{bond:'splash', weakType:'risk-up', strongType:'branch',
+    weak:{label:'💞 水花兄弟：水花之一单独追纪录（查当家能力）', attr:'best', kind:'pro', win:{fame:2,scene:1}, lose:{controversy:1}},
+    strong:{label:'💞 水花兄弟：兄弟连纪录之夜（查当家能力）', attr:'best', kind:'pro', win:{fame:3,scene:1,rel:1}, lose:{controversy:1}}}},
  {id:'media_debt', name:'媒体风暴', brief:'名嘴在节目里说你被高估，片段上了热搜',
   A:{label:'公开回应（人气+2，争议+1）', fixed:{fame:2,controversy:1}},
   B:{label:'沉默（人气-1，争议-1）', fixed:{fame:-1,controversy:-1}}},
@@ -975,19 +987,34 @@ window.BK_EVENTS = [
   B:{label:'硬刚联盟（人气+1，争议+2）', fixed:{fame:1,controversy:2}}},
  {id:'fan_night', name:'球迷之夜', brief:'主场球迷自发为你拉 MVP 横幅',
   A:{label:'签名合影回馈（人气+2，战力+40）', fixed:{fame:2,power:40}},
-  B:{label:'低调离场（人气+1）', fixed:{fame:1}}},
+  B:{label:'低调离场（人气+1）', fixed:{fame:1}},
+  bondRewrite:{bond:'gods', weakType:'safe-low', strongType:'branch',
+    weak:{label:'💞 神与王：神王之一回馈球迷', fixed:{fame:2,power:20}},
+    strong:{label:'💞 神与王：双神同框回馈球迷（查领袖）', attr:11, kind:'pro', win:{fame:3,power:60}, lose:{fame:1}}}},
  {id:'mentor', name:'老将传授', brief:'退役名宿来训练馆单练你一场',
   A:{label:'虚心求教（随机一项能力历练+1）', train:true, fixed:{}},
-  B:{label:'婉拒专注当下', fixed:{}}},
+  B:{label:'婉拒专注当下', fixed:{}},
+  bondRewrite:{bond:'towers', weakType:'safe-low', strongType:'branch',
+    weak:{label:'💞 双塔：双塔之一单独指点（随机一项能力历练+1）', train:true, fixed:{}},
+    strong:{label:'💞 双塔：双塔合练（查球商）', train:true, attr:10, kind:'pro', win:{power:40}, lose:{}}}},
  {id:'rookie', name:'新秀挑衅', brief:'今年的热门新秀放话要拿你当垫脚石',
   A:{label:'正面打服他（查突破）', attr:2, kind:'pro', win:{fame:2}, lose:{controversy:1}},
-  B:{label:'不跟小孩子计较', fixed:{}}},
+  B:{label:'不跟小孩子计较', fixed:{}},
+  bondRewrite:{bond:'triangle', weakType:'risk-up', strongType:'branch',
+    weak:{label:'💞 三角进攻：三角之一正面打服（查突破）', attr:2, kind:'pro', win:{fame:1}, lose:{controversy:1}},
+    strong:{label:'💞 三角进攻：联手军训新秀（查突破）', attr:2, kind:'pro', win:{fame:3,power:80}, lose:{controversy:1}}}},
  {id:'revenge', name:'手刃旧主', brief:'赛程撞上老东家，全场都在等这一战', cond:'transferOrRumor',
   A:{label:'全力打爆旧主（查中投）', attr:1, kind:'pro', win:{fame:3,controversy:-2}, lose:{controversy:2}},
-  B:{label:'平常心对待', fixed:{fame:1}}},
+  B:{label:'平常心对待', fixed:{fame:1}},
+  bondRewrite:{bond:'foe', weakType:'risk-up', strongType:'branch',
+    weak:{label:'💞 宿敌：宿敌之一的旧主戏（查中投）', attr:1, kind:'pro', win:{fame:2,controversy:-1}, lose:{controversy:1}},
+    strong:{label:'💞 宿敌：宿敌联手打爆旧主（查中投）', attr:1, kind:'pro', win:{fame:4,controversy:-2}, lose:{controversy:2}}}},
  {id:'ball_rights', name:'球权谈判', brief:'队内二当家要求更多球权，更衣室在等你表态',
   A:{label:'让球（战力+100，个人判定修正-3 持续3战）', fixed:{power:100}, debuff:{mod:-3,battles:3}},
-  B:{label:'争球（战力-60，个人判定修正+3 持续3战）', fixed:{power:-60}, buff:{mod:3,battles:3}}},
+  B:{label:'争球（战力-60，个人判定修正+3 持续3战）', fixed:{power:-60}, buff:{mod:3,battles:3}},
+  bondRewrite:{bond:'janwei', weakType:'safe-low', strongType:'branch',
+    weak:{label:'💞 詹韦连线：让球给詹韦之一', fixed:{power:60}},
+    strong:{label:'💞 詹韦连线：球权共治（查传球）', attr:4, kind:'pro', win:{power:140,fame:1}, lose:{power:-60}}}},
  {id:'cold_bench', name:'内讧冷板凳', brief:'两名队友公开闹僵，必须冷板凳一个',
   A:{label:'冷射手保内线（战力-40，三分相关判定+2 持续3战）', fixed:{power:-40}},
   B:{label:'冷内线保射手（战力-40，篮板相关判定+2 持续3战）', fixed:{power:-40}}},
@@ -1143,7 +1170,10 @@ window.BK_ensureArt = function(){
     s.baseAttrs[attrIdx] = s.attrs[attrIdx];
     s.lockedCount++; s.draftRound++;
     s.batch = null; s.peakPending = null;
+    const bondsBefore = s.bonds ? Object.keys(s.bonds) : [];
     recomputeBonds(s); // 选秀期每次锁定后重算；第 12 锁即开赛冻结
+    // BK-033 挣令·羁绊触发：recompute 前后键集新增逐对 +1（钳上限）
+    if(C.GAMBLE.earnOnBondTrigger && s.bonds){ for(const id in s.bonds){ if(!bondsBefore.includes(id)) grantGambleTokens(s, 1); } }
     if(s.draftRound >= C.DRAFT_ROUNDS){ s.phase='battle'; s.battleIdx=1; }
     else genBatch(s);
     syncRng(s);
@@ -1271,11 +1301,49 @@ window.BK_ensureArt = function(){
   function scaleFx(fx, mult){
     if(!fx) return {}; const out={}; for(const k in fx) out[k]=fx[k]*mult; return out;
   }
+  // —— BK-033 A 拼一把 ——
+  function ensureTele(s){ if(!s.tele || typeof s.tele!=='object') s.tele = { wager:0, wagerWin:0, wagerFlip:0, eWeakShow:0, eWeakPick:0, eStrongShow:0, eStrongPick:0, bondEvent:0 }; return s.tele; }
+  function grantGambleTokens(s, n){
+    if(!n || n<=0) return 0;
+    const before = (typeof s.gambleTokens==='number') ? s.gambleTokens : C.GAMBLE.startTokens;
+    s.gambleTokens = Math.min(C.GAMBLE.tokenCap, before + n);
+    return s.gambleTokens - before;
+  }
+  function wagerEligible(s){
+    return !!s && (s.gambleTokens||0) > 0 && s.gambleCh !== s.battleIdx && (!C.GAMBLE.requireBond || Object.keys(s.bonds||{}).length > 0);
+  }
+  function wagerCoef(rate){
+    const p = rate/100, p2 = p*p;
+    if(!(p2>0)) return C.GAMBLE.clampMax;
+    return F.clamp((1-p2)/p2, C.GAMBLE.clampMin, C.GAMBLE.clampMax);
+  }
+  function wagerReward(rate, grade){
+    const B = C.MERIT[grade] || 0;
+    if(!B) return 0;
+    return Math.round(wagerCoef(rate) * B * C.GAMBLE.rewardK);
+  }
+  function wagerFeel(rate){
+    const p = rate/100, p2 = p*p;
+    if(p2 >= C.GAMBLE.feelTiers[0]) return '稳';
+    if(p2 >= C.GAMBLE.feelTiers[1]) return '较稳';
+    return '险';
+  }
+  function creditWagerPoints(s, n){
+    if(!n || n<=0) return 0;
+    const meta = window.BK_Meta.load(); meta.points = (meta.points||0) + n; window.BK_Meta.save(meta);
+    s.wagerPoints = (s.wagerPoints||0) + n;
+    return n;
+  }
   function chooseBattle(s, key, opts){
-    opts = opts||{}; const gamble = !!opts.gamble;
+    opts = opts||{};
     const b = battleDef(s); if(!b) return { ok:false, reason:'no-battle' };
     const opt = b[key]; if(!opt) return { ok:false, reason:'no-option' };
-    const rec = { kind:'battle', battle:b.id, key, gamble, pre:null, lines:[] };
+    // BK-033：wager 只对判定类（pro/plan）生效，前置＝有拼令＋本战未拼＋已触发≥1对羁绊；finals/fixed/identity 不生效
+    const wager = !!opts.wager && (opt.kind==='pro' || opt.kind==='plan') && wagerEligible(s);
+    const rec = { kind:'battle', battle:b.id, key, wager, pre:null, lines:[] };
+    if(wager){ // 下注即扣令（赌注本体）＋频率闸置位＋遥测
+      s.gambleTokens--; s.gambleCh = s.battleIdx; ensureTele(s).wager++;
+    }
     // 负荷冲突场首结算
     const lc = preBattle(s);
     if(lc>0){ L.apply(s, { health: lc*C.LOAD_HEALTH_PER }, 'load-conflict'); rec.pre = { load: lc, health: lc*C.LOAD_HEALTH_PER }; }
@@ -1297,14 +1365,31 @@ window.BK_ensureArt = function(){
       // 判定类
       const mods = {};
       if(s.checkMod && s.checkMod.battles>0) mods.mod = s.checkMod.value;
-      rate = F.checkRate(s, opt.attr, Object.assign({}, mods, { gamble }));
+      rate = F.checkRate(s, opt.attr, mods);
       roll = Math.floor(rng.next()*100)+1;
-      success = roll <= rate;
-      grade = success ? F.gradeOf(roll, rate, true) : (opt.kind==='plan' && roll <= rate + C.GRADE_HOLD_MARGIN ? 'hold' : 'lose');
-      const mult = gamble ? 2 : 1;
+      const roll1Success = roll <= rate;
+      success = roll1Success;
+      let wagerFlip = false, wagerRoll2 = null;
+      if(wager && roll1Success){
+        // 双掷模型：roll1 成功后再掷 roll2（独立、同 rate），roll2 失败翻转为败；净胜率＝p²
+        wagerRoll2 = Math.floor(rng.next()*100)+1;
+        if(wagerRoll2 > rate){ success = false; wagerFlip = true; ensureTele(s).wagerFlip++; }
+      }
+      if(wagerFlip) grade = 'lose';
+      else grade = success ? F.gradeOf(roll, rate, true) : (opt.kind==='plan' && roll <= rate + C.GRADE_HOLD_MARGIN ? 'hold' : 'lose');
+      if(wager){
+        rec.wager = { R: 0, flip: wagerFlip, roll2: wagerRoll2 };
+        if(success){ // 押赢：grade 照 gradeOf(roll1)，额外 R 按 p² 定价入生涯功勋点＋回补令
+          const R = wagerReward(rate, grade);
+          rec.wager.R = R;
+          if(R>0) creditWagerPoints(s, R);
+          s.gambleTokens = Math.min(C.GAMBLE.tokenCap, s.gambleTokens + C.GAMBLE.tokenRefundOnWin);
+          ensureTele(s).wagerWin++;
+        }
+      }
       if(success){
-        L.apply(s, scaleFx(opt.win, mult), 'battle-win');
-        let merit = C.MERIT[grade]*mult;
+        L.apply(s, opt.win||{}, 'battle-win');
+        let merit = C.MERIT[grade];
         if(opt.noMerit) merit = 0;
         L.apply(s, { merit }, 'battle-merit');
         // 批2·历练成长：判定胜/大胜（及 plan 僵持，见下方 else 分支）后，所考属性本局永久成长
@@ -1315,13 +1400,15 @@ window.BK_ensureArt = function(){
         if(opt.kind==='pro'){
           s.proSuccess++;
           const fateScene = (function(){ const ft = s.fate && C.FATES.find(f=>f.id===s.fate); return (ft && ft.mode==='scene') ? ft.mod : 0; })();
-          if(F.effAttr(s, opt.attr) >= C.SCENE_ATTR_MIN - fateScene && rng.next()<0.9){ L.apply(s, { scene: 1 }, 'scene'); rec.scene = true; }
+          if(F.effAttr(s, opt.attr) >= C.SCENE_ATTR_MIN - fateScene && rng.next()<0.9){ L.apply(s, { scene: 1 }, 'scene'); rec.scene = true;
+            // BK-033 挣令·首次高光替代源（纸面 C6）：本局首次高光 +1 拼令，每局一次
+            if(!s.wagerScenePaid){ s.wagerScenePaid = true; grantGambleTokens(s, 1); }
+          }
         }
       } else {
-        L.apply(s, scaleFx(opt.lose, mult), 'battle-lose');
-        if(gamble) L.apply(s, C.GAMBLE_FAIL_EXTRA, 'gamble-extra');
+        L.apply(s, opt.lose||{}, 'battle-lose');
         if(opt.kind==='plan' && grade==='hold'){
-          if(!opt.noMerit) L.apply(s, { merit: C.MERIT.hold*mult }, 'battle-merit');
+          if(!opt.noMerit) L.apply(s, { merit: C.MERIT.hold }, 'battle-merit');
           // 批2·历练成长：僵持同样计成长（任务书口径），与胜场同一段界/封顶
           const tAmtH = s.battleIdx < C.TRAIN.FRONT_END ? C.TRAIN.FRONT_AMT : C.TRAIN.BACK_AMT;
           s.perm[opt.attr] = Math.min(C.TRAIN.CAP, (s.perm[opt.attr]||0) + tAmtH);
@@ -1368,6 +1455,8 @@ window.BK_ensureArt = function(){
   }
   function advanceAfterBattle(s, rec){
     const b = battleDef(s);
+    // BK-033 挣令·里程碑：第 5/10/15 战后各 +1（gambleEarnPaid 防重发，钳上限）
+    if(b){ const marks = [5,10,15].filter(x=>b.id>=x).length; if(marks > (s.gambleEarnPaid||0)){ grantGambleTokens(s, marks - (s.gambleEarnPaid||0)); s.gambleEarnPaid = marks; } }
     // 伤退即时判定
     if(s.resources.health<=0){ finishRun(s, 'injury'); return; }
     // 季后赛淘汰
@@ -1416,15 +1505,51 @@ window.BK_ensureArt = function(){
     const ev = pool[rng.int(pool.length)];
     return ev;
   }
+  // —— BK-033 E 事件改写 ——
+  function bondRewriteState(s, ev){
+    if(!ev || !ev.bondRewrite) return null;
+    const B = C.BONDS.find(x=>x.id===ev.bondRewrite.bond); if(!B) return null;
+    if(s.bonds && s.bonds[B.id]) return { bond: B, form: 'strong' };
+    const anyIn = [B.a, B.b].some(n=> (s.attrSrc||[]).includes(n));
+    return anyIn ? { bond: B, form: 'weak' } : null;
+  }
+  function eventOptions(s, ev){
+    const out = [{ key:'A', ...(ev.A||{}) }, { key:'B', ...(ev.B||{}) }];
+    const st = bondRewriteState(s, ev);
+    if(st && ev.bondRewrite){
+      const src = ev.bondRewrite[st.form] || {};
+      const desc = { ...src, bondOpt: true, form: st.form, bondId: st.bond.id };
+      if(st.form==='weak' && ev.bondRewrite.weakType==='risk-up') desc.rateBonus = C.GAMBLE.rateBonus;
+      out.push({ key:'C', ...desc });
+    }
+    return out;
+  }
+  function markEventShown(s, ev){
+    const c = eventOptions(s, ev).find(o=>o.key==='C');
+    if(!c) return null;
+    const k = ev.id + '|' + c.form + '|' + s.battleIdx;
+    if(s._evShowKey === k) return c;
+    s._evShowKey = k;
+    const t = ensureTele(s);
+    if(c.form==='weak') t.eWeakShow++; else t.eStrongShow++;
+    return c;
+  }
   function chooseEvent(s, key){
     const ev = window.BK_EVENTS.find(e=>e.id===s.pendingEvent);
     if(!ev) { s.pendingEvent=null; s.phase='battle'; s.battleIdx++; return { ok:false, reason:'no-event' }; }
-    const opt = ev[key]; const rec = { kind:'event', event: ev.id, key, lines:[] };
+    let opt;
+    if(key==='C'){
+      opt = eventOptions(s, ev).find(o=>o.key==='C');
+      if(!opt) return { ok:false, reason:'no-bond-option' };
+    } else opt = ev[key];
+    if(!opt) return { ok:false, reason:'no-option' };
+    const rec = { kind:'event', event: ev.id, key, lines:[] };
+    if(opt.bondOpt){ rec.bondOpt = true; rec.form = opt.form; rec.bondId = opt.bondId; const t = ensureTele(s); if(opt.form==='weak') t.eWeakPick++; else t.eStrongPick++; }
     if(opt.train){ const idx = rng.int(12); s.attrs[idx]=Math.min(99, s.attrs[idx]+1); rec.trainAttr = idx; }
     if(opt.attr!=null || opt.kind==='pro'){
       let attr = opt.attr;
       if(attr==='best'){ let bi=0; for(let i=0;i<12;i++) if(F.effAttr(s,i)>F.effAttr(s,bi)) bi=i; attr=bi; }
-      const rate = F.checkRate(s, attr, {}); const roll = Math.floor(rng.next()*100)+1;
+      const rate = F.checkRate(s, attr, opt.rateBonus ? { mod: opt.rateBonus } : {}); const roll = Math.floor(rng.next()*100)+1;
       rec.rate=rate; rec.roll=roll; rec.success = roll<=rate;
       L.apply(s, rec.success? (opt.win||{}) : (opt.lose||{}), 'event');
     } else {
@@ -1517,7 +1642,7 @@ window.BK_ensureArt = function(){
     s.phase='battle';
     return { ok:true };
   }
-  window.BK_Game = { newGame, genBatch, candidateObj, draftPick, rerollBatch, directedDraft, chooseBattle, chooseEvent, applyAdGrant, useRewind, finishRun, playerByName, battleDef, ensureRng, syncRng, checkAchievements, recomputeBonds, chaseOptions, missingPartners, lastUnlocked: ()=>lastUnlocked };
+  window.BK_Game = { newGame, genBatch, candidateObj, draftPick, rerollBatch, directedDraft, chooseBattle, chooseEvent, applyAdGrant, useRewind, finishRun, playerByName, battleDef, ensureRng, syncRng, checkAchievements, recomputeBonds, chaseOptions, missingPartners, eventOptions, bondRewriteState, markEventShown, wagerCoef, wagerReward, wagerFeel, wagerEligible, creditWagerPoints, grantGambleTokens, lastUnlocked: ()=>lastUnlocked };
 })();
 </script>
 <script>// 声音层（BK-032）：WebAudio 全合成 BGM＋音效，零音频文件、零素材（包体不涨）。
@@ -1673,6 +1798,7 @@ window.BK_ensureArt = function(){
   const app = document.getElementById('app');
   const SIL = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><rect width="120" height="120" fill="#ddd3b8"/><circle cx="60" cy="46" r="20" fill="#8a7c5c"/><path d="M22 120c4-26 20-38 38-38s34 12 38 38z" fill="#8a7c5c"/></svg>');
   let S = null; let view = 'home'; let selCand = -1; let lbTab = 'best'; let galTab = 'players'; let jingleKey = '';
+  let wagerArm = false; // BK-033：拼一把武装态只活在渲染层，不进存档
   function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
   // BK-032 声音出口：BK_Audio 缺失（逻辑层测试环境）或合成异常时静默跳过，绝不打断游戏
   function sfx(name){ try{ const A = window.BK_Audio; if(A && typeof A[name]==='function') A[name](); }catch(e){} }
@@ -2063,6 +2189,7 @@ window.BK_ensureArt = function(){
       if(rec.pre) h += '负荷冲突 '+rec.pre.load+' 项，健康 '+rec.pre.health+'；';
       if(rec.rate!=null) h += '判定 '+rec.roll+' / 成功率 '+rec.rate+'% → <b>'+(rec.success?'成功':'失败')+'</b>（'+({great:'大胜',win:'胜',hold:'僵持',lose:'败',fixed:'固定'})[rec.grade]+'）';
       else h += '固定结算';
+      if(rec.wager) h += rec.wager.flip ? '；🎲 拼一把翻转落空，本场按失败处理' : (rec.wager.R ? '；🎲 拼一把命中：额外功勋点 +'+rec.wager.R+'（已入生涯）' : '；🎲 拼一把命中');
       if(rec.scene) h += '；🌟 高光时刻 +1';
       if(rec.train) h += '；📈 历练 '+C.ATTRS[rec.train.attr]+' +'+rec.train.amt;
       if(rec.rest) h += '；休整健康 +'+rec.rest;
@@ -2094,24 +2221,39 @@ window.BK_ensureArt = function(){
     h += fateBadgeHtml(S.fate);
     if(S.bondNotes && S.bondNotes.length) h += '<p>💞 本局羁绊：'+S.bondNotes.map(esc).join('；')+'</p>';
     const lc = F.loadConflict(S.attrs, S); if(lc>0) h += '<p>⚠ 负荷冲突 '+lc+' 项：本场首扣健康 '+(lc*C.LOAD_HEALTH_PER)+'、判定 -'+(lc*3)+'%</p>';
+    // BK-033 拼一把面板：可武装条件与 game.js wagerEligible 同口径；不可武装置灰写明原因
+    const wagerTokens = (typeof S.gambleTokens==='number') ? S.gambleTokens : C.GAMBLE.startTokens;
+    let wagerReason = '';
+    if(!(wagerTokens>0)) wagerReason = '无拼令';
+    else if(S.gambleCh === S.battleIdx) wagerReason = '本战已拼';
+    else if(!(S.bonds && Object.keys(S.bonds).length>0)) wagerReason = '需先触发羁绊';
+    const wagerCan = !wagerReason;
+    if(!wagerCan) wagerArm = false;
+    const wagerMods = (S.checkMod && S.checkMod.battles>0) ? { mod: S.checkMod.value } : {};
     ['A','B','C'].forEach(k=>{
       const o = b[k]; if(!o) return;
       let extra = '';
       if(o.attr!=null){ const rate = F.checkRate(S, o.attr, {}); extra = '（查'+C.ATTRS[o.attr]+' '+F.effAttr(S,o.attr)+' · 基础成功率 '+rate+'%）'; }
       if(o.kind==='identity') extra = '（战术身份，锁定后全季生效）';
       if(o.kind==='finals') extra = '（终局抉择，见结局门槛）';
+      if(wagerArm && wagerCan && (o.kind==='pro' || o.kind==='plan') && o.attr!=null){
+        const wrate = F.checkRate(S, o.attr, wagerMods);
+        extra += '（拼一把：本场把握 '+G.wagerFeel(wrate)+' · 拼赢额外功勋点 +'+G.wagerReward(wrate, 'win')+'）';
+      }
       h += '<button class="btn" data-opt="'+k+'">'+k+' · '+esc(o.label)+extra+'</button>';
     });
-    h += '<label class="chk"><input type="checkbox" id="gamble"> 拼一把（成功率减半，效果与功勋翻倍，失败额外 健康-3/战力-50）</label>';
+    if(wagerCan) h += '<div class="wager-panel"><button class="btn small" id="wager-arm">'+(wagerArm?'🎲 拼一把已武装（点此取消武装）':'🎲 拼一把（点此武装，武装后点判定选项即下注）')+'</button><p style="font-size:12px;color:#7a6c4f;margin:6px 0 0">拼令 '+wagerTokens+' 枚 · 下注扣 1 枚，拼赢回补 1 枚并额外得功勋点；失败：本场判定按失败处理</p></div>';
+    else h += '<div class="wager-panel"><button class="btn small" disabled>🎲 拼一把（'+wagerReason+'）</button><p style="font-size:12px;color:#7a6c4f;margin:6px 0 0">拼令 '+wagerTokens+' 枚 · 失败：本场判定按失败处理</p></div>';
     h += '<div class="row"><button class="btn small green" id="ad-fate">🌟 巨星时刻（广告）</button><button class="btn small green" id="ad-heal">🩹 队医补给（广告）</button></div>';
     if(S.lastSettle && S.lastSettle.kind==='battle' && S.lastSettle.success===false && !S.rewindArmed) h += '<button class="btn small" id="ad-rewind">↩ 改命（广告：免除上战亲为失败计数）</button>';
     if(S.rewindArmed) h += '<button class="btn small primary" id="use-rewind">使用改命（回健康+8，消上战失败计数）</button>';
     h += '<button class="btn ghost" id="b-home">回首页</button></div>';
     app.innerHTML = h;
     S._settleShown = S.battleIdx;
+    bind('wager-arm', ()=>{ wagerArm = !wagerArm; render(); });
     app.querySelectorAll('[data-opt]').forEach(el=>el.addEventListener('click', ()=>{
-      const gamble = document.getElementById('gamble').checked;
-      const r = G.chooseBattle(S, el.dataset.opt, { gamble });
+      const wager = wagerArm; wagerArm = false;
+      const r = G.chooseBattle(S, el.dataset.opt, { wager });
       if(r.ok){
         if(r.rec && r.rec.success===true) sfx('win'); else if(r.rec && r.rec.success===false) sfx('lose'); // BK-032 对战胜负 sting（固定结算不响）
         Save.save('battle-settle'); // 判定落盘：结算即存
@@ -2136,7 +2278,9 @@ window.BK_ensureArt = function(){
     + '<div class="paper">'
     + ((window.BK_EV_ART && window.BK_EV_ART[ev.id]) ? '<div class="ev-art" style="background-image:url(\''+window.BK_EV_ART[ev.id]+'\')"></div>' : '')
     + '<h2>'+esc(ev.name)+'</h2><p>'+esc(ev.brief)+'</p>';
-    ['A','B'].forEach(k=>{ const o=ev[k]; if(o) h += '<button class="btn" data-ev="'+k+'">'+k+' · '+esc(o.label)+'</button>'; });
+    const evOpts = G.eventOptions(S, ev);
+    G.markEventShown(S, ev); // BK-033：Show 计数只在事件打开渲染时 +1（同事件同战重渲不重复计）
+    evOpts.forEach(o=>{ if(o) h += '<button class="btn" data-ev="'+o.key+'">'+o.key+' · '+esc(o.label)+(o.bondOpt?'（💞 羁绊'+(o.form==='strong'?'分支':'改写')+'）':'')+'</button>'; });
     h += '</div>';
     app.innerHTML = h;
     app.querySelectorAll('[data-ev]').forEach(el=>el.addEventListener('click', ()=>{
