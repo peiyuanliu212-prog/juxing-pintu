@@ -21,71 +21,66 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>巨星拼图：巅峰王朝</title>
 <style>
-:root{ --ink:#1d2733; --paper:#f7f0dc; --paper2:#e9e1cd; --accent:#b3402a; --accent2:#0f5132; --line:#c9b98a; --dark:#071a13; --gold:#c9a227; --gold2:#e8c96a; }
+:root{ --ink:#1a1a1a; --paper:#f7f1e5; --paper2:#f2ead7; --accent:#e62b1e; --accent2:#14532d; --line:#d8cfbc; --line2:#e3d3ac; --gold:#a8842f; --gold2:#c9962e; --mut:#7a6c4f; }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
-html,body{margin:0;padding:0;background:#04120c}
-body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:#eef1f4}
-#app{max-width:430px;margin:0 auto;min-height:100vh;padding-top:var(--safe-top, env(safe-area-inset-top, 0px));background:
- radial-gradient(130% 55% at 50% -8%, rgba(232,201,106,.16), rgba(232,201,106,0) 60%),
- repeating-linear-gradient(115deg, rgba(232,201,106,0) 0 110px, rgba(232,201,106,.045) 110px 112px, rgba(232,201,106,0) 112px 230px),
- repeating-linear-gradient(65deg, rgba(255,255,255,0) 0 150px, rgba(255,255,255,.03) 150px 152px, rgba(255,255,255,0) 152px 300px),
- linear-gradient(168deg, #0c3023 0%, #071f16 52%, #04120c 100%)}
-.paper{background:linear-gradient(168deg,#faf4e2,#f3e9cd);color:var(--ink);border:1.5px solid var(--gold);border-radius:14px;padding:12px;margin:10px;box-shadow:0 6px 22px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.65)}
-.paper h2{margin:4px 0 8px}
-.paper h3{margin:14px -12px 10px;padding:7px 14px;background:linear-gradient(90deg,#122b21,#1d4030);color:var(--gold2);font-size:16px;letter-spacing:1px;clip-path:polygon(0 0,100% 0,calc(100% - 16px) 100%,0 100%);border-bottom:2px solid var(--gold)}
-.paper h3:first-child{margin-top:-2px}
-h1.title{font-size:24px;margin:0;letter-spacing:1px}
-.sub{color:#9fb0c0;font-size:13px;margin:2px 10px}
-.btn{display:block;width:100%;padding:11px 10px;margin:7px 0;border:1.5px solid #8a6d1f;border-radius:10px;background:linear-gradient(180deg,#fffdf6,#f1e5c6);color:#1d2733;font-size:15px;font-weight:600;cursor:pointer;text-align:center;box-shadow:0 2px 7px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.8)}
+html,body{margin:0;padding:0;background-color:#f2ead7}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink);background-image:radial-gradient(ellipse at 50% -10%, #fdf8ec 0%, rgba(253,248,236,0) 55%);background-repeat:no-repeat;background-position:top center;background-size:100% 60%}
+#app{max-width:430px;margin:0 auto;min-height:100vh;padding-top:var(--safe-top, env(safe-area-inset-top, 0px))}
+.paper{background:#fffdf6;background-image:repeating-linear-gradient(0deg, rgba(120,96,40,.028) 0 2px, transparent 2px 8px);color:var(--ink);border:1px solid var(--line2);border-radius:14px;padding:16px 14px;margin:10px;box-shadow:0 2px 9px rgba(90,70,30,.09)}
+.paper h2{margin:4px 0 10px;font-size:19px;display:flex;align-items:center;gap:8px}
+.paper h2::before{content:'';width:4px;height:18px;border-radius:2px;background:linear-gradient(180deg,#ff6a2b,#e62b1e);flex:none}
+.paper h3{margin:16px 0 10px;padding:0;background:none;color:var(--ink);font-size:17px;font-weight:800;letter-spacing:.5px;border:none;display:flex;align-items:center;gap:8px}
+.paper h3::before{content:'';width:4px;height:18px;border-radius:2px;background:linear-gradient(180deg,#ff6a2b,#e62b1e);flex:none}
+.paper h3:first-child{margin-top:0}
+h1.title{font-size:31px;font-weight:900;margin:4px 0 2px;letter-spacing:2px;text-align:center}
+.sub{color:var(--mut);font-size:13px;margin:2px 10px}
+.btn{display:block;width:100%;padding:11px 10px;margin:7px 0;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);font-size:15px;font-weight:600;cursor:pointer;text-align:center;box-shadow:0 1px 4px rgba(90,70,30,.08)}
 .btn:active{transform:translateY(1px)}
-.btn.primary{background:linear-gradient(180deg,#cd4a30,#9c2b16);color:#ffeec9;border-color:var(--gold2);text-shadow:0 1px 2px rgba(0,0,0,.4)}
-.btn.green{background:linear-gradient(180deg,#166a41,#0b3d24);color:#ffeec9;border-color:var(--gold2)}
-.btn.ghost{background:linear-gradient(180deg,#274435,#142a1f);color:#e8e2cd;border-color:#5d7355}
+.btn.primary{background:linear-gradient(135deg,#ff6a2b,#e62b1e);color:#fff;border:none;font-weight:700}
+.btn.green{background:linear-gradient(135deg,#1e7a4f,#14532d);color:#fff;border:none;font-weight:700}
+.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
 .btn.small{padding:7px 8px;font-size:13px;margin:4px 0}
 .btn:disabled{opacity:.45}
 .row{display:flex;gap:8px}.row>.btn{flex:1}
-.resbar{display:flex;flex-wrap:wrap;gap:4px 10px;background:linear-gradient(180deg,rgba(10,26,40,.92),rgba(7,18,30,.92));color:#dfe7ee;border:1px solid rgba(232,201,106,.55);border-radius:10px;padding:8px 10px;margin:10px;font-size:12.5px;box-shadow:0 3px 10px rgba(0,0,0,.35)}
-.resbar b{color:var(--gold2);font-weight:700}
+.resbar{display:flex;flex-wrap:wrap;gap:4px 10px;background:#fffdf6;color:var(--ink);border:1px solid var(--line2);border-radius:10px;padding:8px 10px;margin:10px;font-size:12.5px}
+.resbar b{color:#b3402a;font-weight:700}
 .slots{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}
-.slot{background:linear-gradient(180deg,#fffdf6,#f6ecd2);border:1.5px dashed #b7a26e;border-radius:8px;padding:6px 4px;text-align:center;font-size:12px;color:var(--ink);min-width:0}
-.slot.filled{border-style:solid;border-color:#8a6d1f;background:linear-gradient(180deg,#fffbe9,#f8ecc9)}
+.slot{background:#fffaf0;border:1.5px dashed #cbbd93;border-radius:8px;padding:6px 4px;text-align:center;font-size:12px;color:var(--ink);min-width:0}
+.slot.filled{border-style:solid;border-color:var(--gold2);background:#fdf6dd}
 .slot .v{font-size:17px;font-weight:800}
-.slot .src{color:#7a6c4f;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slot .src{color:var(--mut);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cands{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.cand{position:relative;overflow:hidden;background:linear-gradient(168deg,#fffdf6,#f4ead0);border:2px solid #b7a26e;border-radius:12px;padding:8px;text-align:center;cursor:pointer;color:var(--ink);box-shadow:0 3px 10px rgba(0,0,0,.22)}
+.cand{position:relative;overflow:hidden;background:#fffdf6;border:1.5px solid var(--line2);border-radius:12px;padding:8px;text-align:center;cursor:pointer;color:var(--ink);box-shadow:0 2px 7px rgba(90,70,30,.08)}
 .cand.sel{border-color:var(--accent)}
-.cand img{width:74px;height:74px;object-fit:cover;border-radius:50%;background:#ddd3b8}
+.cand img{width:74px;height:74px;object-fit:cover;border-radius:50%;background:#ddd3b8;box-shadow:0 0 0 2px var(--line2)}
 .cand .nm{font-weight:800;font-size:15px}
-.cand .meta{font-size:11.5px;color:#7a6c4f}
-/* ===== 稀有度视觉（拼将母本 v5.1 同款：S 金色传说 / A 紫史诗 / B 蓝稀有 / C 普通） ===== */
-.cand.tier-s,.gcard.tier-s{border-color:#d9a514;background:linear-gradient(165deg,#fffdf4,#fbeec3 55%,#f6dd8e);box-shadow:0 0 0 2px rgba(217,165,20,.5),0 12px 28px rgba(190,140,20,.35);animation:tierReveal .55s ease both}
-.cand.tier-s img,.gcard.tier-s img{box-shadow:0 0 0 3px #d9a514,0 0 20px rgba(217,165,20,.6);filter:saturate(1.15)}
-.cand.tier-s::before,.gcard.tier-s::before{content:'传说';position:absolute;top:8px;right:8px;z-index:2;font-size:10px;font-weight:800;letter-spacing:3px;color:#fff8e1;background:linear-gradient(135deg,#eec44a,#c8891b);padding:2px 7px 2px 10px;border-radius:99px;box-shadow:0 2px 8px rgba(190,140,20,.5)}
-.cand.tier-s::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 32%,rgba(255,255,255,.55) 49%,transparent 64%);background-size:260% 100%;animation:tierShine 1.5s ease-out .35s 1 both}
-.cand.tier-ss,.gcard.tier-ss{border-color:#a31621;background:linear-gradient(165deg,#fff8ec,#f7e3b0 55%,#eec96e);box-shadow:0 0 0 2px rgba(163,22,33,.55),0 12px 28px rgba(150,30,20,.35);animation:tierReveal .55s ease both}
-.cand.tier-ss img,.gcard.tier-ss img{box-shadow:0 0 0 3px #a31621,0 0 22px rgba(217,165,20,.65);filter:saturate(1.2)}
-.cand.tier-ss::before,.gcard.tier-ss::before{content:'传世';position:absolute;top:8px;right:8px;z-index:2;font-size:10px;font-weight:800;letter-spacing:3px;color:#ffe9a8;background:linear-gradient(135deg,#c02331,#7e0f1a);padding:2px 7px 2px 10px;border-radius:99px;box-shadow:0 2px 8px rgba(150,30,20,.5)}
-.cand.tier-ss::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 32%,rgba(255,255,255,.55) 49%,transparent 64%);background-size:260% 100%;animation:tierShine 1.5s ease-out .35s 1 both}
-.cand.tier-a,.gcard.tier-a{border-color:#8e6cc8;background:linear-gradient(165deg,#fdfaff,#eee5fb);box-shadow:0 0 0 1px rgba(142,108,200,.4),0 9px 22px rgba(110,80,180,.2)}
-.cand.tier-a img,.gcard.tier-a img{box-shadow:0 0 0 2px #8e6cc8,0 0 12px rgba(142,108,200,.4);filter:saturate(1.06)}
-.cand.tier-a::before,.gcard.tier-a::before{content:'史诗';position:absolute;top:8px;right:8px;z-index:2;font-size:10px;font-weight:800;letter-spacing:3px;color:#f6f0ff;background:linear-gradient(135deg,#a582dd,#7757b8);padding:2px 7px 2px 10px;border-radius:99px}
-.cand.tier-b,.gcard.tier-b{border-color:#7d9fc4;background:linear-gradient(165deg,#fbfdff,#e7f0fa)}
-.cand.tier-b img,.gcard.tier-b img{box-shadow:0 0 0 2px rgba(125,159,196,.75)}
-.cand.tier-c img,.gcard.tier-c img{filter:saturate(.75)}
-.cand.tier-peak{border-color:#C9A227;background:linear-gradient(160deg,#fffbe8,#fdf3d0)}
-.cand .peak-ribbon{position:absolute;top:8px;left:8px;z-index:2;background:linear-gradient(135deg,#C9A227,#a87f14);color:#fff;font-size:10px;font-weight:800;letter-spacing:2px;padding:2px 8px;border-radius:99px;box-shadow:0 2px 8px rgba(190,140,20,.5)}
+.cand .meta{font-size:11.5px;color:var(--mut)}
+/* ===== 稀有度视觉（对标乱世母本分级：S 金 / A 紫 / B 蓝 / C 普通，平光无炫光） ===== */
+.cand.tier-s,.gcard.tier-s{border-color:var(--gold2);background:#fdf6dd;animation:tierReveal .45s ease both}
+.cand.tier-s img,.gcard.tier-s img{box-shadow:0 0 0 2.5px var(--gold2)}
+.cand.tier-s::before,.gcard.tier-s::before{content:'传说';position:absolute;top:8px;right:8px;z-index:2;font-size:10px;font-weight:800;letter-spacing:3px;color:#fff;background:#c8891b;padding:2px 7px 2px 10px;border-radius:99px}
+.cand.tier-ss,.gcard.tier-ss{border-color:#b3271e;background:#fdf0e6;animation:tierReveal .45s ease both}
+.cand.tier-ss img,.gcard.tier-ss img{box-shadow:0 0 0 2.5px #b3271e}
+.cand.tier-ss::before,.gcard.tier-ss::before{content:'传世';position:absolute;top:8px;right:8px;z-index:2;font-size:10px;font-weight:800;letter-spacing:3px;color:#fff;background:#b3271e;padding:2px 7px 2px 10px;border-radius:99px}
+.cand.tier-a,.gcard.tier-a{border-color:#8e6cc8;background:#f6f1fd}
+.cand.tier-a img,.gcard.tier-a img{box-shadow:0 0 0 2px #8e6cc8}
+.cand.tier-a::before,.gcard.tier-a::before{content:'史诗';position:absolute;top:8px;right:8px;z-index:2;font-size:10px;font-weight:800;letter-spacing:3px;color:#fff;background:#7757b8;padding:2px 7px 2px 10px;border-radius:99px}
+.cand.tier-b,.gcard.tier-b{border-color:#7d9fc4;background:#f2f7fc}
+.cand.tier-b img,.gcard.tier-b img{box-shadow:0 0 0 2px rgba(125,159,196,.8)}
+.cand.tier-c img,.gcard.tier-c img{filter:saturate(.8)}
+.cand.tier-peak{border-color:var(--gold2);background:#fdf6dd}
+.cand .peak-ribbon{position:absolute;top:8px;left:8px;z-index:2;background:#c8891b;color:#fff;font-size:10px;font-weight:800;letter-spacing:2px;padding:2px 8px;border-radius:99px}
 .gcard{position:relative;overflow:hidden}
-.cand.sel{border-color:#b3402a;box-shadow:0 0 0 2px rgba(179,64,42,.55)}
-@keyframes tierReveal{0%{transform:scale(.93)}55%{transform:scale(1.025)}100%{transform:scale(1)}}
-@keyframes tierShine{0%{background-position:130% 0}45%{background-position:-130% 0}100%{background-position:-130% 0}}
-/* ===== 卡面迷你属性条（拼将母本 v5.13 同款：卡上直接看数值，前三高描金） ===== */
+.cand.sel{border-color:#b3402a;box-shadow:0 0 0 2px rgba(179,64,42,.35)}
+@keyframes tierReveal{0%{transform:scale(.96)}100%{transform:scale(1)}}
+/* ===== 卡面迷你属性条（乱世同款：棕金条、前三高亮金） ===== */
 .abar-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px 10px;margin-top:7px;text-align:left}
 .abar{display:flex;align-items:center;gap:4px;font-size:10.5px;color:#6b5836}
 .abar i{font-style:normal;width:22px;flex:none}
-.abar em{flex:1;height:5px;background:rgba(120,90,40,.16);border-radius:3px;overflow:hidden}
+.abar em{flex:1;height:5px;background:rgba(120,90,40,.15);border-radius:3px;overflow:hidden}
 .abar em b{display:block;height:100%;background:#a8842f;border-radius:3px}
 .abar.top i,.abar.top span{color:#8a6d1f;font-weight:700}
-.abar.top em b{background:linear-gradient(90deg,#e3b341,#b8860b)}
+.abar.top em b{background:linear-gradient(90deg,#d99a26,#a87b1e)}
 .abar span{width:19px;text-align:right;font-variant-numeric:tabular-nums}
 .cands2{display:flex;flex-direction:column;gap:8px}
 .cand2{text-align:left;padding:10px}
@@ -93,66 +88,77 @@ h1.title{font-size:24px;margin:0;letter-spacing:1px}
 .cand2 .chead img{width:54px;height:54px}
 .cand2 .cinfo{min-width:0}
 .cand2 .atext{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:8px}
-.cand2 .atext div{background:rgba(255,255,255,.55);border:1px solid #d8c894;border-radius:6px;padding:2px 0;font-size:11px;color:#7a6c4f;text-align:center;white-space:nowrap}
+.cand2 .atext div{background:#fffaf0;border:1px solid var(--line2);border-radius:6px;padding:2px 0;font-size:11px;color:var(--mut);text-align:center;white-space:nowrap}
 .cand2 .atext b{font-size:13px;color:var(--ink)}
-.cand2 .atext .top{background:#fdf3d0;border-color:#c9a227}
-.cand2 .atext .top b{color:#a4760a}
-.cand2 .pick-panel{display:none;margin-top:8px;border-top:1px dashed #b7a26e;padding-top:8px}
+.cand2 .atext .top{background:#fdf3d0;border-color:var(--gold2)}
+.cand2 .atext .top b{color:#8a6d1f}
+.cand2 .pick-panel{display:none;margin-top:8px;border-top:1px dashed #cbbd93;padding-top:8px}
 .cand2.open{border-color:var(--accent)}
 .cand2.open .pick-panel{display:block}
 .attrgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.attrbtn{background:linear-gradient(180deg,#fffdf6,#f1e5c6);border:1.5px solid #8a6d1f;border-radius:8px;padding:7px 4px;font-size:13px;color:var(--ink);cursor:pointer}
+.attrbtn{background:#fff;border:1.5px solid var(--line);border-radius:8px;padding:7px 4px;font-size:13px;color:var(--ink);cursor:pointer}
 .attrbtn b{font-size:15px}
 .timeline{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}
-.timeline span{background:linear-gradient(180deg,#1b2f47,#101d2e);color:#e6ecf3;border:1px solid rgba(232,201,106,.4);border-radius:6px;padding:3px 7px;font-size:11.5px}
-.timeline span.done{background:linear-gradient(180deg,#166a41,#0b3d24);color:#ffeec9}
-.timeline span.now{background:linear-gradient(180deg,#cd4a30,#9c2b16);color:#ffeec9}
-.settle{background:linear-gradient(168deg,#fff8e6,#fdeed3);border:2px solid var(--gold);border-radius:12px;padding:10px;color:var(--ink);margin:10px;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.timeline span{background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:3px 7px;font-size:11.5px}
+.timeline span.done{background:#e7f3ea;border-color:#1e7a4f;color:#14532d}
+.timeline span.now{background:#fdeceb;border-color:#e62b1e;color:#b3271e}
+.settle{background:#fffdf6;border:1.5px solid var(--gold2);border-radius:12px;padding:10px;color:var(--ink);margin:10px;box-shadow:0 2px 9px rgba(90,70,30,.1)}
 .grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.gcard{background:linear-gradient(168deg,#fffdf6,#f4ead0);border:1.5px solid #b7a26e;border-radius:10px;padding:7px;text-align:center;color:var(--ink);font-size:12px;content-visibility:auto;contain-intrinsic-size:auto 150px}
-.gcard img{width:60px;height:60px;object-fit:cover;border-radius:50%;background:#ddd3b8}
+.gcard{background:#fffdf6;border:1.5px solid var(--line2);border-radius:10px;padding:7px;text-align:center;color:var(--ink);font-size:12px;content-visibility:auto;contain-intrinsic-size:auto 150px}
+.gcard img{width:60px;height:60px;object-fit:cover;border-radius:50%;background:#ddd3b8;box-shadow:0 0 0 2px var(--line2)}
 table.lb{width:100%;border-collapse:collapse;font-size:13px;color:var(--ink)}
-table.lb td,table.lb th{border-bottom:1px solid var(--line);padding:5px 4px;text-align:left}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.66);display:flex;align-items:center;justify-content:center;z-index:50}
-.modal .box{background:linear-gradient(168deg,#faf4e2,#f3e9cd);color:var(--ink);border:1.5px solid var(--gold);border-radius:14px;max-width:400px;width:92%;max-height:86vh;overflow:auto;padding:14px;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+table.lb td,table.lb th{border-bottom:1px solid var(--line2);padding:5px 4px;text-align:left}
+.modal{position:fixed;inset:0;background:rgba(38,34,25,.55);display:flex;align-items:center;justify-content:center;z-index:50}
+.modal .box{background:#fffdf6;color:var(--ink);border:1px solid var(--line2);border-radius:14px;max-width:400px;width:92%;max-height:86vh;overflow:auto;padding:14px;box-shadow:0 10px 30px rgba(60,45,15,.25)}
 textarea{width:100%;min-height:80px;font-size:12px}
-select,input[type=text]{width:100%;padding:9px;font-size:14px;border:1.5px solid #8a6d1f;border-radius:8px;background:#fffdf6;color:#1d2733}
-.kicker{color:#e8762d;font-weight:800;font-size:12px;letter-spacing:2px;text-shadow:0 1px 3px rgba(0,0,0,.5)}
-.foot{color:#7e8fa0;font-size:11.5px;text-align:center;padding:14px}
+select,input[type=text]{width:100%;padding:9px;font-size:14px;border:1.5px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+.kicker{color:#8a7a5c;font-weight:700;font-size:11px;letter-spacing:3px;text-align:center}
+.foot{color:#8a7a5c;font-size:11.5px;text-align:center;padding:14px}
 label.chk{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--ink);margin:6px 0}
-.ev-art{height:150px;border-radius:6px;background-size:cover;background-position:center;margin-bottom:12px;box-shadow:inset 0 0 0 1px rgba(120,90,40,.25)}
-/* ===== 战役图位（拼将母本 .ch-art 同款：16:9 全宽） ===== */
-.ch-art{width:100%;aspect-ratio:16/9;border-radius:10px;background-size:cover;background-position:center;margin-bottom:12px;box-shadow:inset 0 0 0 1px rgba(120,90,40,.3)}
-/* ===== 首页主视觉（母本 .hero-art 同款：21:9 横幅） ===== */
-.hero-art{width:100%;aspect-ratio:21/9;border-radius:12px;margin-bottom:12px;background-image:url('cover.webp');background-size:cover;background-position:center;border:1.5px solid var(--gold2);box-shadow:0 4px 16px rgba(0,0,0,.35), inset 0 0 0 1px rgba(146,116,48,.35)}
-/* ===== 入场过渡（母本 .reveal 同款节奏：淡入上浮） ===== */
+.ev-art{height:150px;border-radius:6px;background-size:cover;background-position:center;margin-bottom:12px;border:1px solid var(--line2)}
+.ch-art{width:100%;aspect-ratio:16/9;border-radius:10px;background-size:cover;background-position:center;margin-bottom:12px;border:1px solid var(--line2)}
+/* ===== 首页主视觉（对标乱世首页：横幅长卷＋红色印章签） ===== */
+.hero-art{width:100%;aspect-ratio:21/9;border-radius:10px;background-image:url('cover.webp');background-size:cover;background-position:center;border:1px solid var(--line2)}
+.hero-wrap{position:relative;margin-bottom:12px}
+.hero-wrap .hero-art{margin-bottom:0}
+.hero-seal{position:absolute;top:-7px;right:10px;background:#c0392b;color:#fff;font-weight:800;font-size:14px;letter-spacing:2px;padding:5px 9px;border-radius:6px;transform:rotate(3deg);box-shadow:0 2px 6px rgba(120,30,20,.3);z-index:2}
+.hero-sub{color:#8a7a5c;font-size:11px;letter-spacing:1.8px;text-align:center;margin:6px 0 10px;white-space:nowrap}
+.hero-desc{font-size:15.5px;line-height:1.75;margin:0 4px;color:#262219;text-align:center}
 @keyframes viewIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 #app>*{animation:viewIn .35s ease both}
-/* ===== 加载页（母本 v5.15 入局动画同款结构） ===== */
-#loading{position:fixed;inset:0;z-index:300;background:radial-gradient(130% 55% at 50% -8%, rgba(232,201,106,.16), rgba(232,201,106,0) 60%),repeating-linear-gradient(115deg, rgba(232,201,106,0) 0 110px, rgba(232,201,106,.05) 110px 112px, rgba(232,201,106,0) 112px 230px),linear-gradient(168deg,#0c3023 0%,#071f16 52%,#04120c 100%);display:flex;align-items:center;justify-content:center;transition:opacity .35s ease}
+/* ===== 加载页（对标乱世：米纸底＋长卷＋朱红进度） ===== */
+#loading{position:fixed;inset:0;z-index:300;background-color:#f2ead7;background-image:radial-gradient(ellipse at 50% -10%, #fdf8ec 0%, rgba(253,248,236,0) 55%);background-repeat:no-repeat;background-position:top center;background-size:100% 60%;display:flex;align-items:center;justify-content:center;transition:opacity .35s ease}
 #loading.done{opacity:0;pointer-events:none}
 .load-box{text-align:center;padding:20px;max-width:420px;width:100%}
-.load-art{width:100%;aspect-ratio:21/9;border-radius:12px;background-image:url('cover.webp');background-size:cover;background-position:center;margin-bottom:18px;border:1.5px solid var(--gold2);box-shadow:0 6px 24px rgba(0,0,0,.45)}
-.load-title{font-size:34px;font-weight:900;letter-spacing:3px;color:#f7f0dc;display:flex;align-items:center;gap:14px;justify-content:center}
-.load-title i{flex:0 0 44px;height:2px;background:linear-gradient(90deg,transparent,var(--gold2));font-style:normal}
-.load-title i:last-child{background:linear-gradient(90deg,var(--gold2),transparent)}
-.load-sub{color:var(--gold2);letter-spacing:3px;font-size:11px;margin:8px 0 22px}
-.load-bar{height:8px;border-radius:99px;background:rgba(244,239,227,.18);overflow:hidden}
-.load-bar b{display:block;height:100%;width:0%;border-radius:99px;background:linear-gradient(90deg,#C9A227,#b3402a);transition:width .18s ease}
-.load-pct{color:#9fb0c0;font-size:12px;margin-top:8px}
-.load-tip{color:#7e8fa0;font-size:12px;margin-top:14px}
+.load-art{width:100%;aspect-ratio:21/9;border-radius:10px;background-image:url('cover.webp');background-size:cover;background-position:center;margin-bottom:18px;border:1px solid var(--line2);box-shadow:0 2px 10px rgba(90,70,30,.15)}
+.load-title{font-size:34px;font-weight:900;letter-spacing:3px;color:var(--ink);display:flex;align-items:center;gap:14px;justify-content:center}
+.load-title i{flex:0 0 44px;height:2px;background:linear-gradient(90deg,transparent,#c9962e);font-style:normal}
+.load-title i:last-child{background:linear-gradient(90deg,#c9962e,transparent)}
+.load-sub{color:#8a7a5c;letter-spacing:3px;font-size:11px;margin:8px 0 22px}
+.load-bar{height:8px;border-radius:99px;background:#e7dcc0;overflow:hidden}
+.load-bar b{display:block;height:100%;width:0%;border-radius:99px;background:linear-gradient(90deg,#ff6a2b,#e62b1e);transition:width .18s ease}
+.load-pct{color:#8a7a5c;font-size:12px;margin-top:8px}
+.load-tip{color:var(--mut);font-size:12px;margin-top:14px}
 .ndot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#e62b1e;vertical-align:super}
-.paper .sub{color:#7a6c4f}
-/* ===== 批2：结局收藏 / 成就墙 / 榜单头像 / 存档页（沿用深绿金＋象牙定版语言） ===== */
-.endcard{background:linear-gradient(168deg,#e9e6d6,#d9d2bb);border:1.5px solid #b7a26e;border-radius:10px;padding:9px 8px;text-align:center;color:var(--ink);font-size:12.5px;min-height:56px}
-.endcard.on{background:linear-gradient(168deg,#fffdf6,#f4ead0);border-color:var(--gold2);box-shadow:inset 0 0 0 1px rgba(201,162,39,.35)}
+.paper .sub{color:var(--mut)}
+.endcard{background:#f1ead6;border:1.5px solid #ddd2b2;border-radius:10px;padding:9px 8px;text-align:center;color:#8a7a5c;font-size:12.5px;min-height:56px}
+.endcard.on{background:#fffdf6;border-color:var(--gold2);color:var(--ink)}
 .endcard .en-name{font-weight:800;font-size:14px;letter-spacing:1px}
-.endcard .en-sub{color:#7a6c4f;font-size:11.5px;margin-top:3px;line-height:1.5}
-.achcard{background:linear-gradient(168deg,#e9e6d6,#d9d2bb);border:1.5px solid #b7a26e;border-radius:10px;padding:8px;color:var(--ink);font-size:12px;min-height:52px}
-.achcard.on{background:linear-gradient(168deg,#fffdf6,#f4ead0);border-color:var(--gold2);box-shadow:inset 0 0 0 1px rgba(201,162,39,.35)}
-.achcard div{color:#7a6c4f;font-size:11px;margin-top:2px;line-height:1.5}
-.lbav{width:26px;height:26px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px;border:1px solid var(--gold);background:#ddd3b8}
-#toast{position:fixed;left:50%;bottom:calc(28px + var(--safe-bottom,0px));transform:translate(-50%,16px);background:linear-gradient(180deg,#12402c,#0a2417);color:#f3e9cd;border:1px solid #c9a227;border-radius:10px;padding:10px 18px;font-size:14px;z-index:400;opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;max-width:86vw;text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.45)}
+.endcard .en-sub{color:var(--mut);font-size:11.5px;margin-top:3px;line-height:1.5}
+.achcard{background:#f1ead6;border:1.5px solid #ddd2b2;border-radius:10px;padding:8px;color:#8a7a5c;font-size:12px;min-height:52px}
+.achcard.on{background:#fffdf6;border-color:var(--gold2);color:var(--ink)}
+.achcard div{color:var(--mut);font-size:11px;margin-top:2px;line-height:1.5}
+.lbav{width:26px;height:26px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px;border:1px solid var(--line2);background:#ddd3b8}
+
+.end-seal{position:absolute;top:12px;right:14px;width:58px;height:58px;border:2.5px solid #b3271e;border-radius:50%;color:#b3271e;font-weight:900;font-size:16px;letter-spacing:3px;display:flex;align-items:center;justify-content:center;transform:rotate(-12deg);opacity:.88;background:rgba(253,240,230,.55);box-shadow:inset 0 0 0 2.5px rgba(179,39,30,.35);pointer-events:none;padding-left:3px}
+table.lb tr.lbh th{background:#262219;color:#f7f0dc;border-bottom:none}
+.medal{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;font-size:11px;font-weight:800;color:#fff;background:#b0a58c}
+.medal.m1{background:#c9962e}.medal.m2{background:#9aa3ab}.medal.m3{background:#b0793f}
+table.lb td.lbv{color:#b3402a;font-weight:800}
+table.lb tr.me td{background:#fdf3d0;font-weight:700}
+.btn.tab-on{background:linear-gradient(135deg,#ff6a2b,#e62b1e);color:#fff;border:none;font-weight:700}
+.gal-count{margin-left:auto;font-size:13px;color:var(--mut);font-weight:600;letter-spacing:1px}
+#toast{position:fixed;left:50%;bottom:calc(28px + var(--safe-bottom,0px));transform:translate(-50%,16px);background:#262219;color:#f7f0dc;border:1px solid #57492a;border-radius:10px;padding:10px 18px;font-size:14px;z-index:400;opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;max-width:86vw;text-align:center;box-shadow:0 6px 18px rgba(60,45,15,.3)}
 #toast.show{opacity:1;transform:translate(-50%,0)}
 </style>
 </head>
@@ -164,7 +170,7 @@ label.chk{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--ink
 <script>// 《巨星拼图：巅峰王朝》配置表——全部数值常量集中于此，代码禁散落魔法数（防屎山纪律 §1.3）
 window.BK_CONFIG = {
   GAME_NAME: '巨星拼图：巅峰王朝',
-  VERSION: 'v1.4',
+  VERSION: 'v1.8',
   LB_API_BASE: 'https://app-6577eaef3c-d1gmtlqu9702c7de1-1252166086.ap-shanghai.app.tcloudbase.com/api',
   LB_ENV_ID: 'app-6577eaef3c-d1gmtlqu9702c7de1',
   BOARD_PREFIX: 'bk_',
@@ -279,6 +285,33 @@ window.BK_CONFIG = {
     {id:'scout', name:'球探情报', price:100, desc:'每局开局自带定向招募资格 ×1', effect:{startDirected:true}},
     {id:'video', name:'录像分析', price:110, desc:'每局开局前 3 战判定 +6（录像红利）', effect:{startFateBuff:3}}
   ],
+  // —— 羁绊系统（BK-028，定案 v2 三档制）：数值全在此表，引擎只读配置 ——
+  // fill 结算：每位成员 bonus = BOND_BASE_BONUS + min(cap, max(0, ref − baseAttrs[其槽]))；单对合计 >BOND_PAIR_CAP 时按补差等比缩（保底不缩）
+  BOND_BASE_BONUS: 2,
+  BOND_FILL: { FULL:{ ref:90, cap:15 }, LITE:{ ref:86, cap:10 }, BASE:{ ref:0, cap:0 } },
+  BOND_PAIR_CAP: 22,             // 单对总加成硬顶（保底＋补差合计）
+  BOND_TEAM_CAP: 12,             // 全队型单局总注入上限（+1/项 × 至多 12 项，结构性封顶）
+  BOND_TEAM_LINE: 90,            // 全队型仅对未满此值的项生效
+  BOND_FOE_RATE: 0.2, BOND_FOE_CAP: 12,   // 宿敌：−20%，单项封顶 −12
+  BOND_BEFRIEND_BONUS: 4,        // 化敌为友：精确回滚罚差后各 +4
+  BOND_BEFRIEND_MAX: 2, BOND_CHASE_MAX: 2, // 两类羁绊广告每局上限
+  BOND_TEMP_VALUE: 3,            // 临时型骑手：下一战全队判定 +3（一战）
+  BOND_LINKAGE_MULT: 1.5,        // 免费轻联动：已锁一员后搭档在候选权重 ×1.5（每局至多 1 批）
+  // type: fill=补强｜temp=补强+临时骑手｜mech=补强+免费换一批｜foe=宿敌｜team=全队共鸣；cls/ref 为内部分档，玩家文案不外露
+  BONDS: [
+    { id:'splash',   a:'斯蒂芬·库里',   b:'克莱·汤普森',   name:'水花兄弟',   type:'fill', cls:'FULL', desc:'联手补强：两人被夺的那项能力按短板补强（弱项补得多），并各自 +2' },
+    { id:'towers',   a:'蒂姆·邓肯',     b:'大卫·罗宾逊',   name:'双塔',       type:'fill', cls:'FULL', desc:'联手补强：两人被夺的那项能力按短板补强（弱项补得多），并各自 +2' },
+    { id:'yaomai',   a:'姚明',          b:'特雷西·麦克格雷迪', name:'姚麦组合', type:'fill', cls:'FULL', desc:'联手补强：两人被夺的那项能力按短板补强（弱项补得多），并各自 +2' },
+    { id:'utah',     a:'约翰·斯托克顿', b:'卡尔·马龙',     name:'犹他双煞',   type:'fill', cls:'LITE', desc:'联手补强：两人被夺的那项能力按短板补强（弱项补得多），并各自 +2' },
+    { id:'ok',       a:'科比·布莱恩特', b:'沙奎尔·奥尼尔', name:'OK 组合',    type:'fill', cls:'LITE', desc:'联手补强：两人被夺的那项能力按短板补强（弱项补得多），并各自 +2' },
+    { id:'janwei',   a:'勒布朗·詹姆斯', b:'德怀恩·韦德',   name:'詹韦连线',   type:'fill', cls:'LITE', desc:'联手补强：两人被夺的那项能力按短板补强（弱项补得多），并各自 +2' },
+    { id:'celtics',  a:'拉里·伯德',     b:'凯文·麦克海尔', name:'绿军双核',   type:'fill', cls:'LITE', desc:'联手补强：两人被夺的那项能力按短板补强（弱项补得多），并各自 +2' },
+    { id:'triangle', a:'迈克尔·乔丹',   b:'斯科蒂·皮蓬',   name:'三角进攻',   type:'fill', cls:'BASE', desc:'联手补强：两人被夺的那项能力各自 +2——他们的价值在卡本身' },
+    { id:'answer',   a:'阿伦·艾弗森',   b:'保罗·皮尔斯',   name:'答案与真相', type:'temp', cls:'FULL', ref:92, desc:'联手补强：两人被夺的那项能力按短板补强（弱项补得多），并各自 +2；凑齐后下一战全队判定 +3' },
+    { id:'raincity', a:'加里·佩顿',     b:'肖恩·坎普',     name:'雨城连线',   type:'mech', cls:'FULL', desc:'联手补强：两人被夺的那项能力按短板补强（弱项补得多），并各自 +2；凑齐后本局免费「换一批」+1 次' },
+    { id:'foe',      a:'拉里·伯德',     b:'魔术师约翰逊',  name:'宿敌',       type:'foe',  cls:'BASE', desc:'宿敌相克：两人被夺的那项能力各 −20%（单项最多 −12）；触发后看广告可「化敌为友」：还原扣减并各 +4' },
+    { id:'gods',     a:'迈克尔·乔丹',   b:'勒布朗·詹姆斯', name:'神与王',     type:'team', cls:'BASE', desc:'全队共鸣：全队未达 90 的能力 +1' }
+  ],
   AD_TTL_MS: 12*3600*1000,       // PENDING TTL 12h（母本 v5.22 口径，先核对后清理）
   AD_BLOCK_AGE_MS: 3*60*1000,    // 未落定拦截：年龄 <=3 分钟
   AD_BLOCK_MAX_CHECKS: 2,        // 且核对次数 <=2
@@ -342,11 +375,12 @@ window.BK_CONFIG = {
     let rate = C.CHECK_BASE + (effAttr(state, idx)-C.CHECK_PIVOT)*C.CHECK_PER_POINT + loadConflict(state.attrs, state)*C.LOAD_RATE_PER;
     if(state.identity && C.IDENTITY_GROUPS[state.identity] && C.IDENTITY_GROUPS[state.identity].indexOf(idx)>=0) rate += C.IDENTITY_MOD;
     if(state.fateBuff && state.fateBuff>0) rate += C.FATE_BUFF;
+    if(state.bondBuffBattles && state.bondBuffBattles>0) rate += state.bondBuff||0; // BK-028 临时型羁绊骑手（下一战全队判定 +3）
     rate += fateMod(state, idx);
     if(opts.mod) rate += opts.mod;
     rate = clamp(rate, C.CHECK_MIN, C.CHECK_MAX);
     if(opts.gamble) rate = Math.round(rate*C.GAMBLE_RATE_FACTOR);
-    return rate;
+    return Math.round(rate*10)/10; // BK-025：统一一位小数——判定与展示同源，杜绝 53.4000…006% 浮点尾巴
   }
   function gradeOf(roll, rate, success){
     if(!success) return 'lose';
@@ -431,6 +465,10 @@ window.BK_CONFIG = {
       lockedCount: 0, draftRound: 0, batch: null, batchTeam: null, swapsLeft: C.SWAPS_FREE,
       directedReady: false, fateBuff: 0, rewindArmed: false, peakPending: null,
       perm: new Array(12).fill(0), fate: null, // 批2：历练成长(perm)与本局词缀(fate)，老档 normalize 补齐
+      // BK-028 羁绊：锁定原值快照/已触发/净加成账/宿敌记账/化敌状态/两类羁绊广告计数/临时骑手/轻联动，老档 normalize 补齐
+      baseAttrs: new Array(12).fill(null), bonds: {}, bondFx: { total: 0, per: {} }, bondNotes: [],
+      foeMarks: {}, befriended: {}, chaseUsed: 0, chaseTarget: null, befriendUsed: 0,
+      freeReroll: 0, mechBondGranted: false, bondBuff: 0, bondBuffBattles: 0, linkageUsed: false,
       resources: { health: C.START_HEALTH, power: 0, fame: 0, rel: 0, controversy: 0, merit: 0, scene: 0 },
       personalFail: 0, proSuccess: 0, selfStreak: 0, playoffRest: 0,
       flags: { loyal:false, transfer:false, injuryMark:false, bountyTag:false },
@@ -448,6 +486,14 @@ window.BK_CONFIG = {
     for(const k in d.flags){ if(s.flags[k]===undefined) s.flags[k]=d.flags[k]; }
     if(!Array.isArray(s.perm) || s.perm.length!==12) s.perm = new Array(12).fill(0);
     if(s.fate===undefined) s.fate = null;
+    // BK-028：羁绊字段形状归一；老档（无 baseAttrs）用落盘 attrs 回填已锁槽快照（老档 attrs 即锁定值＋战后零星历练事件值，是可得的最佳近似）
+    if(!Array.isArray(s.baseAttrs) || s.baseAttrs.length!==12) s.baseAttrs = new Array(12).fill(null);
+    for(let i=0;i<12;i++){ if(s.baseAttrs[i]==null && s.attrSrc && s.attrSrc[i]) s.baseAttrs[i] = s.attrs[i]; }
+    if(!s.bonds || typeof s.bonds!=='object') s.bonds = {};
+    if(!s.bondFx || typeof s.bondFx!=='object') s.bondFx = { total: 0, per: {} };
+    if(!Array.isArray(s.bondNotes)) s.bondNotes = [];
+    if(!s.foeMarks || typeof s.foeMarks!=='object') s.foeMarks = {};
+    if(!s.befriended || typeof s.befriended!=='object') s.befriended = {};
     if(!Array.isArray(s.eDoneBattle)) s.eDoneBattle = [];
     s.ver = 1;
     // phase 归一：settle 类 phase 恢复时统一回到 battle 流（靠 lastSettle 分发重建）——母本 settle 修复实锤口径
@@ -471,11 +517,14 @@ window.BK_CONFIG = {
         points:0, shopOwned:[], runs:0, endingsSeen:[], lbName:'',
         ach:{}, endingsBest:{}, bestLegend:0, championships:0, locks:0, events:0,
         welfareClaimed:false, welfareNoticeOff:false, pendingDirected:false, // 群福利：已领/不再提醒/待用定向资格（是否已领以服务端为准，本地只作展示）
+        bondsSeen:{}, bondStories:{}, // BK-028：羁绊跨局收集；bondStories 为隐藏情节预留字段（本批只留不写逻辑）
         ...m,
         shopOwned: Array.isArray(m.shopOwned) ? m.shopOwned : [],
         endingsSeen: Array.isArray(m.endingsSeen) ? m.endingsSeen : [],
         ach: (m.ach && typeof m.ach==='object') ? m.ach : {},
-        endingsBest: (m.endingsBest && typeof m.endingsBest==='object') ? m.endingsBest : {}
+        endingsBest: (m.endingsBest && typeof m.endingsBest==='object') ? m.endingsBest : {},
+        bondsSeen: (m.bondsSeen && typeof m.bondsSeen==='object') ? m.bondsSeen : {},
+        bondStories: (m.bondStories && typeof m.bondStories==='object') ? m.bondStories : {}
       };
     },
     save(m){ lsSet(C.META_KEY, m); }
@@ -484,11 +533,14 @@ window.BK_CONFIG = {
   window.BK_ls = { get: lsGet, set: lsSet, del: lsDel };
 })();
 </script>
-<script>// 广告层：PENDING v5.22 口径（拼将三作现行版，本作出生即带齐）
-// - settlePendingAd() 是唯一核对入口；只认平台广告计数余额增量发奖，落定即删标记
-// - 未落定保留续核；TTL 12h 先核对后清理留痕；PENDING 带 token 防覆盖
-// - 死锁改造：未落定只短暂拦截（年龄<=3分钟 且 核对次数<=2），超时必放行
-// - 存储：主槽 bk_pending_ad（单条）+ 后台槽队列 bk_pending_queue（上限5）FIFO 逐条核对；落定须 count>max(base,floor)，落定后 floor+1
+<script>// 广告层：BK-027 对齐母本（乱世 v5.22 线上实证口径）修复「看完不给奖励」
+// - 发奖主通道＝平台回执：completeRewardVideo 返回 code===200 且 data.rewarded → 当场直发（grantFn），
+//   按 token 删本条 PENDING，floor 抬到 base+1（本条增量已被自己领走，防旧账误领）
+// - 差量核对只是备份（settleAll）：回执缺失/抛错时保留 PENDING，凭平台计数增量在启动/下次观看时落定补发；
+//   绝不凭空造计数、绝不把计数落盘（BK-026 前的旧实现把备份当唯一通道、又把伪造计数落盘抬死 floor，看一次死一次）
+// - settleAll FIFO 逐条、每条至多消费 1 个增量：落定一条 floor=max(base,floor)+1，后条须见更高增量
+// - TTL 12h 先核对后清理，且仅在平台状态查询成功时才许过期清理（查询失败/计数未知一律保留）
+// - 未落定只短暂拦截（年龄<=3分钟 且 核对次数<=2），超时必放行；旧账不分类型一律转后台队列续核，绝不覆盖
 (function(){
   const C = window.BK_CONFIG;
   const LS = window.BK_ls;
@@ -497,26 +549,22 @@ window.BK_CONFIG = {
     const v = window.ColorboxAI && window.ColorboxAI.vatask;
     return !!(v && typeof v.getActivityTaskState==='function' && typeof v.completeRewardVideo==='function');
   }
-  let platCache = null; // 平台广告计数内存缓存（vatask 可用时）
+  let platCache = null; // 平台广告计数内存快照（不落盘：落盘旧计数会污染跨会话基线）
+  let stateOk = false;  // 最近一次平台状态查询是否成功（失败时计数视为未知，不落定不过期）
   function adCount(){
-    if(vatask()){
-      if(typeof platCache==='number') return platCache;
-      const v = LS.get(C.PLAT_ADCOUNT_KEY);
-      if(typeof v==='number'){ platCache = v; return v; }
-      return 0;
-    }
+    if(vatask()) return (typeof platCache==='number') ? platCache : null;
     return LS.get(C.MOCK_ADCOUNT_KEY) || 0; // mock 平台计数
   }
-  // 刷新平台计数：code===200 且 availableChanceCount 为 number 时更新缓存并落盘；失败静默
+  // 刷新平台计数：code===200 且 availableChanceCount 为 number 才更新快照并置 stateOk；失败静默、计数视为未知
   async function refreshCount(){
-    if(!vatask()) return adCount();
+    if(!vatask()){ stateOk = true; return adCount(); }
     try{
       const st = await window.ColorboxAI.vatask.getActivityTaskState();
       if(st && st.code===200 && st.data && typeof st.data.availableChanceCount==='number'){
         platCache = st.data.availableChanceCount;
-        LS.set(C.PLAT_ADCOUNT_KEY, platCache);
-      }
-    }catch(e){}
+        stateOk = true;
+      } else stateOk = false;
+    }catch(e){ stateOk = false; }
     return adCount();
   }
   function hasPendingToken(token){
@@ -539,66 +587,59 @@ window.BK_CONFIG = {
     if(!p) return false;
     return (now - p.t) <= C.AD_BLOCK_AGE_MS && (p.checks||0) <= C.AD_BLOCK_MAX_CHECKS;
   }
+  // 主槽未落定记录转后台队列续核（队列满丢最早一条并留痕），绝不覆盖销毁
+  function parkMain(){
+    const m = getMain(); if(!m) return;
+    const q = getQueue(); q.push(m);
+    while(q.length > C.AD_QUEUE_MAX){ const d = q.shift(); try{ console.warn('[ad-pending] 待核队列已满(5)，清理最早一条', d && d.type, d && d.token); }catch(e){} }
+    setQueue(q); setMain(null);
+  }
   // 模拟平台：完播后计数 +1（真机为平台记账，客户端只读差量）
-  function mockComplete(){ LS.set(C.MOCK_ADCOUNT_KEY, adCount()+1); }
-  // 平台路径（vatask 可用时）：拦截/挤队列前置判断与 mock 路径相同；基线取平台计数，完播只认平台回执/差量
+  function mockComplete(){ LS.set(C.MOCK_ADCOUNT_KEY, (LS.get(C.MOCK_ADCOUNT_KEY) || 0) + 1); }
+  // 平台路径：回执直发为主、差量备份为辅（母本 playRewardAd 同口径）
   async function watchPlatform(type, grantFn){
-    const now = Date.now();
-    const main = getMain();
-    if(main && main.type!==type && isBlocking(main, now)){
-      Ads.settleAll(grantFn);
-      if(getMain()) return { ok:false, reason:'checking' };
-    }
-    if(main && main.type!==type){
-      // 主槽被他类占用且已可放行：挤入后台队列续核
-      const q = getQueue(); if(q.length < C.AD_QUEUE_MAX){ q.push(main); setQueue(q); } setMain(null);
-    }
     await refreshCount();
-    const base = adCount();
+    Ads.settleAll(grantFn); // 先核对旧账，能落定的先补发
+    const main0 = getMain();
+    if(main0 && isBlocking(main0, Date.now())) return { ok:false, reason:'checking' };
+    if(main0) parkMain();
+    await refreshCount();
+    const base = adCount(); // 可能为 null（查询失败）：本条只能靠回执落定，备份核对自动跳过
+    const now = Date.now();
     const token = 'ad_' + now.toString(36) + '_' + Math.floor(Math.random()*1e6).toString(36);
     const rec = { type, token, base, t: now, checks: 0 };
     setMain(rec);
-    let receipt = 'none'; // ok＝明确获奖回执；denied＝平台明确不可用；none＝其余/抛错，无明确回执
+    let receipt = 'none'; // ok＝明确获奖回执；denied＝平台明确未获奖/不可用；none＝抛错/无回执
     try{
       const res = await window.ColorboxAI.vatask.completeRewardVideo();
-      if(res && res.data && res.data.rewarded===true) receipt = 'ok';
+      if(res && res.code===200 && res.data && res.data.rewarded) receipt = 'ok';
       else if(res && res.data && res.data.reason==='UNAVAILABLE') receipt = 'denied';
+      else if(res && res.code===200 && res.data) receipt = 'denied';
     }catch(e){ receipt = 'none'; }
+    if(receipt==='ok'){
+      removePendingByToken(token);
+      if(typeof base==='number' && base+1 > floor_()) LS.set(C.AD_FLOOR_KEY, base+1);
+      if(grantFn) grantFn(type, rec);
+      return { ok:true, settled:true, token };
+    }
     if(receipt==='denied'){
       removePendingByToken(token); // 按 token 精确删本条，不动其他 PENDING
       return { ok:false, reason:'unavailable', token };
     }
-    if(receipt!=='ok'){
-      return { ok:false, reason:'unsettled', token }; // 保留 PENDING 交差量续核
-    }
-    await refreshCount();
-    let settledList = Ads.settleAll(grantFn);
-    if(hasPendingToken(token)){
-      // 计数刷新滞后、本条仍未落定：按母本回执口径把平台计数视为 base+1 再核对一次
-      platCache = base+1;
-      LS.set(C.PLAT_ADCOUNT_KEY, platCache);
-      const more = Ads.settleAll(grantFn);
-      settledList = settledList.concat(more.filter(t=>settledList.indexOf(t)<0));
-    }
-    return { ok:true, settled: settledList.indexOf(type)>=0, token };
+    return { ok:false, reason:'unsettled', token }; // 保留 PENDING 交差量备份续核
   }
   const Ads = {
     count: adCount,
     refreshCount,
     platform(){ return vatask(); },
-    // 发起观看：vatask 可用走平台路径（async）；不可用走 mock 同步逻辑（已有未落定主槽且仍在拦截窗内 -> 拒绝防覆盖；否则写 PENDING 并模拟完播）
+    // 发起观看：vatask 可用走平台路径（async）；不可用走 mock 同步逻辑（前置口径与平台路径一致）
     watch(type, grantFn){
       if(vatask()) return watchPlatform(type, grantFn);
+      Ads.settleAll(grantFn);
+      const main0 = getMain();
+      if(main0 && isBlocking(main0, Date.now())) return { ok:false, reason:'checking' };
+      if(main0) parkMain();
       const now = Date.now();
-      const main = getMain();
-      if(main && main.type!==type && isBlocking(main, now)){
-        Ads.settleAll(grantFn);
-        if(getMain()) return { ok:false, reason:'checking' };
-      }
-      if(main && main.type!==type){
-        // 主槽被他类占用且已可放行：挤入后台队列续核
-        const q = getQueue(); if(q.length < C.AD_QUEUE_MAX){ q.push(main); setQueue(q); } setMain(null);
-      }
       const token = 'ad_' + now.toString(36) + '_' + Math.floor(Math.random()*1e6).toString(36);
       const rec = { type, token, base: adCount(), t: now, checks: 0 };
       setMain(rec);
@@ -606,21 +647,23 @@ window.BK_CONFIG = {
       const settled = Ads.settleAll(grantFn);
       return { ok:true, settled: settled.indexOf(type)>=0, token };
     },
-    // 唯一核对入口：主槽+队列 FIFO 逐条；返回本次落定的 type 列表
+    // 备份核对入口：主槽+队列 FIFO 逐条，每条至多消费 1 个增量；计数未知（平台查询失败）时只记 checks、不落定不过期
     settleAll(grantFn){
       const now = Date.now(); const settled = [];
+      let runFloor = floor_();
+      const cnt = adCount();
+      const known = (typeof cnt==='number') && (!vatask() || stateOk);
       const tryRec = (rec)=>{
         if(!rec) return false;
         rec.checks = (rec.checks||0)+1;
-        const cnt = adCount(); const fl = floor_();
-        if(cnt > Math.max(rec.base, fl)){
-          LS.set(C.AD_FLOOR_KEY, cnt); // 落定后水位推进（floor 以实际计数为准，防同一增量被旧账误领）
+        if(known && typeof rec.base==='number' && cnt > Math.max(rec.base, runFloor)){
+          runFloor = Math.max(rec.base, runFloor) + 1; // 本条消费 1 个增量，水位逐条抬升
           if(grantFn) grantFn(rec.type, rec);
           settled.push(rec.type);
           return true;
         }
-        // 未落定：TTL 过期先留痕再清（本次已核对过）
-        if(now - rec.t > C.AD_TTL_MS){ settled.push('expired:'+rec.type); return true; }
+        // 未落定：TTL 过期先留痕再清（本次已核对过，且计数已知——查询成功无增量才清理）
+        if(known && now - rec.t > C.AD_TTL_MS){ settled.push('expired:'+rec.type); return true; }
         return false;
       };
       let main = getMain();
@@ -628,6 +671,7 @@ window.BK_CONFIG = {
       const q = getQueue(); const rest = [];
       for(const rec of q){ if(!tryRec(rec)) rest.push(rec); }
       setQueue(rest);
+      if(runFloor !== floor_()) LS.set(C.AD_FLOOR_KEY, runFloor);
       return settled;
     },
     blocking(now){ return isBlocking(getMain(), now||Date.now()); },
@@ -796,14 +840,14 @@ window.BK_SAMPLES = [
  {name:'沙奎尔·奥尼尔', team:'00年代队', tier:'S', window:'1999–2002', stats:[28,50,72,96,74,64,95,63,90,84,86,88], special:{attr:3,kind:'floor',value:92}, note:'最具统治力中锋，扣篮与力量顶点'},
  {name:'科比·布莱恩特', team:'00年代队', tier:'S', window:'2005–2009', stats:[84,95,92,90,81,91,68,86,66,93,91,90], special:{attr:1,kind:'floor',value:90}, note:'曼巴，中投与意志的图腾'},
  {name:'勒布朗·詹姆斯', team:'10年代队', tier:'SS', window:'2009–2013', stats:[83,88,99,97,98,94,88,86,79,99,99,97], special:{attr:2,kind:'floor',value:95}, note:'全能皇帝，峰值窗口官方范例'},
- {name:'斯蒂芬·库里', team:'10年代队', tier:'SS', window:'2014–2018', stats:[97,94,88,62,89,95,57,83,47,89,94,91], special:{attr:0,kind:'floor',value:94}, note:'三分革命本人'},
+ {name:'斯蒂芬·库里', team:'10年代队', tier:'SS', window:'2014–2018', stats:[99,94,88,62,89,95,57,83,47,89,94,91], special:{attr:0,kind:'floor',value:94}, note:'三分革命本人'},
  {name:'尼古拉·约基奇', team:'新世代队', tier:'SS', window:'2020–2024', stats:[84,91,76,74,97,88,95,76,71,88,97,89], special:{attr:4,kind:'floor',value:93}, note:'约老师，中锋组织学革命'},
  {name:'维克托·文班亚马', team:'新世代队', tier:'S', window:'2023–2026', stats:[77,79,73,86,72,70,90,68,94,79,82,72], special:{attr:8,kind:'floor',value:89}, note:'外星人，潜力签·窗口未关闭'},
  {name:'姚明', team:'国际纵队', tier:'A', window:'2005–2009', stats:[26,86,54,80,68,56,90,52,90,70,86,82], special:{attr:1,kind:'floor',value:80}, note:'移动长城，中国篮球的图腾'},
  {name:'史蒂夫·纳什', team:'国际纵队', tier:'SS', window:'2004–2008', stats:[94,95,85,51,98,97,50,72,41,85,97,90], special:{attr:4,kind:'floor',value:93}, note:'风之子，两连 MVP 的组织上限'}
 ];
 </script>
-<script>window.BK_DATA = { players: [{"name": "魔术师约翰逊", "team": "80年代队", "tier": "SS", "window": "1984–1988", "stats": [72, 85, 90, 84, 98, 95, 89, 82, 67, 90, 98, 98], "special": {"attr": 4, "kind": "floor", "value": 94}, "note": "Showtime 发动机，传球天花板", "portrait": "por-00.webp"}, {"name": "拉里·伯德", "team": "80年代队", "tier": "S", "window": "1984–1988", "stats": [90, 94, 77, 66, 88, 83, 88, 77, 61, 82, 96, 92], "special": {"attr": 1, "kind": "floor", "value": 88}, "note": "全能锋线鼻祖，中投与球商双绝", "portrait": "por-01.webp"}, {"name": "卡里姆·贾巴尔", "team": "80年代队", "tier": "S", "window": "1980–1984", "stats": [42, 92, 69, 83, 76, 69, 94, 65, 91, 89, 89, 89], "special": {"attr": 1, "kind": "floor", "value": 87}, "note": "天勾，历史得分王底蕴", "portrait": "por-02.webp"}, {"name": "伊塞亚·托马斯", "team": "80年代队", "tier": "A", "window": "1984–1988", "stats": [66, 81, 85, 68, 89, 89, 42, 83, 30, 85, 87, 85], "special": {"attr": 4, "kind": "floor", "value": 84}, "note": "微笑刺客，小个控卫的硬度标杆", "portrait": "por-03.webp"}, {"name": "朱利叶斯·欧文", "team": "80年代队", "tier": "A", "window": "1980–1984", "stats": [50, 81, 85, 88, 70, 78, 66, 76, 68, 84, 80, 82], "special": {"attr": 3, "kind": "floor", "value": 83}, "note": "J 博士，飞翔美学的源头", "portrait": "por-04.webp"}, {"name": "摩西·马龙", "team": "80年代队", "tier": "B", "window": "1979–1983", "stats": [25, 66, 62, 73, 44, 47, 84, 55, 66, 82, 69, 73], "special": {"attr": 6, "kind": "floor", "value": 78}, "note": "篮板野兽，三届 MVP", "portrait": "por-05.webp"}, {"name": "凯文·麦克海尔", "team": "80年代队", "tier": "B", "window": "1984–1988", "stats": [25, 82, 58, 69, 53, 56, 78, 51, 80, 78, 82, 69], "special": {"attr": 1, "kind": "floor", "value": 76}, "note": "低位脚步教科书", "portrait": "por-06.webp"}, {"name": "詹姆斯·沃西", "team": "80年代队", "tier": "B", "window": "1986–1990", "stats": [38, 74, 76, 78, 60, 67, 54, 63, 49, 76, 71, 67], "special": {"attr": 3, "kind": "floor", "value": 72}, "note": "快攻终结点，眼镜蛇", "portrait": "por-07.webp"}, {"name": "罗伯特·帕里什", "team": "80年代队", "tier": "B", "window": "1981–1985", "stats": [25, 70, 50, 66, 46, 44, 79, 48, 75, 79, 68, 64], "special": {"attr": 6, "kind": "floor", "value": 74}, "note": "酋长，绿军铁三角的沉默中锋", "portrait": "por-08.webp"}, {"name": "多米尼克·威尔金斯", "team": "80年代队", "tier": "B", "window": "1985–1989", "stats": [52, 71, 75, 84, 54, 68, 54, 63, 43, 76, 68, 63], "special": {"attr": 3, "kind": "floor", "value": 78}, "note": "人类电影精华，扣篮与得分", "portrait": "por-09.webp"}, {"name": "阿历克斯·英格利什", "team": "80年代队", "tier": "B", "window": "1982–1986", "stats": [41, 78, 74, 67, 63, 71, 49, 60, 41, 78, 74, 67], "special": {"attr": 1, "kind": "floor", "value": 72}, "note": "得分机器，掘金队史标杆", "portrait": "por-10.webp"}, {"name": "克里斯·穆林", "team": "80年代队", "tier": "B", "window": "1987–1991", "stats": [81, 81, 70, 52, 70, 72, 46, 68, 37, 77, 79, 68], "special": {"attr": 0, "kind": "floor", "value": 76}, "note": "上帝左手，梦一队射手", "portrait": "por-11.webp"}, {"name": "比尔·兰比尔", "team": "80年代队", "tier": "C", "window": "1983–1987", "stats": [38, 59, 31, 45, 43, 38, 69, 38, 50, 69, 64, 57], "special": {"attr": 6, "kind": "floor", "value": 63}, "note": "坏小子军团的恶人，争议拉满型模板", "portrait": "por-12.webp"}, {"name": "乔·杜马斯", "team": "80年代队", "tier": "C", "window": "1988–1992", "stats": [65, 72, 65, 50, 62, 70, 26, 70, 25, 72, 72, 67], "special": {"attr": 1, "kind": "floor", "value": 66}, "note": "活塞冠军后场，攻防均衡", "portrait": "por-13.webp"}, {"name": "拜伦·斯科特", "team": "80年代队", "tier": "C", "window": "1984–1988", "stats": [68, 68, 65, 56, 48, 63, 25, 58, 25, 70, 60, 51], "special": {"attr": 0, "kind": "floor", "value": 62}, "note": "Showtime 的侧翼射手", "portrait": "por-14.webp"}, {"name": "迈克尔·乔丹", "team": "90年代队", "tier": "SS", "window": "1990–1994", "stats": [81, 99, 99, 99, 88, 96, 76, 96, 81, 97, 97, 96], "special": {"attr": 2, "kind": "floor", "value": 94}, "note": "篮球之神，全表标尺", "portrait": "por-15.webp"}, {"name": "哈基姆·奥拉朱旺", "team": "90年代队", "tier": "S", "window": "1992–1996", "stats": [44, 80, 74, 87, 71, 67, 93, 82, 95, 87, 89, 85], "special": {"attr": 8, "kind": "floor", "value": 90}, "note": "大梦脚步，封盖历史第一", "portrait": "por-16.webp"}, {"name": "卡尔·马龙", "team": "90年代队", "tier": "S", "window": "1994–1998", "stats": [33, 87, 81, 85, 69, 67, 91, 72, 65, 94, 83, 87], "special": {"attr": 6, "kind": "floor", "value": 87}, "note": "邮差，力量与铁人属性", "portrait": "por-17.webp"}, {"name": "大卫·罗宾逊", "team": "90年代队", "tier": "A", "window": "1991–1995", "stats": [29, 80, 71, 84, 61, 59, 87, 67, 89, 85, 81, 83], "special": {"attr": 8, "kind": "floor", "value": 84}, "note": "海军上将，全能中锋", "portrait": "por-18.webp"}, {"name": "查尔斯·巴克利", "team": "90年代队", "tier": "A", "window": "1990–1994", "stats": [56, 78, 82, 84, 72, 74, 88, 72, 62, 84, 80, 82], "special": {"attr": 6, "kind": "floor", "value": 83}, "note": "飞猪，矮个大前锋的极限", "portrait": "por-19.webp"}, {"name": "约翰·斯托克顿", "team": "90年代队", "tier": "A", "window": "1989–1993", "stats": [79, 83, 81, 49, 91, 89, 41, 91, 27, 87, 91, 83], "special": {"attr": 4, "kind": "floor", "value": 86}, "note": "助攻抢断双史一，控卫模板", "portrait": "por-20.webp"}, {"name": "斯科蒂·皮蓬", "team": "90年代队", "tier": "A", "window": "1993–1997", "stats": [69, 79, 83, 83, 79, 79, 73, 89, 69, 87, 85, 77], "special": {"attr": 7, "kind": "floor", "value": 84}, "note": "历史最强二当家，防守大闸", "portrait": "por-21.webp"}, {"name": "帕特里克·尤因", "team": "90年代队", "tier": "B", "window": "1989–1993", "stats": [25, 78, 56, 73, 49, 47, 80, 54, 80, 76, 71, 76], "special": {"attr": 8, "kind": "floor", "value": 74}, "note": "纽约中锋，无冕代表", "portrait": "por-22.webp"}, {"name": "雷吉·米勒", "team": "90年代队", "tier": "C", "window": "1994–1998", "stats": [76, 74, 71, 40, 57, 66, 25, 54, 25, 74, 71, 69], "special": {"attr": 0, "kind": "floor", "value": 71}, "note": "米勒时刻，三分与大心脏", "portrait": "por-23.webp"}, {"name": "加里·佩顿", "team": "90年代队", "tier": "B", "window": "1994–1998", "stats": [59, 72, 74, 55, 79, 79, 41, 81, 28, 81, 77, 77], "special": {"attr": 7, "kind": "floor", "value": 76}, "note": "手套，控卫防守天花板", "portrait": "por-24.webp"}, {"name": "肖恩·坎普", "team": "90年代队", "tier": "B", "window": "1993–1997", "stats": [25, 60, 67, 82, 42, 47, 73, 53, 69, 73, 60, 56], "special": {"attr": 3, "kind": "floor", "value": 76}, "note": "雨人，暴力扣篮的图腾", "portrait": "por-25.webp"}, {"name": "阿伦佐·莫宁", "team": "90年代队", "tier": "C", "window": "1995–1999", "stats": [25, 58, 51, 70, 37, 34, 73, 44, 75, 70, 65, 70], "special": {"attr": 8, "kind": "floor", "value": 69}, "note": "肾斗士，铁血封盖", "portrait": "por-26.webp"}, {"name": "克莱德·德雷克斯勒", "team": "90年代队", "tier": "B", "window": "1988–1992", "stats": [52, 77, 80, 81, 68, 74, 57, 74, 50, 81, 77, 72], "special": {"attr": 2, "kind": "floor", "value": 74}, "note": "滑翔机，80 年代末崛起、峰值多数在 90 年代", "portrait": "por-27.webp"}, {"name": "迪肯贝·穆托姆博", "team": "90年代队", "tier": "B", "window": "1994–1998", "stats": [25, 42, 31, 58, 31, 27, 75, 38, 82, 69, 58, 56], "special": {"attr": 8, "kind": "floor", "value": 76}, "note": "摇手指，四届最佳防守", "portrait": "por-28.webp"}, {"name": "蒂姆·哈达威", "team": "90年代队", "tier": "C", "window": "1991–1995", "stats": [66, 66, 71, 40, 69, 71, 25, 64, 25, 69, 66, 61], "special": {"attr": 5, "kind": "floor", "value": 65}, "note": "变向鼻祖，胯下运球招牌", "portrait": "por-29.webp"}, {"name": "沙奎尔·奥尼尔", "team": "00年代队", "tier": "S", "window": "1999–2002", "stats": [28, 50, 72, 96, 74, 64, 95, 63, 90, 84, 86, 88], "special": {"attr": 3, "kind": "floor", "value": 92}, "note": "最具统治力中锋，扣篮与力量顶点", "portrait": "por-30.webp"}, {"name": "科比·布莱恩特", "team": "00年代队", "tier": "S", "window": "2005–2009", "stats": [84, 95, 92, 90, 81, 91, 68, 86, 66, 93, 91, 90], "special": {"attr": 1, "kind": "floor", "value": 90}, "note": "曼巴，中投与意志的图腾", "portrait": "por-31.webp"}, {"name": "蒂姆·邓肯", "team": "00年代队", "tier": "S", "window": "2001–2007", "stats": [34, 87, 74, 80, 80, 74, 93, 72, 90, 87, 92, 88], "special": {"attr": 6, "kind": "floor", "value": 88}, "note": "石佛，大基本功", "portrait": "por-32.webp"}, {"name": "凯文·加内特", "team": "00年代队", "tier": "S", "window": "2000–2004", "stats": [52, 88, 80, 86, 82, 77, 93, 82, 86, 93, 89, 93], "special": {"attr": 6, "kind": "floor", "value": 88}, "note": "狼王，全能大前与防守体系", "portrait": "por-33.webp"}, {"name": "德克·诺维茨基", "team": "00年代队", "tier": "A", "window": "2006–2010", "stats": [81, 87, 67, 61, 65, 71, 77, 57, 65, 79, 83, 81], "special": {"attr": 1, "kind": "floor", "value": 82}, "note": "金鸡独立，峰值窗口优先于国籍归队", "portrait": "por-34.webp"}, {"name": "阿伦·艾弗森", "team": "00年代队", "tier": "A", "window": "2000–2004", "stats": [72, 84, 90, 68, 78, 90, 38, 84, 28, 88, 80, 82], "special": {"attr": 2, "kind": "floor", "value": 85}, "note": "答案，小个得分手的神", "portrait": "por-35.webp"}, {"name": "德怀恩·韦德", "team": "00年代队", "tier": "A", "window": "2005–2009", "stats": [62, 82, 88, 82, 74, 84, 50, 80, 72, 84, 82, 84], "special": {"attr": 2, "kind": "floor", "value": 83}, "note": "闪电侠，2006 总决赛封神", "portrait": "por-36.webp"}, {"name": "特雷西·麦克格雷迪", "team": "00年代队", "tier": "A", "window": "2000–2004", "stats": [79, 87, 85, 87, 75, 85, 47, 73, 63, 77, 81, 77], "special": {"attr": 1, "kind": "floor", "value": 82}, "note": "35 秒 13 分，干拔美学", "portrait": "por-37.webp"}, {"name": "保罗·皮尔斯", "team": "00年代队", "tier": "B", "window": "2002–2006", "stats": [76, 83, 79, 68, 68, 79, 59, 68, 46, 81, 81, 83], "special": {"attr": 1, "kind": "floor", "value": 78}, "note": "真理，凯尔特人队魂", "portrait": "por-38.webp"}, {"name": "阿玛雷·斯塔德迈尔", "team": "00年代队", "tier": "B", "window": "2004–2008", "stats": [25, 70, 72, 83, 46, 52, 76, 50, 74, 74, 63, 59], "special": {"attr": 3, "kind": "floor", "value": 78}, "note": "小霸王，暴力终结型内线", "portrait": "por-39.webp"}, {"name": "文斯·卡特", "team": "00年代队", "tier": "B", "window": "1999–2003", "stats": [61, 68, 70, 84, 54, 65, 39, 54, 37, 68, 63, 59], "special": {"attr": 3, "kind": "floor", "value": 78}, "note": "半人半神，扣篮绝活顶格", "portrait": "por-40.webp"}, {"name": "贾森·基德", "team": "00年代队", "tier": "B", "window": "2001–2005", "stats": [65, 67, 71, 51, 80, 78, 58, 78, 29, 78, 80, 76], "special": {"attr": 4, "kind": "floor", "value": 74}, "note": "组织大师，三双型控卫", "portrait": "por-41.webp"}, {"name": "雷·阿伦", "team": "00年代队", "tier": "B", "window": "2000–2004", "stats": [80, 78, 71, 56, 62, 71, 32, 58, 25, 80, 73, 69], "special": {"attr": 0, "kind": "floor", "value": 76}, "note": "三分绝活位，历史级射手", "portrait": "por-42.webp"}, {"name": "克里斯·波什", "team": "00年代队", "tier": "C", "window": "2005–2009", "stats": [57, 74, 62, 67, 50, 55, 74, 45, 64, 72, 69, 62], "special": {"attr": 1, "kind": "floor", "value": 68}, "note": "龙王锚点，空间型内线", "portrait": "por-43.webp"}, {"name": "本·华莱士", "team": "00年代队", "tier": "A", "window": "2001–2005", "stats": [25, 47, 45, 69, 47, 43, 87, 67, 89, 85, 75, 73], "special": {"attr": 8, "kind": "floor", "value": 84}, "note": "大本，4 届最佳防守球员，防守型模板", "portrait": "por-44.webp"}, {"name": "勒布朗·詹姆斯", "team": "10年代队", "tier": "SS", "window": "2009–2013", "stats": [83, 88, 99, 97, 98, 94, 88, 86, 79, 99, 99, 97], "special": {"attr": 2, "kind": "floor", "value": 95}, "note": "全能皇帝，峰值窗口官方范例", "portrait": "por-45.webp"}, {"name": "斯蒂芬·库里", "team": "10年代队", "tier": "SS", "window": "2014–2018", "stats": [97, 94, 88, 62, 89, 95, 57, 83, 47, 89, 94, 91], "special": {"attr": 0, "kind": "floor", "value": 94}, "note": "三分革命本人", "portrait": "por-46.webp"}, {"name": "凯文·杜兰特", "team": "10年代队", "tier": "A", "window": "2013–2017", "stats": [87, 91, 88, 83, 79, 85, 67, 71, 73, 85, 85, 83], "special": {"attr": 1, "kind": "floor", "value": 86}, "note": "死神，无差别单打", "portrait": "por-47.webp"}, {"name": "科怀·伦纳德", "team": "10年代队", "tier": "A", "window": "2015–2019", "stats": [78, 84, 82, 78, 70, 78, 70, 88, 72, 80, 84, 78], "special": {"attr": 7, "kind": "floor", "value": 83}, "note": "机器人，两冠两 FMVP 的攻防一体", "portrait": "por-48.webp"}, {"name": "詹姆斯·哈登", "team": "10年代队", "tier": "A", "window": "2015–2019", "stats": [84, 82, 90, 72, 88, 90, 54, 74, 48, 84, 86, 80], "special": {"attr": 5, "kind": "floor", "value": 85}, "note": "大胡子，持球大核心打法开创者", "portrait": "por-49.webp"}, {"name": "拉塞尔·威斯布鲁克", "team": "10年代队", "tier": "A", "window": "2015–2019", "stats": [63, 77, 91, 89, 87, 85, 75, 75, 55, 91, 75, 77], "special": {"attr": 2, "kind": "floor", "value": 86}, "note": "三双机器，能量与争议并存", "portrait": "por-50.webp"}, {"name": "克里斯·保罗", "team": "10年代队", "tier": "S", "window": "2011–2015", "stats": [83, 92, 87, 62, 94, 94, 53, 89, 42, 85, 94, 90], "special": {"attr": 4, "kind": "floor", "value": 90}, "note": "控卫之神，组织与中投", "portrait": "por-51.webp"}, {"name": "卡梅隆·安东尼", "team": "10年代队", "tier": "B", "window": "2009–2013", "stats": [73, 82, 78, 71, 56, 73, 60, 51, 38, 73, 73, 75], "special": {"attr": 1, "kind": "floor", "value": 76}, "note": "甜瓜，进攻万花筒", "portrait": "por-52.webp"}, {"name": "德里克·罗斯", "team": "10年代队", "tier": "A", "window": "2009–2013", "stats": [61, 79, 87, 81, 65, 83, 37, 65, 41, 65, 77, 77], "special": {"attr": 2, "kind": "floor", "value": 82}, "note": "风城玫瑰，2011 MVP 锚点，巅峰定值、体能短板真实写", "portrait": "por-53.webp"}, {"name": "凯里·欧文", "team": "10年代队", "tier": "B", "window": "2015–2019", "stats": [74, 74, 75, 63, 66, 82, 28, 59, 25, 68, 70, 61], "special": {"attr": 5, "kind": "floor", "value": 76}, "note": "运球与终结美学", "portrait": "por-54.webp"}, {"name": "达米安·利拉德", "team": "10年代队", "tier": "B", "window": "2016–2020", "stats": [78, 74, 76, 60, 71, 76, 32, 56, 25, 76, 76, 74], "special": {"attr": 0, "kind": "floor", "value": 72}, "note": "表哥，超远三分与绝杀", "portrait": "por-55.webp"}, {"name": "吉米·巴特勒", "team": "10年代队", "tier": "B", "window": "2016–2020", "stats": [56, 73, 76, 71, 69, 71, 62, 78, 51, 80, 78, 80], "special": {"attr": 11, "kind": "floor", "value": 74}, "note": "硬汉，季后赛档位自动 +1 的男人", "portrait": "por-56.webp"}, {"name": "克莱·汤普森", "team": "10年代队", "tier": "C", "window": "2014–2018", "stats": [74, 69, 57, 43, 50, 60, 26, 62, 31, 69, 64, 55], "special": {"attr": 0, "kind": "floor", "value": 69}, "note": "G6 汤，三分与无球防守", "portrait": "por-57.webp"}, {"name": "德雷蒙德·格林", "team": "10年代队", "tier": "C", "window": "2014–2018", "stats": [42, 49, 49, 47, 68, 56, 59, 68, 56, 68, 73, 66], "special": {"attr": 4, "kind": "floor", "value": 62}, "note": "追梦，勇士体系轴心（争议型模板）", "portrait": "por-58.webp"}, {"name": "凯文·乐福", "team": "10年代队", "tier": "C", "window": "2010–2014", "stats": [68, 68, 53, 48, 60, 51, 70, 36, 34, 65, 68, 63], "special": {"attr": 6, "kind": "floor", "value": 64}, "note": "两双机器，骑士冠军拼图", "portrait": "por-59.webp"}, {"name": "尼古拉·约基奇", "team": "新世代队", "tier": "SS", "window": "2020–2024", "stats": [84, 91, 76, 74, 97, 88, 95, 76, 71, 88, 97, 89], "special": {"attr": 4, "kind": "floor", "value": 93}, "note": "约老师，中锋组织学革命", "portrait": "por-60.webp"}, {"name": "维克托·文班亚马", "team": "新世代队", "tier": "S", "window": "2023–2026", "stats": [77, 79, 73, 86, 72, 70, 90, 68, 94, 79, 82, 72], "special": {"attr": 8, "kind": "floor", "value": 89}, "note": "外星人，潜力签·窗口未关闭", "portrait": "por-61.webp"}, {"name": "扬尼斯·阿德托昆博", "team": "新世代队", "tier": "S", "window": "2018–2022", "stats": [64, 74, 95, 94, 83, 85, 90, 78, 85, 93, 87, 89], "special": {"attr": 2, "kind": "floor", "value": 90}, "note": "字母哥，转换进攻的终极形态", "portrait": "por-62.webp"}, {"name": "卢卡·东契奇", "team": "新世代队", "tier": "S", "window": "2020–2024", "stats": [88, 88, 89, 69, 95, 93, 83, 72, 60, 83, 91, 89], "special": {"attr": 4, "kind": "floor", "value": 90}, "note": "持球大核现役版", "portrait": "por-63.webp"}, {"name": "谢伊·吉尔杰斯-亚历山大", "team": "新世代队", "tier": "A", "window": "2021–2025", "stats": [69, 87, 83, 71, 71, 83, 45, 77, 61, 81, 83, 79], "special": {"attr": 1, "kind": "floor", "value": 82}, "note": "SGA，中距离与造犯规的现代答案", "portrait": "por-64.webp"}, {"name": "杰森·塔图姆", "team": "新世代队", "tier": "B", "window": "2020–2024", "stats": [79, 81, 81, 72, 70, 77, 66, 66, 57, 81, 79, 81], "special": {"attr": 0, "kind": "floor", "value": 73}, "note": "獭兔，冠军锋线", "portrait": "por-65.webp"}, {"name": "乔尔·恩比德", "team": "新世代队", "tier": "B", "window": "2019–2023", "stats": [65, 80, 70, 74, 59, 61, 83, 52, 79, 61, 76, 74], "special": {"attr": 6, "kind": "floor", "value": 78}, "note": "大帝，健康条即战力的玻璃模板（体能短板显著）", "portrait": "por-66.webp"}, {"name": "安东尼·爱德华兹", "team": "新世代队", "tier": "A", "window": "2021–2025", "stats": [79, 81, 89, 89, 69, 81, 53, 75, 63, 85, 75, 77], "special": {"attr": 3, "kind": "floor", "value": 84}, "note": "华子，新生代门面", "portrait": "por-67.webp"}, {"name": "安东尼·戴维斯", "team": "新世代队", "tier": "A", "window": "2018–2024", "stats": [56, 80, 76, 82, 62, 64, 86, 66, 88, 74, 80, 82], "special": {"attr": 8, "kind": "floor", "value": 83}, "note": "浓眉，攻防一体内线", "portrait": "por-68.webp"}, {"name": "泰雷斯·哈利伯顿", "team": "新世代队", "tier": "B", "window": "2021–2025", "stats": [75, 70, 72, 53, 79, 77, 35, 66, 26, 72, 77, 66], "special": {"attr": 4, "kind": "floor", "value": 74}, "note": "传球魔术的现役传人", "portrait": "por-69.webp"}, {"name": "杰伦·布伦森", "team": "新世代队", "tier": "B", "window": "2021–2025", "stats": [70, 77, 79, 50, 72, 77, 31, 57, 25, 77, 75, 77], "special": {"attr": 2, "kind": "floor", "value": 74}, "note": "大头，纽约新王", "portrait": "por-70.webp"}, {"name": "德文·布克", "team": "新世代队", "tier": "B", "window": "2019–2023", "stats": [77, 79, 77, 68, 66, 75, 39, 57, 26, 75, 72, 68], "special": {"attr": 1, "kind": "floor", "value": 74}, "note": "得分后卫正统", "portrait": "por-71.webp"}, {"name": "多诺万·米切尔", "team": "新世代队", "tier": "B", "window": "2020–2024", "stats": [76, 76, 80, 80, 65, 76, 36, 62, 36, 78, 71, 67], "special": {"attr": 2, "kind": "floor", "value": 74}, "note": "蜘蛛侠，季后赛爆发户", "portrait": "por-72.webp"}, {"name": "贾马尔·穆雷", "team": "新世代队", "tier": "C", "window": "2019–2023", "stats": [71, 71, 71, 59, 64, 69, 25, 54, 25, 66, 69, 64], "special": {"attr": 1, "kind": "floor", "value": 65}, "note": "季后赛限定变身型模板", "portrait": "por-73.webp"}, {"name": "卡尔-安东尼·唐斯", "team": "新世代队", "tier": "C", "window": "2018–2022", "stats": [71, 69, 59, 66, 52, 54, 71, 37, 54, 69, 64, 57], "special": {"attr": 0, "kind": "floor", "value": 65}, "note": "空间型内线，防守是短板", "portrait": "por-74.webp"}, {"name": "姚明", "team": "国际纵队", "tier": "A", "window": "2005–2009", "stats": [26, 86, 54, 80, 68, 56, 90, 52, 90, 70, 86, 82], "special": {"attr": 1, "kind": "floor", "value": 80}, "note": "移动长城，中国篮球的图腾", "portrait": "por-75.webp"}, {"name": "史蒂夫·纳什", "team": "国际纵队", "tier": "SS", "window": "2004–2008", "stats": [94, 95, 85, 51, 98, 97, 50, 72, 41, 85, 97, 90], "special": {"attr": 4, "kind": "floor", "value": 93}, "note": "风之子，两连 MVP 的组织上限", "portrait": "por-76.webp"}, {"name": "马努·吉诺比利", "team": "国际纵队", "tier": "A", "window": "2004–2008", "stats": [80, 82, 89, 78, 86, 88, 54, 80, 52, 80, 90, 84], "special": {"attr": 2, "kind": "floor", "value": 84}, "note": "妖刀，第六人位置的传奇模板", "portrait": "por-77.webp"}, {"name": "保罗·加索尔", "team": "国际纵队", "tier": "A", "window": "2006–2010", "stats": [52, 84, 66, 72, 80, 68, 84, 58, 80, 78, 86, 80], "special": {"attr": 4, "kind": "floor", "value": 75}, "note": "家嫂，策应型内线", "portrait": "por-78.webp"}, {"name": "托尼·帕克", "team": "国际纵队", "tier": "A", "window": "2007–2011", "stats": [56, 80, 86, 54, 80, 82, 32, 64, 25, 80, 80, 76], "special": {"attr": 2, "kind": "floor", "value": 81}, "note": "法国跑车，总决赛 MVP 控卫", "portrait": "por-79.webp"}, {"name": "德拉岑·彼得罗维奇", "team": "国际纵队", "tier": "A", "window": "1989–1993", "stats": [86, 86, 78, 52, 72, 80, 38, 62, 25, 76, 82, 74], "special": {"attr": 0, "kind": "floor", "value": 81}, "note": "篮球莫扎特，英年早逝的传奇", "portrait": "por-80.webp"}, {"name": "马克·加索尔", "team": "国际纵队", "tier": "B", "window": "2012–2016", "stats": [57, 74, 57, 61, 76, 59, 79, 57, 79, 72, 83, 74], "special": {"attr": 8, "kind": "floor", "value": 73}, "note": "小加，防守中枢＋策应", "portrait": "por-81.webp"}, {"name": "王治郅", "team": "国际纵队", "tier": "C", "window": "1999–2003", "stats": [57, 69, 55, 50, 43, 47, 62, 33, 57, 59, 62, 50], "special": {"attr": 1, "kind": "floor", "value": 63}, "note": "大郅，中国登陆 NBA 第一人，脚步内线", "portrait": "por-82.webp"}, {"name": "易建联", "team": "国际纵队", "tier": "C", "window": "2008–2012", "stats": [58, 70, 65, 72, 41, 48, 70, 41, 62, 70, 65, 55], "special": {"attr": 3, "kind": "floor", "value": 66}, "note": "阿联，空间型大前，中国男篮旗帜十年", "portrait": "por-83.webp"}, {"name": "阿维达斯·萨博尼斯", "team": "国际纵队", "tier": "C", "window": "1988–1992", "stats": [47, 71, 50, 57, 76, 45, 74, 40, 66, 57, 74, 62], "special": {"attr": 4, "kind": "floor", "value": 70}, "note": "老萨，世界屋脊的传球中锋", "portrait": "por-84.webp"}, {"name": "路易斯·斯科拉", "team": "国际纵队", "tier": "C", "window": "2007–2011", "stats": [25, 73, 59, 54, 51, 49, 66, 47, 35, 66, 71, 59], "special": {"attr": 1, "kind": "floor", "value": 67}, "note": "钻石，阿根廷黄金一代的轴", "portrait": "por-85.webp"}, {"name": "安德烈·基里连科", "team": "国际纵队", "tier": "C", "window": "2003–2007", "stats": [39, 58, 63, 65, 58, 61, 63, 75, 73, 70, 68, 53], "special": {"attr": 7, "kind": "floor", "value": 69}, "note": "AK47，全能防守的瑞士军刀", "portrait": "por-86.webp"}, {"name": "佩德拉格·斯托亚科维奇", "team": "国际纵队", "tier": "C", "window": "2000–2004", "stats": [73, 71, 54, 35, 49, 56, 30, 44, 25, 63, 63, 51], "special": {"attr": 0, "kind": "floor", "value": 68}, "note": "佩贾，纯射手位", "portrait": "por-87.webp"}, {"name": "鲍里斯·迪奥", "team": "国际纵队", "tier": "C", "window": "2005–2009", "stats": [46, 58, 54, 44, 66, 61, 44, 46, 39, 61, 68, 51], "special": {"attr": 4, "kind": "floor", "value": 60}, "note": "法国魔术师，什么都能打一点", "portrait": "por-88.webp"}, {"name": "孙悦", "team": "国际纵队", "tier": "C", "window": "2007–2011", "stats": [49, 56, 61, 63, 56, 61, 37, 61, 68, 66, 58, 49], "special": {"attr": 8, "kind": "floor", "value": 62}, "note": "孙大圣，中国后卫的 NBA 冠军戒指（话题型模板）", "portrait": "por-89.webp"}],
+<script>window.BK_DATA = { players: [{"name": "魔术师约翰逊", "team": "80年代队", "tier": "SS", "window": "1984–1988", "stats": [72, 85, 90, 84, 98, 95, 89, 82, 67, 90, 98, 98], "special": {"attr": 4, "kind": "floor", "value": 94}, "note": "Showtime 发动机，传球天花板", "portrait": "por-00.webp"}, {"name": "拉里·伯德", "team": "80年代队", "tier": "S", "window": "1984–1988", "stats": [90, 94, 77, 66, 88, 83, 88, 77, 61, 82, 96, 92], "special": {"attr": 1, "kind": "floor", "value": 88}, "note": "全能锋线鼻祖，中投与球商双绝", "portrait": "por-01.webp"}, {"name": "卡里姆·贾巴尔", "team": "80年代队", "tier": "S", "window": "1980–1984", "stats": [42, 92, 69, 83, 76, 69, 94, 65, 91, 89, 89, 89], "special": {"attr": 1, "kind": "floor", "value": 87}, "note": "天勾，历史得分王底蕴", "portrait": "por-02.webp"}, {"name": "伊塞亚·托马斯", "team": "80年代队", "tier": "A", "window": "1984–1988", "stats": [66, 81, 85, 68, 89, 89, 42, 83, 30, 85, 87, 85], "special": {"attr": 4, "kind": "floor", "value": 84}, "note": "微笑刺客，小个控卫的硬度标杆", "portrait": "por-03.webp"}, {"name": "朱利叶斯·欧文", "team": "80年代队", "tier": "A", "window": "1980–1984", "stats": [50, 81, 85, 88, 70, 78, 66, 76, 68, 84, 80, 82], "special": {"attr": 3, "kind": "floor", "value": 83}, "note": "J 博士，飞翔美学的源头", "portrait": "por-04.webp"}, {"name": "摩西·马龙", "team": "80年代队", "tier": "B", "window": "1979–1983", "stats": [25, 66, 62, 73, 44, 47, 84, 55, 66, 82, 69, 73], "special": {"attr": 6, "kind": "floor", "value": 78}, "note": "篮板野兽，三届 MVP", "portrait": "por-05.webp"}, {"name": "凯文·麦克海尔", "team": "80年代队", "tier": "B", "window": "1984–1988", "stats": [25, 82, 58, 69, 53, 56, 78, 51, 80, 78, 82, 69], "special": {"attr": 1, "kind": "floor", "value": 76}, "note": "低位脚步教科书", "portrait": "por-06.webp"}, {"name": "詹姆斯·沃西", "team": "80年代队", "tier": "B", "window": "1986–1990", "stats": [38, 74, 76, 78, 60, 67, 54, 63, 49, 76, 71, 67], "special": {"attr": 3, "kind": "floor", "value": 72}, "note": "快攻终结点，眼镜蛇", "portrait": "por-07.webp"}, {"name": "罗伯特·帕里什", "team": "80年代队", "tier": "B", "window": "1981–1985", "stats": [25, 70, 50, 66, 46, 44, 79, 48, 75, 79, 68, 64], "special": {"attr": 6, "kind": "floor", "value": 74}, "note": "酋长，绿军铁三角的沉默中锋", "portrait": "por-08.webp"}, {"name": "多米尼克·威尔金斯", "team": "80年代队", "tier": "B", "window": "1985–1989", "stats": [52, 71, 75, 84, 54, 68, 54, 63, 43, 76, 68, 63], "special": {"attr": 3, "kind": "floor", "value": 78}, "note": "人类电影精华，扣篮与得分", "portrait": "por-09.webp"}, {"name": "阿历克斯·英格利什", "team": "80年代队", "tier": "B", "window": "1982–1986", "stats": [41, 78, 74, 67, 63, 71, 49, 60, 41, 78, 74, 67], "special": {"attr": 1, "kind": "floor", "value": 72}, "note": "得分机器，掘金队史标杆", "portrait": "por-10.webp"}, {"name": "克里斯·穆林", "team": "80年代队", "tier": "B", "window": "1987–1991", "stats": [81, 81, 70, 52, 70, 72, 46, 68, 37, 77, 79, 68], "special": {"attr": 0, "kind": "floor", "value": 76}, "note": "上帝左手，梦一队射手", "portrait": "por-11.webp"}, {"name": "比尔·兰比尔", "team": "80年代队", "tier": "C", "window": "1983–1987", "stats": [38, 59, 31, 45, 43, 38, 69, 38, 50, 69, 64, 57], "special": {"attr": 6, "kind": "floor", "value": 63}, "note": "坏小子军团的恶人，争议拉满型模板", "portrait": "por-12.webp"}, {"name": "乔·杜马斯", "team": "80年代队", "tier": "C", "window": "1988–1992", "stats": [65, 72, 65, 50, 62, 70, 26, 70, 25, 72, 72, 67], "special": {"attr": 1, "kind": "floor", "value": 66}, "note": "活塞冠军后场，攻防均衡", "portrait": "por-13.webp"}, {"name": "拜伦·斯科特", "team": "80年代队", "tier": "C", "window": "1984–1988", "stats": [68, 68, 65, 56, 48, 63, 25, 58, 25, 70, 60, 51], "special": {"attr": 0, "kind": "floor", "value": 62}, "note": "Showtime 的侧翼射手", "portrait": "por-14.webp"}, {"name": "迈克尔·乔丹", "team": "90年代队", "tier": "SS", "window": "1990–1994", "stats": [81, 99, 99, 99, 88, 96, 76, 96, 81, 97, 97, 96], "special": {"attr": 2, "kind": "floor", "value": 94}, "note": "篮球之神，全表标尺", "portrait": "por-15.webp"}, {"name": "哈基姆·奥拉朱旺", "team": "90年代队", "tier": "S", "window": "1992–1996", "stats": [44, 80, 74, 87, 71, 67, 93, 82, 95, 87, 89, 85], "special": {"attr": 8, "kind": "floor", "value": 90}, "note": "大梦脚步，封盖历史第一", "portrait": "por-16.webp"}, {"name": "卡尔·马龙", "team": "90年代队", "tier": "S", "window": "1994–1998", "stats": [33, 87, 81, 85, 69, 67, 91, 72, 65, 94, 83, 87], "special": {"attr": 6, "kind": "floor", "value": 87}, "note": "邮差，力量与铁人属性", "portrait": "por-17.webp"}, {"name": "大卫·罗宾逊", "team": "90年代队", "tier": "A", "window": "1991–1995", "stats": [29, 80, 71, 84, 61, 59, 87, 67, 89, 85, 81, 83], "special": {"attr": 8, "kind": "floor", "value": 84}, "note": "海军上将，全能中锋", "portrait": "por-18.webp"}, {"name": "查尔斯·巴克利", "team": "90年代队", "tier": "A", "window": "1990–1994", "stats": [56, 78, 82, 84, 72, 74, 88, 72, 62, 84, 80, 82], "special": {"attr": 6, "kind": "floor", "value": 83}, "note": "飞猪，矮个大前锋的极限", "portrait": "por-19.webp"}, {"name": "约翰·斯托克顿", "team": "90年代队", "tier": "A", "window": "1989–1993", "stats": [79, 83, 81, 49, 95, 89, 41, 91, 27, 87, 91, 83], "special": {"attr": 4, "kind": "floor", "value": 86}, "note": "助攻抢断双史一，控卫模板", "portrait": "por-20.webp"}, {"name": "斯科蒂·皮蓬", "team": "90年代队", "tier": "A", "window": "1993–1997", "stats": [69, 79, 83, 83, 79, 79, 73, 89, 69, 87, 85, 77], "special": {"attr": 7, "kind": "floor", "value": 84}, "note": "历史最强二当家，防守大闸", "portrait": "por-21.webp"}, {"name": "帕特里克·尤因", "team": "90年代队", "tier": "B", "window": "1989–1993", "stats": [25, 78, 56, 73, 49, 47, 80, 54, 80, 76, 71, 76], "special": {"attr": 8, "kind": "floor", "value": 74}, "note": "纽约中锋，无冕代表", "portrait": "por-22.webp"}, {"name": "雷吉·米勒", "team": "90年代队", "tier": "C", "window": "1994–1998", "stats": [97, 74, 71, 40, 57, 66, 25, 54, 25, 74, 71, 69], "special": {"attr": 0, "kind": "floor", "value": 71}, "note": "米勒时刻，三分与大心脏", "portrait": "por-23.webp"}, {"name": "加里·佩顿", "team": "90年代队", "tier": "B", "window": "1994–1998", "stats": [59, 72, 74, 55, 79, 79, 41, 81, 28, 81, 77, 77], "special": {"attr": 7, "kind": "floor", "value": 76}, "note": "手套，控卫防守天花板", "portrait": "por-24.webp"}, {"name": "肖恩·坎普", "team": "90年代队", "tier": "B", "window": "1993–1997", "stats": [25, 60, 67, 82, 42, 47, 73, 53, 69, 73, 60, 56], "special": {"attr": 3, "kind": "floor", "value": 76}, "note": "雨人，暴力扣篮的图腾", "portrait": "por-25.webp"}, {"name": "阿伦佐·莫宁", "team": "90年代队", "tier": "C", "window": "1995–1999", "stats": [25, 58, 51, 70, 37, 34, 73, 44, 75, 70, 65, 70], "special": {"attr": 8, "kind": "floor", "value": 69}, "note": "肾斗士，铁血封盖", "portrait": "por-26.webp"}, {"name": "克莱德·德雷克斯勒", "team": "90年代队", "tier": "B", "window": "1988–1992", "stats": [52, 77, 80, 81, 68, 74, 57, 74, 50, 81, 77, 72], "special": {"attr": 2, "kind": "floor", "value": 74}, "note": "滑翔机，80 年代末崛起、峰值多数在 90 年代", "portrait": "por-27.webp"}, {"name": "迪肯贝·穆托姆博", "team": "90年代队", "tier": "B", "window": "1994–1998", "stats": [25, 42, 31, 58, 31, 27, 75, 38, 82, 69, 58, 56], "special": {"attr": 8, "kind": "floor", "value": 76}, "note": "摇手指，四届最佳防守", "portrait": "por-28.webp"}, {"name": "蒂姆·哈达威", "team": "90年代队", "tier": "C", "window": "1991–1995", "stats": [66, 66, 71, 40, 69, 71, 25, 64, 25, 69, 66, 61], "special": {"attr": 5, "kind": "floor", "value": 65}, "note": "变向鼻祖，胯下运球招牌", "portrait": "por-29.webp"}, {"name": "沙奎尔·奥尼尔", "team": "00年代队", "tier": "S", "window": "1999–2002", "stats": [28, 50, 72, 96, 74, 64, 95, 63, 90, 84, 86, 88], "special": {"attr": 3, "kind": "floor", "value": 92}, "note": "最具统治力中锋，扣篮与力量顶点", "portrait": "por-30.webp"}, {"name": "科比·布莱恩特", "team": "00年代队", "tier": "S", "window": "2005–2009", "stats": [84, 95, 92, 90, 81, 91, 68, 86, 66, 93, 91, 90], "special": {"attr": 1, "kind": "floor", "value": 90}, "note": "曼巴，中投与意志的图腾", "portrait": "por-31.webp"}, {"name": "蒂姆·邓肯", "team": "00年代队", "tier": "S", "window": "2001–2007", "stats": [34, 87, 74, 80, 80, 74, 93, 72, 90, 87, 92, 88], "special": {"attr": 6, "kind": "floor", "value": 88}, "note": "石佛，大基本功", "portrait": "por-32.webp"}, {"name": "凯文·加内特", "team": "00年代队", "tier": "S", "window": "2000–2004", "stats": [52, 88, 80, 86, 82, 77, 93, 82, 86, 93, 89, 93], "special": {"attr": 6, "kind": "floor", "value": 88}, "note": "狼王，全能大前与防守体系", "portrait": "por-33.webp"}, {"name": "德克·诺维茨基", "team": "00年代队", "tier": "A", "window": "2006–2010", "stats": [81, 87, 67, 61, 65, 71, 77, 57, 65, 79, 83, 81], "special": {"attr": 1, "kind": "floor", "value": 82}, "note": "金鸡独立，峰值窗口优先于国籍归队", "portrait": "por-34.webp"}, {"name": "阿伦·艾弗森", "team": "00年代队", "tier": "A", "window": "2000–2004", "stats": [72, 84, 90, 68, 78, 90, 38, 84, 28, 88, 80, 82], "special": {"attr": 2, "kind": "floor", "value": 85}, "note": "答案，小个得分手的神", "portrait": "por-35.webp"}, {"name": "德怀恩·韦德", "team": "00年代队", "tier": "A", "window": "2005–2009", "stats": [62, 82, 88, 82, 74, 84, 50, 80, 72, 84, 82, 84], "special": {"attr": 2, "kind": "floor", "value": 83}, "note": "闪电侠，2006 总决赛封神", "portrait": "por-36.webp"}, {"name": "特雷西·麦克格雷迪", "team": "00年代队", "tier": "A", "window": "2000–2004", "stats": [79, 87, 85, 87, 75, 85, 47, 73, 63, 77, 81, 77], "special": {"attr": 1, "kind": "floor", "value": 82}, "note": "35 秒 13 分，干拔美学", "portrait": "por-37.webp"}, {"name": "保罗·皮尔斯", "team": "00年代队", "tier": "B", "window": "2002–2006", "stats": [76, 83, 79, 68, 68, 79, 59, 68, 46, 81, 81, 83], "special": {"attr": 1, "kind": "floor", "value": 78}, "note": "真理，凯尔特人队魂", "portrait": "por-38.webp"}, {"name": "阿玛雷·斯塔德迈尔", "team": "00年代队", "tier": "B", "window": "2004–2008", "stats": [25, 70, 72, 83, 46, 52, 76, 50, 74, 74, 63, 59], "special": {"attr": 3, "kind": "floor", "value": 78}, "note": "小霸王，暴力终结型内线", "portrait": "por-39.webp"}, {"name": "文斯·卡特", "team": "00年代队", "tier": "B", "window": "1999–2003", "stats": [61, 68, 70, 98, 54, 65, 39, 54, 37, 68, 63, 59], "special": {"attr": 3, "kind": "floor", "value": 78}, "note": "半人半神，扣篮绝活顶格", "portrait": "por-40.webp"}, {"name": "贾森·基德", "team": "00年代队", "tier": "B", "window": "2001–2005", "stats": [65, 67, 71, 51, 80, 78, 58, 78, 29, 78, 80, 76], "special": {"attr": 4, "kind": "floor", "value": 74}, "note": "组织大师，三双型控卫", "portrait": "por-41.webp"}, {"name": "雷·阿伦", "team": "00年代队", "tier": "B", "window": "2000–2004", "stats": [98, 78, 71, 56, 62, 71, 32, 58, 25, 80, 73, 69], "special": {"attr": 0, "kind": "floor", "value": 76}, "note": "三分绝活位，历史级射手", "portrait": "por-42.webp"}, {"name": "克里斯·波什", "team": "00年代队", "tier": "C", "window": "2005–2009", "stats": [57, 74, 62, 67, 50, 55, 74, 45, 64, 72, 69, 62], "special": {"attr": 1, "kind": "floor", "value": 68}, "note": "龙王锚点，空间型内线", "portrait": "por-43.webp"}, {"name": "本·华莱士", "team": "00年代队", "tier": "A", "window": "2001–2005", "stats": [25, 47, 45, 69, 47, 43, 87, 67, 89, 85, 75, 73], "special": {"attr": 8, "kind": "floor", "value": 84}, "note": "大本，4 届最佳防守球员，防守型模板", "portrait": "por-44.webp"}, {"name": "勒布朗·詹姆斯", "team": "10年代队", "tier": "SS", "window": "2009–2013", "stats": [83, 88, 99, 97, 98, 94, 88, 86, 79, 99, 99, 97], "special": {"attr": 2, "kind": "floor", "value": 95}, "note": "全能皇帝，峰值窗口官方范例", "portrait": "por-45.webp"}, {"name": "斯蒂芬·库里", "team": "10年代队", "tier": "SS", "window": "2014–2018", "stats": [99, 94, 88, 62, 89, 95, 57, 83, 47, 89, 94, 91], "special": {"attr": 0, "kind": "floor", "value": 94}, "note": "三分革命本人", "portrait": "por-46.webp"}, {"name": "凯文·杜兰特", "team": "10年代队", "tier": "A", "window": "2013–2017", "stats": [87, 91, 88, 83, 79, 85, 67, 71, 73, 85, 85, 83], "special": {"attr": 1, "kind": "floor", "value": 86}, "note": "死神，无差别单打", "portrait": "por-47.webp"}, {"name": "科怀·伦纳德", "team": "10年代队", "tier": "A", "window": "2015–2019", "stats": [78, 84, 82, 78, 70, 78, 70, 88, 72, 80, 84, 78], "special": {"attr": 7, "kind": "floor", "value": 83}, "note": "机器人，两冠两 FMVP 的攻防一体", "portrait": "por-48.webp"}, {"name": "詹姆斯·哈登", "team": "10年代队", "tier": "A", "window": "2015–2019", "stats": [84, 82, 90, 72, 88, 90, 54, 74, 48, 84, 86, 80], "special": {"attr": 5, "kind": "floor", "value": 85}, "note": "大胡子，持球大核心打法开创者", "portrait": "por-49.webp"}, {"name": "拉塞尔·威斯布鲁克", "team": "10年代队", "tier": "A", "window": "2015–2019", "stats": [63, 77, 91, 89, 87, 85, 75, 75, 55, 91, 75, 77], "special": {"attr": 2, "kind": "floor", "value": 86}, "note": "三双机器，能量与争议并存", "portrait": "por-50.webp"}, {"name": "克里斯·保罗", "team": "10年代队", "tier": "S", "window": "2011–2015", "stats": [83, 92, 87, 62, 94, 94, 53, 89, 42, 85, 94, 90], "special": {"attr": 4, "kind": "floor", "value": 90}, "note": "控卫之神，组织与中投", "portrait": "por-51.webp"}, {"name": "卡梅隆·安东尼", "team": "10年代队", "tier": "B", "window": "2009–2013", "stats": [73, 82, 78, 71, 56, 73, 60, 51, 38, 73, 73, 75], "special": {"attr": 1, "kind": "floor", "value": 76}, "note": "甜瓜，进攻万花筒", "portrait": "por-52.webp"}, {"name": "德里克·罗斯", "team": "10年代队", "tier": "A", "window": "2009–2013", "stats": [61, 79, 87, 81, 65, 83, 37, 65, 41, 65, 77, 77], "special": {"attr": 2, "kind": "floor", "value": 82}, "note": "风城玫瑰，2011 MVP 锚点，巅峰定值、体能短板真实写", "portrait": "por-53.webp"}, {"name": "凯里·欧文", "team": "10年代队", "tier": "B", "window": "2015–2019", "stats": [74, 74, 75, 63, 66, 82, 28, 59, 25, 68, 70, 61], "special": {"attr": 5, "kind": "floor", "value": 76}, "note": "运球与终结美学", "portrait": "por-54.webp"}, {"name": "达米安·利拉德", "team": "10年代队", "tier": "B", "window": "2016–2020", "stats": [90, 74, 76, 60, 71, 76, 32, 56, 25, 76, 76, 74], "special": {"attr": 0, "kind": "floor", "value": 72}, "note": "表哥，超远三分与绝杀", "portrait": "por-55.webp"}, {"name": "吉米·巴特勒", "team": "10年代队", "tier": "B", "window": "2016–2020", "stats": [56, 73, 76, 71, 69, 71, 62, 78, 51, 80, 78, 80], "special": {"attr": 11, "kind": "floor", "value": 74}, "note": "硬汉，季后赛档位自动 +1 的男人", "portrait": "por-56.webp"}, {"name": "克莱·汤普森", "team": "10年代队", "tier": "C", "window": "2014–2018", "stats": [95, 69, 57, 43, 50, 60, 26, 62, 31, 69, 64, 55], "special": {"attr": 0, "kind": "floor", "value": 69}, "note": "G6 汤，三分与无球防守", "portrait": "por-57.webp"}, {"name": "德雷蒙德·格林", "team": "10年代队", "tier": "C", "window": "2014–2018", "stats": [42, 49, 49, 47, 68, 56, 59, 68, 56, 68, 73, 66], "special": {"attr": 4, "kind": "floor", "value": 62}, "note": "追梦，勇士体系轴心（争议型模板）", "portrait": "por-58.webp"}, {"name": "凯文·乐福", "team": "10年代队", "tier": "C", "window": "2010–2014", "stats": [68, 68, 53, 48, 60, 51, 70, 36, 34, 65, 68, 63], "special": {"attr": 6, "kind": "floor", "value": 64}, "note": "两双机器，骑士冠军拼图", "portrait": "por-59.webp"}, {"name": "尼古拉·约基奇", "team": "新世代队", "tier": "SS", "window": "2020–2024", "stats": [84, 91, 76, 74, 97, 88, 95, 76, 71, 88, 97, 89], "special": {"attr": 4, "kind": "floor", "value": 93}, "note": "约老师，中锋组织学革命", "portrait": "por-60.webp"}, {"name": "维克托·文班亚马", "team": "新世代队", "tier": "S", "window": "2023–2026", "stats": [77, 79, 73, 86, 72, 70, 90, 68, 94, 79, 82, 72], "special": {"attr": 8, "kind": "floor", "value": 89}, "note": "外星人，潜力签·窗口未关闭", "portrait": "por-61.webp"}, {"name": "扬尼斯·阿德托昆博", "team": "新世代队", "tier": "S", "window": "2018–2022", "stats": [64, 74, 95, 94, 83, 85, 90, 78, 85, 93, 87, 89], "special": {"attr": 2, "kind": "floor", "value": 90}, "note": "字母哥，转换进攻的终极形态", "portrait": "por-62.webp"}, {"name": "卢卡·东契奇", "team": "新世代队", "tier": "S", "window": "2020–2024", "stats": [88, 88, 89, 69, 95, 93, 83, 72, 60, 83, 91, 89], "special": {"attr": 4, "kind": "floor", "value": 90}, "note": "持球大核现役版", "portrait": "por-63.webp"}, {"name": "谢伊·吉尔杰斯-亚历山大", "team": "新世代队", "tier": "A", "window": "2021–2025", "stats": [69, 87, 83, 71, 71, 83, 45, 77, 61, 81, 83, 79], "special": {"attr": 1, "kind": "floor", "value": 82}, "note": "SGA，中距离与造犯规的现代答案", "portrait": "por-64.webp"}, {"name": "杰森·塔图姆", "team": "新世代队", "tier": "B", "window": "2020–2024", "stats": [79, 81, 81, 72, 70, 77, 66, 66, 57, 81, 79, 81], "special": {"attr": 0, "kind": "floor", "value": 73}, "note": "獭兔，冠军锋线", "portrait": "por-65.webp"}, {"name": "乔尔·恩比德", "team": "新世代队", "tier": "B", "window": "2019–2023", "stats": [65, 80, 70, 74, 59, 61, 83, 52, 79, 61, 76, 74], "special": {"attr": 6, "kind": "floor", "value": 78}, "note": "大帝，健康条即战力的玻璃模板（体能短板显著）", "portrait": "por-66.webp"}, {"name": "安东尼·爱德华兹", "team": "新世代队", "tier": "A", "window": "2021–2025", "stats": [79, 81, 89, 89, 69, 81, 53, 75, 63, 85, 75, 77], "special": {"attr": 3, "kind": "floor", "value": 84}, "note": "华子，新生代门面", "portrait": "por-67.webp"}, {"name": "安东尼·戴维斯", "team": "新世代队", "tier": "A", "window": "2018–2024", "stats": [56, 80, 76, 82, 62, 64, 86, 66, 88, 74, 80, 82], "special": {"attr": 8, "kind": "floor", "value": 83}, "note": "浓眉，攻防一体内线", "portrait": "por-68.webp"}, {"name": "泰雷斯·哈利伯顿", "team": "新世代队", "tier": "B", "window": "2021–2025", "stats": [75, 70, 72, 53, 79, 77, 35, 66, 26, 72, 77, 66], "special": {"attr": 4, "kind": "floor", "value": 74}, "note": "传球魔术的现役传人", "portrait": "por-69.webp"}, {"name": "杰伦·布伦森", "team": "新世代队", "tier": "B", "window": "2021–2025", "stats": [70, 77, 79, 50, 72, 77, 31, 57, 25, 77, 75, 77], "special": {"attr": 2, "kind": "floor", "value": 74}, "note": "大头，纽约新王", "portrait": "por-70.webp"}, {"name": "德文·布克", "team": "新世代队", "tier": "B", "window": "2019–2023", "stats": [77, 79, 77, 68, 66, 75, 39, 57, 26, 75, 72, 68], "special": {"attr": 1, "kind": "floor", "value": 74}, "note": "得分后卫正统", "portrait": "por-71.webp"}, {"name": "多诺万·米切尔", "team": "新世代队", "tier": "B", "window": "2020–2024", "stats": [76, 76, 80, 80, 65, 76, 36, 62, 36, 78, 71, 67], "special": {"attr": 2, "kind": "floor", "value": 74}, "note": "蜘蛛侠，季后赛爆发户", "portrait": "por-72.webp"}, {"name": "贾马尔·穆雷", "team": "新世代队", "tier": "C", "window": "2019–2023", "stats": [71, 71, 71, 59, 64, 69, 25, 54, 25, 66, 69, 64], "special": {"attr": 1, "kind": "floor", "value": 65}, "note": "季后赛限定变身型模板", "portrait": "por-73.webp"}, {"name": "卡尔-安东尼·唐斯", "team": "新世代队", "tier": "C", "window": "2018–2022", "stats": [71, 69, 59, 66, 52, 54, 71, 37, 54, 69, 64, 57], "special": {"attr": 0, "kind": "floor", "value": 65}, "note": "空间型内线，防守是短板", "portrait": "por-74.webp"}, {"name": "姚明", "team": "国际纵队", "tier": "A", "window": "2005–2009", "stats": [26, 86, 54, 80, 68, 56, 90, 52, 90, 70, 86, 82], "special": {"attr": 1, "kind": "floor", "value": 80}, "note": "移动长城，中国篮球的图腾", "portrait": "por-75.webp"}, {"name": "史蒂夫·纳什", "team": "国际纵队", "tier": "SS", "window": "2004–2008", "stats": [94, 95, 85, 51, 98, 97, 50, 72, 41, 85, 97, 90], "special": {"attr": 4, "kind": "floor", "value": 93}, "note": "风之子，两连 MVP 的组织上限", "portrait": "por-76.webp"}, {"name": "马努·吉诺比利", "team": "国际纵队", "tier": "A", "window": "2004–2008", "stats": [80, 82, 89, 78, 86, 88, 54, 80, 52, 80, 90, 84], "special": {"attr": 2, "kind": "floor", "value": 84}, "note": "妖刀，第六人位置的传奇模板", "portrait": "por-77.webp"}, {"name": "保罗·加索尔", "team": "国际纵队", "tier": "A", "window": "2006–2010", "stats": [52, 84, 66, 72, 80, 68, 84, 58, 80, 78, 86, 80], "special": {"attr": 4, "kind": "floor", "value": 75}, "note": "家嫂，策应型内线", "portrait": "por-78.webp"}, {"name": "托尼·帕克", "team": "国际纵队", "tier": "A", "window": "2007–2011", "stats": [56, 80, 86, 54, 80, 82, 32, 64, 25, 80, 80, 76], "special": {"attr": 2, "kind": "floor", "value": 81}, "note": "法国跑车，总决赛 MVP 控卫", "portrait": "por-79.webp"}, {"name": "德拉岑·彼得罗维奇", "team": "国际纵队", "tier": "A", "window": "1989–1993", "stats": [86, 86, 78, 52, 72, 80, 38, 62, 25, 76, 82, 74], "special": {"attr": 0, "kind": "floor", "value": 81}, "note": "篮球莫扎特，英年早逝的传奇", "portrait": "por-80.webp"}, {"name": "马克·加索尔", "team": "国际纵队", "tier": "B", "window": "2012–2016", "stats": [57, 74, 57, 61, 76, 59, 79, 57, 79, 72, 83, 74], "special": {"attr": 8, "kind": "floor", "value": 73}, "note": "小加，防守中枢＋策应", "portrait": "por-81.webp"}, {"name": "王治郅", "team": "国际纵队", "tier": "C", "window": "1999–2003", "stats": [57, 69, 55, 50, 43, 47, 62, 33, 57, 59, 62, 50], "special": {"attr": 1, "kind": "floor", "value": 63}, "note": "大郅，中国登陆 NBA 第一人，脚步内线", "portrait": "por-82.webp"}, {"name": "易建联", "team": "国际纵队", "tier": "C", "window": "2008–2012", "stats": [58, 70, 65, 72, 41, 48, 70, 41, 62, 70, 65, 55], "special": {"attr": 3, "kind": "floor", "value": 66}, "note": "阿联，空间型大前，中国男篮旗帜十年", "portrait": "por-83.webp"}, {"name": "阿维达斯·萨博尼斯", "team": "国际纵队", "tier": "C", "window": "1988–1992", "stats": [47, 71, 50, 57, 76, 45, 74, 40, 66, 57, 74, 62], "special": {"attr": 4, "kind": "floor", "value": 70}, "note": "老萨，世界屋脊的传球中锋", "portrait": "por-84.webp"}, {"name": "路易斯·斯科拉", "team": "国际纵队", "tier": "C", "window": "2007–2011", "stats": [25, 73, 59, 54, 51, 49, 66, 47, 35, 66, 71, 59], "special": {"attr": 1, "kind": "floor", "value": 67}, "note": "钻石，阿根廷黄金一代的轴", "portrait": "por-85.webp"}, {"name": "安德烈·基里连科", "team": "国际纵队", "tier": "C", "window": "2003–2007", "stats": [39, 58, 63, 65, 58, 61, 63, 75, 73, 70, 68, 53], "special": {"attr": 7, "kind": "floor", "value": 69}, "note": "AK47，全能防守的瑞士军刀", "portrait": "por-86.webp"}, {"name": "佩德拉格·斯托亚科维奇", "team": "国际纵队", "tier": "C", "window": "2000–2004", "stats": [73, 71, 54, 35, 49, 56, 30, 44, 25, 63, 63, 51], "special": {"attr": 0, "kind": "floor", "value": 68}, "note": "佩贾，纯射手位", "portrait": "por-87.webp"}, {"name": "鲍里斯·迪奥", "team": "国际纵队", "tier": "C", "window": "2005–2009", "stats": [46, 58, 54, 44, 66, 61, 44, 46, 39, 61, 68, 51], "special": {"attr": 4, "kind": "floor", "value": 60}, "note": "法国魔术师，什么都能打一点", "portrait": "por-88.webp"}, {"name": "孙悦", "team": "国际纵队", "tier": "C", "window": "2007–2011", "stats": [49, 56, 61, 63, 56, 61, 37, 61, 68, 66, 58, 49], "special": {"attr": 8, "kind": "floor", "value": 62}, "note": "孙大圣，中国后卫的 NBA 冠军戒指（话题型模板）", "portrait": "por-89.webp"}],
  peaks: window.BK_PEAKS, endings: window.BK_ENDINGS };
 </script>
 <script>// 20 个赛季关键战役（设计案 §6 逐行落地；数值方向值，蒙特卡洛校准后回写本表）
@@ -1003,21 +1047,40 @@ window.BK_ensureArt = function(){
     const order = rng.shuffle(C.TEAMS.slice());
     return order[s.draftRound % order.length];
   }
-  function genBatch(s, forcedTeam){
+  function genBatch(s, forcedTeam, forcedInclude){
     const team = forcedTeam || teamForRound(s);
     const pool = D.players.filter(p=>p.team===team && !s.attrSrc.includes(p.name));
+    // BK-028 免费轻联动（定案 v1）：已锁某羁绊一员且搭档在本队池中 → 搭档权重 ×1.5，每局至多 1 批（宿敌不联动）
+    let boostName = null;
+    if(!s.linkageUsed){
+      for(const B of C.BONDS){
+        if(B.type==='foe') continue;
+        for(const m of [B.a, B.b]){
+          const other = (m===B.a) ? B.b : B.a;
+          if(s.attrSrc.includes(m) && !s.attrSrc.includes(other) && pool.some(p=>p.name===other)){ boostName = other; break; }
+        }
+        if(boostName) break;
+      }
+    }
+    const weightOf = p => (C.TIER_W[p.tier]||1) * (p.name===boostName ? C.BOND_LINKAGE_MULT : 1);
     // BK-020：按档加权不放回抽样；高档（SS/S）每批硬上限 BATCH_HIGH_CAP 张，稀有感回归
     const rest = pool.slice(); const picks = []; let highUsed = 0;
+    // BK-028 广告追羁绊：强制包含搭档（占一个名额，高档计数照常）
+    if(forcedInclude){
+      const fi = rest.find(p=>p.name===forcedInclude);
+      if(fi){ picks.push(fi); rest.splice(rest.indexOf(fi), 1); if(fi.tier==='SS' || fi.tier==='S') highUsed++; }
+    }
     while(picks.length < C.BATCH_SIZE && rest.length){
       let cand = rest;
       if(highUsed >= C.BATCH_HIGH_CAP) cand = rest.filter(p=>p.tier!=='SS' && p.tier!=='S');
       if(!cand.length) cand = rest;
-      let total = 0; for(const p of cand) total += (C.TIER_W[p.tier]||1);
+      let total = 0; for(const p of cand) total += weightOf(p);
       let roll = rng.next() * total, chosen = cand[cand.length-1];
-      for(const p of cand){ roll -= (C.TIER_W[p.tier]||1); if(roll <= 0){ chosen = p; break; } }
+      for(const p of cand){ roll -= weightOf(p); if(roll <= 0){ chosen = p; break; } }
       picks.push(chosen); rest.splice(rest.indexOf(chosen), 1);
       if(chosen.tier==='SS' || chosen.tier==='S') highUsed++;
     }
+    if(boostName) s.linkageUsed = true;
     // 巅峰不再独立成卡（BK-020）：本体一张卡，巅峰形态由玩家看广告在候选面板唤醒（applyAdGrant 'peak'）
     const batch = picks.map(p=>({ name:p.name, peak:false }));
     s.batch = batch; s.batchTeam = team; s.peakPending = null;
@@ -1046,14 +1109,20 @@ window.BK_ensureArt = function(){
       else s.attrs[attrIdx] = Math.min(99, s.attrs[attrIdx] + cand.special.value);
     }
     if(shootItem && (attrIdx===0||attrIdx===1)) s.attrFloors[attrIdx] = Math.max(s.attrFloors[attrIdx]||0, cand.stats[attrIdx]-0);
+    // BK-028：锁定原值快照（羁绊永远只从 baseAttrs 重算，禁止在 attrs 上叠加）
+    if(!Array.isArray(s.baseAttrs) || s.baseAttrs.length!==12) s.baseAttrs = new Array(12).fill(null);
+    s.baseAttrs[attrIdx] = s.attrs[attrIdx];
     s.lockedCount++; s.draftRound++;
     s.batch = null; s.peakPending = null;
+    recomputeBonds(s); // 选秀期每次锁定后重算；第 12 锁即开赛冻结
     if(s.draftRound >= C.DRAFT_ROUNDS){ s.phase='battle'; s.battleIdx=1; }
     else genBatch(s);
     syncRng(s);
     return { ok:true, done: s.phase==='battle' };
   }
   function rerollBatch(s){
+    // BK-028：机制型羁绊的免费换一批优先于免费次数消耗
+    if((s.freeReroll||0) > 0){ s.freeReroll--; genBatch(s); syncRng(s); return { ok:true, free:true }; }
     if(s.swapsLeft<=0) return { ok:false, reason:'no-swaps' };
     s.swapsLeft--; genBatch(s); syncRng(s); return { ok:true };
   }
@@ -1061,6 +1130,97 @@ window.BK_ensureArt = function(){
     if(!s.directedReady) return { ok:false, reason:'not-ready' };
     s.directedReady = false; genBatch(s, team); syncRng(s); return { ok:true };
   }
+
+  // —— 羁绊引擎（BK-028，定案 v2 三档制）：单一入口 recomputeBonds，只从 baseAttrs 重算 ——
+  // 结算序：按 BONDS 配置序逐对（fill/temp/mech 补强 → foe 宿敌）→ 化敌回滚回放 → team 全队型 → 账目落 bondFx
+  function slotOf(s, name){ return s.attrSrc.indexOf(name); }
+  function recomputeBonds(s){
+    if(!Array.isArray(s.baseAttrs)) return s;
+    const attrs = s.baseAttrs.map(v=> v==null ? C.BASE_ATTR : v);
+    const bonds = {}, notes = [], per = {}; let totalPos = 0;
+    s.foeMarks = {};
+    for(const B of C.BONDS){
+      const slots = [slotOf(s, B.a), slotOf(s, B.b)];
+      if(slots[0] < 0 || slots[1] < 0) continue;
+      bonds[B.id] = true;
+      if(B.type==='foe'){
+        const marks = slots.map(sl=>{
+          const base = s.baseAttrs[sl];
+          const pen = Math.min(C.BOND_FOE_CAP, Math.round(base * C.BOND_FOE_RATE));
+          attrs[sl] = base - pen;
+          return [sl, base, base - pen];
+        });
+        s.foeMarks[B.id] = marks; per[B.id] = 0;
+        notes.push('宿敌《'+B.name+'》：'+B.a+'、'+B.b+' 被夺能力 −20%');
+        continue;
+      }
+      if(B.type==='team'){
+        let added = 0;
+        for(let i=0;i<12;i++){
+          if(s.baseAttrs[i]==null) continue;
+          if(attrs[i] < C.BOND_TEAM_LINE && added < C.BOND_TEAM_CAP){ attrs[i] += 1; added++; }
+        }
+        per[B.id] = added; totalPos += added;
+        notes.push('羁绊《'+B.name+'》：全队未达 '+C.BOND_TEAM_LINE+' 的能力 +1');
+        continue;
+      }
+      // fill 系（fill/temp/mech）：保底 + 补差（补到 ref、单人封顶 cap），单对合计超硬顶按补差等比缩、保底不缩
+      const spec = C.BOND_FILL[B.cls] || C.BOND_FILL.BASE;
+      const ref = B.ref || spec.ref;
+      let fills = slots.map(sl => Math.max(0, Math.min(spec.cap, ref - s.baseAttrs[sl])));
+      let bonuses = fills.map(f => C.BOND_BASE_BONUS + f);
+      let sum = bonuses.reduce((x,y)=>x+y,0);
+      if(sum > C.BOND_PAIR_CAP){
+        const fsum = fills.reduce((x,y)=>x+y,0);
+        if(fsum > 0){
+          const allow = C.BOND_PAIR_CAP - C.BOND_BASE_BONUS * slots.length;
+          fills = fills.map(f => Math.floor(f * allow / fsum));
+          bonuses = fills.map(f => C.BOND_BASE_BONUS + f);
+          sum = bonuses.reduce((x,y)=>x+y,0);
+          let guard = 0; // 取整后仍超顶则从较大补差逐点回削（不低于保底）
+          while(sum > C.BOND_PAIR_CAP && guard++ < 64){
+            let bi = bonuses.indexOf(Math.max(...bonuses));
+            if(bonuses[bi] <= C.BOND_BASE_BONUS) break;
+            bonuses[bi]--; sum--;
+          }
+        }
+      }
+      slots.forEach((sl, ix)=>{ attrs[sl] = s.baseAttrs[sl] + bonuses[ix]; });
+      per[B.id] = sum; totalPos += sum;
+      notes.push('羁绊《'+B.name+'》触发：'+B.a+'、'+B.b+' 联手补强');
+      if(B.type==='temp'){ s.bondBuff = C.BOND_TEMP_VALUE; s.bondBuffBattles = 1; } // 骑手在选秀期武装、首战消费
+      if(B.type==='mech' && !s.mechBondGranted){ s.freeReroll = (s.freeReroll||0) + 1; s.mechBondGranted = true; }
+    }
+    // 化敌为友回放：宿敌先结算，此处按 foeMarks 精确回滚罚差并 +BOND_BEFRIEND_BONUS
+    if(s.befriended){
+      for(const id in s.befriended){
+        const marks = s.foeMarks[id];
+        if(!s.befriended[id] || !marks) continue;
+        let add = 0;
+        for(const m of marks){ const back = (m[1]-m[2]) + C.BOND_BEFRIEND_BONUS; attrs[m[0]] += back; add += back; }
+        per[id+':befriend'] = add; totalPos += add;
+        notes.push('《宿敌》已化敌为友：还原扣减并各 +'+C.BOND_BEFRIEND_BONUS);
+      }
+    }
+    s.attrs = attrs; s.bonds = bonds; s.bondNotes = notes;
+    s.bondFx = { total: totalPos, per };
+    const meta = window.BK_Meta.load(); let dirty = false;
+    for(const id in bonds){ if(!meta.bondsSeen[id]){ meta.bondsSeen[id] = 1; dirty = true; } }
+    if(dirty) window.BK_Meta.save(meta);
+    return s;
+  }
+  // 广告追羁绊可选项：已锁一员、搭档未锁、非宿敌的羁绊对（供 UI 出按钮）
+  function chaseOptions(s){
+    const out = [];
+    if(!s || s.phase!=='draft' || (s.chaseUsed||0) >= C.BOND_CHASE_MAX) return out;
+    for(const B of C.BONDS){
+      if(B.type==='foe') continue;
+      const la = s.attrSrc.includes(B.a), lb = s.attrSrc.includes(B.b);
+      if(la !== lb) out.push({ bond: B, partner: la ? B.b : B.a });
+    }
+    return out;
+  }
+  function foeBond(){ return C.BONDS.find(b=>b.type==='foe'); }
 
   // —— 战斗判定 ——
   function battleDef(s){ return window.BK_BATTLES[s.battleIdx-1]; }
@@ -1135,6 +1295,7 @@ window.BK_ensureArt = function(){
     }
     rec.grade = grade; rec.success = success;
     if(s.checkMod && s.checkMod.battles>0){ s.checkMod.battles--; if(s.checkMod.battles<=0) s.checkMod=null; }
+    if(s.bondBuffBattles>0){ s.bondBuffBattles--; if(s.bondBuffBattles<=0) s.bondBuff=0; } // BK-028 临时骑手一场消费（与 fateBuff 同口径）
     if(s.fateBuff>0) s.fateBuff--;
     s.selfStreak = (opt.kind==='fixed') ? s.selfStreak+1 : 0;
     if(s.selfStreak >= C.SELF_PENALTY_FROM){
@@ -1284,6 +1445,23 @@ window.BK_ensureArt = function(){
       }
       s.peakPending = null;
     }
+    else if(type==='chase'){
+      // BK-028 广告追羁绊：下一批切到搭档所在队且必含搭档（仅选秀期、每局 ≤BOND_CHASE_MAX，目标由 UI 在看广告前写入 S.chaseTarget）
+      if(s.phase==='draft' && s.chaseTarget && (s.chaseUsed||0) < C.BOND_CHASE_MAX){
+        const p = playerByName(s.chaseTarget);
+        if(p && !s.attrSrc.includes(p.name)){ s.chaseUsed = (s.chaseUsed||0) + 1; genBatch(s, p.team, p.name); syncRng(s); }
+      }
+      s.chaseTarget = null;
+    }
+    else if(type==='befriend'){
+      // BK-028 广告化敌为友：宿敌已触发且未化敌时生效（每局 ≤BOND_BEFRIEND_MAX）；选秀期走 recompute 回放，战时按 foeMarks 直接回滚
+      const fb = foeBond();
+      if(fb && s.bonds && s.bonds[fb.id] && !(s.befriended && s.befriended[fb.id]) && (s.befriendUsed||0) < C.BOND_BEFRIEND_MAX){
+        s.befriended = s.befriended || {}; s.befriended[fb.id] = true; s.befriendUsed = (s.befriendUsed||0) + 1;
+        if(s.phase==='draft') recomputeBonds(s);
+        else { const marks = (s.foeMarks||{})[fb.id] || []; for(const m of marks) s.attrs[m[0]] += (m[1]-m[2]) + C.BOND_BEFRIEND_BONUS; }
+      }
+    }
     else if(type==='fate'){ s.fateBuff = C.FATE_BATTLES; }
     else if(type==='heal'){ const medic = C.SHOP.find(x=>x.id==='medic'); const bonus = (medic && s.shopOwned.includes('medic')) ? (medic.effect.healBonus||0) : 0; L.apply(s, { health: C.HEAL_AD_AMOUNT + bonus }, 'ad-heal'); }
     else if(type==='extraSwap'){ s.swapsLeft += 1; }
@@ -1298,10 +1476,10 @@ window.BK_ensureArt = function(){
     s.phase='battle';
     return { ok:true };
   }
-  window.BK_Game = { newGame, genBatch, candidateObj, draftPick, rerollBatch, directedDraft, chooseBattle, chooseEvent, applyAdGrant, useRewind, finishRun, playerByName, battleDef, ensureRng, syncRng, checkAchievements, lastUnlocked: ()=>lastUnlocked };
+  window.BK_Game = { newGame, genBatch, candidateObj, draftPick, rerollBatch, directedDraft, chooseBattle, chooseEvent, applyAdGrant, useRewind, finishRun, playerByName, battleDef, ensureRng, syncRng, checkAchievements, recomputeBonds, chaseOptions, lastUnlocked: ()=>lastUnlocked };
 })();
 </script>
-<script>// 视图层：球探报告风。所有按钮显式设文字颜色（CSS .btn 已定色）；中文全为真实 HTML 文字。
+<script>// 视图层：乱世拼将同款纸墨视觉（BK-025 全站对标母本）。所有按钮显式设文字颜色（CSS .btn 已定色）；中文全为真实 HTML 文字。
 (function(){
   const C = window.BK_CONFIG, F = window.BK_Formulas, G = window.BK_Game, Save = window.BK_Save, Ads = window.BK_Ads, LB = window.BK_LB;
   const app = document.getElementById('app');
@@ -1313,14 +1491,24 @@ window.BK_ensureArt = function(){
   function resBar(){
     if(!S) return '';
     const r = S.resources;
-    return '<div class="resbar"><span>健康 <b>'+r.health+'</b></span><span>战力 <b>'+r.power+'</b></span><span>人气 <b>'+r.fame+'</b></span><span>人脉 <b>'+r.rel+'</b></span><span>争议 <b>'+r.controversy+'</b></span><span>功勋 <b>'+r.merit+'</b></span><span>高光 <b>'+r.scene+'</b></span><span>总评 <b>'+F.overall(S)+'</b></span><span>传奇投影 <b>'+F.legendValue(S,0)+'</b></span></div>';
+    return '<div class="resbar"><span>❤️ 健康 <b>'+r.health+'</b></span><span>⚔️ 战力 <b>'+r.power+'</b></span><span>⭐ 人气 <b>'+r.fame+'</b></span><span>🤝 人脉 <b>'+r.rel+'</b></span><span>🔥 争议 <b>'+r.controversy+'</b></span><span>🏅 功勋 <b>'+r.merit+'</b></span><span>✨ 高光 <b>'+r.scene+'</b></span><span>📊 总评 <b>'+F.overall(S)+'</b></span><span>🏆 传奇投影 <b>'+F.legendValue(S,0)+'</b></span></div>';
+  }
+  // BK-028 羁绊进度角标：成员所属羁绊显示「💞 名 n/2」，本局已触发显示「💞 名 ✓」
+  function bondBadges(name){
+    if(!S || !S.attrSrc) return '';
+    return C.BONDS.filter(B=>B.a===name||B.b===name).map(B=>{
+      if(S.bonds && S.bonds[B.id]) return '💞 '+B.name+' ✓';
+      const n = [B.a,B.b].filter(x=>S.attrSrc.includes(x)).length;
+      return '💞 '+B.name+' '+n+'/2';
+    }).join(' ');
   }
   function slotsHtml(){
     let h = '<div class="slots">';
     for(let i=0;i<12;i++){
       const filled = S && S.attrSrc[i];
       const pel = (S && S.perm ? (S.perm[i]||0) : 0);
-      h += '<div class="slot'+(filled?' filled':'')+'"><div>'+C.ATTRS[i]+'</div><div class="v">'+(filled?F.effAttr(S,i):'—')+(filled&&pel>0?'<span style="font-size:11px"> +'+pel+'</span>':'')+'</div><div class="src">'+(filled?esc(S.attrSrc[i])+(pel>0?' · 历练+'+pel:''):'待选秀')+'</div></div>';
+      const bd = filled ? bondBadges(S.attrSrc[i]) : '';
+      h += '<div class="slot'+(filled?' filled':'')+'"><div>'+C.ATTRS[i]+'</div><div class="v">'+(filled?F.effAttr(S,i):'—')+(filled&&pel>0?'<span style="font-size:11px"> +'+pel+'</span>':'')+'</div><div class="src">'+(filled?esc(S.attrSrc[i])+(pel>0?' · 历练+'+pel:''):'待选秀')+'</div>'+(bd?'<div style="font-size:10px;color:#b3402a;line-height:1.5">'+bd+'</div>':'')+'</div>';
     }
     return h+'</div>';
   }
@@ -1352,7 +1540,7 @@ window.BK_ensureArt = function(){
   function renderHome(){
     const has = !!Save.peek();
     app.innerHTML =
-    '<div class="paper"><div class="hero-art"></div><div class="kicker">球探报告 · SCOUTING REPORT</div><h1 class="title">巨星拼图：巅峰王朝</h1><div class="sub" style="margin-left:0">12 轮选秀夺技，一局拼出历史第一人</div></div>'
+    '<div class="paper"><div class="hero-wrap"><div class="hero-art"></div><div class="hero-seal">拼图</div></div><h1 class="title">《巨星拼图》</h1><div class="hero-sub">PEAK DYNASTY PUZZLE · 拼一个历史第一人出来</div><p class="hero-desc">从乔丹、詹姆斯、库里身上夺走 12 项本事，拼到一个无名新秀身上——本事大过命格，看你撑不撑得住。</p></div>'
     + '<div class="paper"><h3>我的拼图（12 项能力）</h3>'+slotsHtml()+'<h3>赛季时间轴（20 个关键战役）</h3>'+timelineHtml()+'</div>'
     + '<div style="margin:0 10px">'
     + (has ? '<button class="btn primary" id="b-continue">继续赛季</button>' : '')
@@ -1371,10 +1559,13 @@ window.BK_ensureArt = function(){
     bind('b-rules', showRules);
     bind('b-notice', showNotice);
     bind('b-group', showGroup);
-    maybeShowWelfare();
   }
   // —— 更新公告（母本 NOTICES 同款：未读红点，打开即已读）——
   const NOTICES = [
+    { v:'v1.8', d:'11月8日', t:'羁绊系统上线', items:['💞 新增「羁绊」：同一赛季凑齐配对球星（如水花兄弟、姚麦组合、神与王），两人被夺的能力联手补强——短板补得多，强强联手也有保底','📺 追羁绊广告：已锁定羁绊一员后，看广告可让下一批候选必出搭档（每局 2 次）；伯德与魔术师的《宿敌》触发后，还能看广告「化敌为友」还原扣减','💞 选秀卡与拼图槽新增羁绊进度角标（💞 羁绊名 n/2，触发变 ✓）；图鉴新增「羁绊」页，12 个羁绊的配对与效果全公开'] },
+    { v:'v1.7', d:'11月7日', t:'广告奖励修复（紧急）', items:['🛠️ 修复「广告看完不给奖励」：发奖通道按《乱世拼将》线上实证口径重做，看完当场发奖，不再无声丢失','此前白看的广告很抱歉——补偿已备好：交流群弹窗内领取生涯功勋点 ×150＋定向招募 ×1（每人限领一次，福利码只在群内发布，进群可领）','本版同时包含 v1.6 全站视觉重做（纸墨风）与球员数据修正'] },
+    { v:'v1.6', d:'11月7日', t:'全站视觉推翻重做', items:['🏀 全站换成《乱世拼将》同款纸墨风：米纸底、白卡、朱红主按钮，告别深绿金配色','首页主视觉换成揭幕战球馆长卷，标题、印章签与版式全向乱世首页对齐','结算页加盖「结局」印章、排行榜前三名奖牌与黑表头、图鉴页签高亮——按 GPT 优化稿逐项落地'] },
+    { v:'v1.5', d:'11月6日', t:'球员数据修正', items:['🏀 按历史地位修正招牌单项：库里三分 99、雷·阿伦 98、雷吉·米勒 97、克莱·汤普森 95、利拉德 90','文斯·卡特扣篮修正为 98、斯托克顿传球修正为 95——专精球员的看家本领不再被综合档位压低'] },
     { v:'v1.4', d:'11月6日', t:'群福利上线', items:['🎁 群福利开放：交流群弹窗输码领取生涯功勋点 ×150＋定向招募资格 ×1（每人限领一次，码在群内发布）','生涯规划商店上新：队医补给、球探情报、录像分析','赛季结算新增「传奇值构成」明细，每一分都算得明明白白','选秀台手感大修：数值直接印在卡上，点卡原地夺技，不跳屏不来回滑'] },
     { v:'v1.3', d:'11月6日', t:'数值再校准', items:['档位细分：新增「传世」档（全池仅 6 人），传说 12、史诗 24、稀有 28、普通 20，各档数值带严格分开','选秀出率再校准：每批最多 1 张传世/传说，金卡不再满屏','巅峰改版：巅峰不再是另一张卡——抽到带巅峰形态的球星，看广告即可把这张卡唤醒为巅峰','选人不再跳屏，点选原地看数值'] },
     { v:'v1.2', d:'11月6日', t:'系统大补', items:['新增成就系统与图鉴成就墙，16 种结局收藏点亮','新增存档页：战绩聚合＋存档码','每局开局抽一条本局词缀，全程生效','打赢判定战役历练成长 +1/+2','排行榜玩家头像与我的名次'] },
@@ -1428,7 +1619,7 @@ window.BK_ensureArt = function(){
     });
   }
   let welfarePopped = false;
-  function maybeShowWelfare(){
+  function maybeShowWelfare(){ // BK-023：审核意见「不要进去就弹窗」——自动弹窗已下线，本函数不再被调用；福利领取保留在交流群弹窗内点击进行
     if(welfarePopped) return;
     const m = window.BK_Meta.load();
     if(m.welfareClaimed || m.welfareNoticeOff) return;
@@ -1483,8 +1674,10 @@ window.BK_ensureArt = function(){
     let h = '<div style="padding:12px 10px 0"><div class="kicker">选秀台 · 第 '+(S.draftRound+1)+' / '+C.DRAFT_ROUNDS+' 轮</div></div>'
     + resBar()
     + '<div class="paper"><h3>我的拼图（已锁定 '+locked+' / 12）· 预估总评 '+F.overall(S)+'</h3>'+slotsHtml()
-    + '<div class="row"><button class="btn" id="b-swap">🔀 换一批（余 '+S.swapsLeft+'）</button>'
+    + '<div class="row"><button class="btn" id="b-swap">🔀 换一批'+((S.freeReroll||0)>0?'（免费 '+S.freeReroll+' 次 · 另余 '+S.swapsLeft+'）':'（余 '+S.swapsLeft+'）')+'</button>'
     + '<button class="btn green" id="b-directed">'+(S.directedReady?'🎯 定向招募已就绪':'🎯 定向招募·看广告')+'</button></div>'
+    + (S.bondNotes && S.bondNotes.length ? '<p class="meta" style="font-size:12px;color:#b3402a;line-height:1.7">'+S.bondNotes.map(esc).join('<br>')+'</p>' : '')
+    + bondAdsHtml()
     + '<h3>本轮候选 · '+esc(S.batchTeam)+'（种子 '+esc(S.seed)+'）· 点一张卡，原地夺技</h3>'
     + (S.fate ? '<p class="meta" style="font-size:12px;color:#7a6c4f">🏷 本局词缀：<b>'+((C.FATES.find(f=>f.id===S.fate)||{}).name||'')+'</b>（全程生效，详情见对战页）</p>' : '<p class="meta" style="font-size:12px;color:#7a6c4f">本局无词缀（旧档继续）</p>')
     + '<div class="cands2">';
@@ -1513,7 +1706,7 @@ window.BK_ensureArt = function(){
       panel += '<p class="meta" style="font-size:12px;color:#7a6c4f;margin:8px 0 0">我的拼图还缺：'+(missing.length?missing.join('、'):'已拼满')+'</p></div>';
       h += '<div class="cand cand2 tier-'+p.tier.toLowerCase()+(p.isPeak?' tier-peak':'')+(selCand===i?' open':'')+'" data-cand="'+i+'">'
         + (p.isPeak?'<span class="peak-ribbon">巅峰</span>':'')
-        + '<div class="chead"><img src="'+portrait(p)+'" alt="" decoding="async"><div class="cinfo"><div class="nm">'+esc(p.name)+'</div><div class="meta">'+esc(p.team)+' · '+p.tier+'档 · 峰值 '+esc(p.window)+'</div><div class="meta">'+esc(p.note)+' · 强项总评 <b>'+rating+'</b></div></div></div>'
+        + '<div class="chead"><img src="'+portrait(p)+'" alt="" decoding="async"><div class="cinfo"><div class="nm">'+esc(p.name)+'</div><div class="meta">'+esc(p.team)+' · '+p.tier+'档 · 峰值 '+esc(p.window)+'</div><div class="meta">'+esc(p.note)+' · 强项总评 <b>'+rating+'</b></div>'+(bondBadges(p.name)?'<div class="meta" style="color:#b3402a">'+bondBadges(p.name)+'</div>':'')+'</div></div>'
         + cells + panel + '</div>';
     });
     h += '</div></div>';
@@ -1537,12 +1730,30 @@ window.BK_ensureArt = function(){
       const res = await Ads.watch('directed', (t)=>G.applyAdGrant(S,t));
       saveNow('ad-directed'); if(S.directedReady){ showTeamPicker(); } render();
     });
+    app.querySelectorAll('.b-chase').forEach(el=>el.addEventListener('click', async ()=>{
+      S.chaseTarget = el.dataset.partner; saveNow('chase-target');
+      await Ads.watch('chase', (t)=>G.applyAdGrant(S,t));
+      saveNow('ad-chase'); selCand=-1; render();
+    }));
+    bind('b-befriend', async ()=>{ await Ads.watch('befriend', (t)=>G.applyAdGrant(S,t)); saveNow('ad-befriend'); render(); });
     app.querySelectorAll('.b-peak').forEach(el=>el.addEventListener('click', async ()=>{
       const card = el.closest('[data-cand]'); if(card) selCand = +card.dataset.cand;
       S.peakPending = selCand; saveNow('peak-pending');
       await Ads.watch('peak', (t)=>G.applyAdGrant(S,t));
       saveNow('ad-peak'); render();
     }));
+  }
+  // BK-028 羁绊广告入口：追羁绊（下批必出搭档）＋化敌为友（宿敌触发后）
+  function bondAdsHtml(){
+    let h = '';
+    G.chaseOptions(S).forEach(o=>{
+      h += '<button class="btn green b-chase" data-partner="'+esc(o.partner)+'" style="width:100%;margin-top:6px">📺 追羁绊 · 看广告：下批必出 '+esc(o.partner)+'（凑《'+esc(o.bond.name)+'》，本局余 '+(C.BOND_CHASE_MAX-(S.chaseUsed||0))+' 次）</button>';
+    });
+    const fb = C.BONDS.find(b=>b.type==='foe');
+    if(fb && S.bonds && S.bonds[fb.id] && !(S.befriended && S.befriended[fb.id]) && (S.befriendUsed||0) < C.BOND_BEFRIEND_MAX){
+      h += '<button class="btn green" id="b-befriend" style="width:100%;margin-top:6px">📺 化敌为友 · 看广告：还原《宿敌》扣减，两人各 +4</button>';
+    }
+    return h;
   }
   function showTeamPicker(){
     modal('<h3>定向招募 · 自选时代</h3>' + C.TEAMS.map(t=>{
@@ -1590,6 +1801,7 @@ window.BK_ensureArt = function(){
     if(S.fateBuff>0) h += '<p>🌟 巨星时刻生效中（余 '+S.fateBuff+' 战，判定 +8）</p>';
     if(S.checkMod) h += '<p>更衣室状态：判定修正 '+(S.checkMod.value>0?'+':'')+S.checkMod.value+'（余 '+S.checkMod.battles+' 战）</p>';
     h += fateBadgeHtml(S.fate);
+    if(S.bondNotes && S.bondNotes.length) h += '<p>💞 本局羁绊：'+S.bondNotes.map(esc).join('；')+'</p>';
     const lc = F.loadConflict(S.attrs, S); if(lc>0) h += '<p>⚠ 负荷冲突 '+lc+' 项：本场首扣健康 '+(lc*C.LOAD_HEALTH_PER)+'、判定 -'+(lc*3)+'%</p>';
     ['A','B','C'].forEach(k=>{
       const o = b[k]; if(!o) return;
@@ -1644,11 +1856,11 @@ window.BK_ensureArt = function(){
   function renderEnding(){
     const def = window.BK_ENDINGS.find(e=>e.id===S.endingId) || {};
     let h = '<div style="padding:14px 10px 0"><div class="kicker">赛季结算</div></div>'
-    + '<div class="paper"><h2>'+esc(def.name||'赛季结束')+'</h2><p>'+esc(def.desc||'')+'</p>'
+    + '<div class="paper" style="position:relative"><h2>'+esc(def.name||'赛季结束')+'</h2><div class="end-seal">结局</div><p>'+esc(def.desc||'')+'</p>'
     + (S.flags.bountyTag ? '<p>🏷 结算标签：<b>抱团夺冠</b>（所夺 S 档来源集中，争议照常计入传奇值）</p>' : '')
     + ((S.endingId==='champion_top'||S.endingId==='champion_piece'||S.endingId==='lying_champ') ? '<p>📖 后记：<b>王朝序章</b>——二周目可挑战连冠。</p>' : '')
     + '<p>传奇值 <b style="font-size:20px">'+S.legend+'</b> · 总评 '+F.overall(S)+' · 贡献 '+F.contribution(S)+'（功勋 '+S.resources.merit+' / 高光 '+S.resources.scene+' / 亲为成功 '+S.proSuccess+'）</p>'
-    + (()=>{ const bd = F.legendBreakdown(S, def.bonus||0); return '<h3>传奇值构成</h3><div style="font-size:13px;line-height:1.9">' + bd.parts.map(p=>'<div style="display:flex;justify-content:space-between;border-bottom:1px dashed var(--line)"><span>'+esc(p.label)+'</span><b>'+(p.value>0?'+':'')+p.value+'</b></div>').join('') + '<div style="display:flex;justify-content:space-between"><span><b>合计</b>'+(bd.capped?'（已达 1000 上限）':'')+'</span><b>'+bd.total+'</b></div></div>'; })()
+    + (()=>{ const bd = F.legendBreakdown(S, def.bonus||0); return '<h3>传奇值构成</h3><div style="font-size:13px;line-height:1.9">' + bd.parts.map(p=>'<div style="display:flex;justify-content:space-between;border-bottom:1px dashed var(--line)"><span>'+esc(p.label)+'</span><b style="color:#b3402a">'+(p.value>0?'+':'')+p.value+'</b></div>').join('') + '<div style="display:flex;justify-content:space-between;padding-top:2px"><span><b>合计</b>'+(bd.capped?'（已达 1000 上限）':'')+'</span><b style="color:#b3402a;font-size:15px">'+bd.total+'</b></div></div>'; })()
     + fateBadgeHtml(S.fate)
     + '<h3>我的拼图</h3>'+slotsHtml()
     + '<div class="row"><button class="btn primary" id="b-poster">生成构筑海报</button><button class="btn" id="b-submit"'+(S.submitted?' disabled':'')+'>'+(S.submitted?'已提交上榜':'提交成绩上榜')+'</button></div>'
@@ -1731,12 +1943,27 @@ window.BK_ensureArt = function(){
     h += '</div><p style="font-size:12px">已达成 '+done+' / '+C.ACHIEVEMENTS.length+'</p>';
     return h;
   }
+  // BK-028 羁绊图鉴：配对＋效果定式文案＋三态收集（本局已触发/曾经触发/未触发）；内部分档数值不外露
+  function galBondsHtml(){
+    const meta = window.BK_Meta.load();
+    const seenN = C.BONDS.filter(B=>meta.bondsSeen[B.id]).length;
+    let h = '<h3>羁绊图鉴（已收集 '+seenN+' / '+C.BONDS.length+'）</h3><p style="font-size:12px">同一赛季里从配对的两位球星身上都夺过能力，羁绊当场触发，补强按锁定原值结算。</p><div class="grid2">';
+    for(const B of C.BONDS){
+      const inRun = !!(S && S.bonds && S.bonds[B.id]);
+      const seen = !!meta.bondsSeen[B.id];
+      const st = inRun ? '本局已触发' : (seen ? '曾经触发' : '未触发');
+      const stc = inRun ? '#2e7d4f' : (seen ? '#8a6d1f' : '#a08c66');
+      h += '<div class="endcard'+(inRun||seen?' on':'')+'"><div class="en-name">《'+esc(B.name)+'》<span style="float:right;font-size:12px;color:'+stc+'">'+st+'</span></div><div class="en-sub">'+esc(B.a)+' ＋ '+esc(B.b)+'</div><div class="en-sub">'+esc(B.desc)+'</div></div>';
+    }
+    return h + '</div>';
+  }
   function renderGallery(){
-    app.innerHTML = '<div class="paper"><h2>图鉴 / 收藏</h2>'
-    + '<div class="row"><button class="btn small" id="gt-players">球员</button><button class="btn small" id="gt-endings">结局</button><button class="btn small" id="gt-ach">成就</button></div>'
+    app.innerHTML = '<div class="paper"><h2>图鉴 / 收藏<span class="gal-count">📖 90 / 90</span></h2>'
+    + '<div class="row"><button class="btn small" id="gt-players">球员</button><button class="btn small" id="gt-bonds">羁绊</button><button class="btn small" id="gt-endings">结局</button><button class="btn small" id="gt-ach">成就</button></div>'
     + '<div id="gal-body"></div><button class="btn ghost" id="b-back2">返回</button></div>';
-    const draw = (tab)=>{ document.getElementById('gal-body').innerHTML = tab==='players' ? galPlayersHtml() : (tab==='endings' ? galEndingsHtml() : galAchHtml()); };
+    const draw = (tab)=>{ document.getElementById('gal-body').innerHTML = tab==='players' ? galPlayersHtml() : (tab==='bonds' ? galBondsHtml() : (tab==='endings' ? galEndingsHtml() : galAchHtml())); ['gt-players','gt-bonds','gt-endings','gt-ach'].forEach(id=>{ const b=document.getElementById(id); if(b) b.classList.toggle('tab-on', id==='gt-'+tab); }); };
     bind('gt-players', ()=>draw('players'));
+    bind('gt-bonds', ()=>draw('bonds'));
     bind('gt-endings', ()=>draw('endings'));
     bind('gt-ach', ()=>draw('ach'));
     bind('b-back2', ()=>{ view = S && S.phase && S.phase!=='ending' ? (S.phase==='draft'?'draft':'battle') : 'home'; if(!S) view='home'; render(); });
@@ -1757,17 +1984,19 @@ window.BK_ensureArt = function(){
       const meta = window.BK_Meta.load();
       let meName = meta.lbName;
       if(!meName){ try{ meName = (await LB.profile()).nickname; }catch(e){ meName = '虎扑用户'; } }
-      let t = '<table class="lb"><tr><th>#</th><th>玩家</th><th>传奇值</th><th>结局</th></tr>';
+      let t = '<table class="lb"><tr class="lbh"><th>#</th><th>玩家</th><th>传奇值</th><th>结局</th></tr>';
       list.forEach((e,i)=>{
         const av = (e.avatar && typeof e.avatar==='string' && /^https?:\/\//.test(e.avatar)) ? '<img class="lbav" src="'+esc(e.avatar)+'" alt="">' : '';
-        t += '<tr><td>'+(i+1)+'</td><td>'+av+esc(e.displayName)+'</td><td>'+e.score+'</td><td>'+esc(e.ending||'')+(typeof e.deathCh==='number'?' · 止步第 '+e.deathCh+' 战':'')+'</td></tr>';
+        const rank = i<3 ? '<span class="medal m'+(i+1)+'">'+(i+1)+'</span>' : ''+(i+1);
+        t += '<tr'+(e.displayName===meName?' class="me"':'')+'><td>'+rank+'</td><td>'+av+esc(e.displayName)+'</td><td class="lbv">'+e.score+'</td><td>'+esc(e.ending||'')+(typeof e.deathCh==='number'?' · 止步第 '+e.deathCh+' 战':'')+'</td></tr>';
       });
       if(!list.length) t += '<tr><td colspan="4">暂无记录，先打一局上榜</td></tr>';
       const myIdx = list.findIndex(e=>e.displayName===meName);
       const myRow = '<p style="font-size:13px;margin:6px 0 0">我的名次：'+(myIdx>=0 ? '第 '+(myIdx+1)+' 名' : '未上榜')+'（按昵称 '+esc(meName)+' 定位，只看前 '+C.LB_PAGE+' 名）</p>';
       document.getElementById('lb-body').innerHTML = t + myRow + '<p style="font-size:12px">共 '+((res&&res.total)||0)+' 条</p>';
     };
-    app.querySelectorAll('[data-tab]').forEach(el=>el.addEventListener('click', ()=>load(el.dataset.tab)));
+    app.querySelectorAll('[data-tab]').forEach(el=>el.addEventListener('click', ()=>{ app.querySelectorAll('[data-tab]').forEach(x=>x.classList.remove('tab-on')); el.classList.add('tab-on'); load(el.dataset.tab); }));
+    const firstTab = app.querySelector('[data-tab]'); if(firstTab) firstTab.classList.add('tab-on');
     load(b.best);
     bind('b-back3', ()=>{ view='home'; render(); });
   }
