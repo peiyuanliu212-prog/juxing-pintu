@@ -49,6 +49,17 @@ h1.title{font-size:31px;font-weight:900;margin:4px 0 2px;letter-spacing:2px;text
 .bond-chip .bc-d{font-size:11px;font-weight:400;line-height:1.45;color:#7a6c4f}
 .bond-chip.done{background:var(--accent2);border-color:var(--accent2);color:#fff}
 .bond-chip.done .bc-d{color:rgba(255,255,255,.93)}
+/* ===== BK-032 候选卡羁绊 chip（暖红底＋描边，三态：未开始/进行中/就差他，达成深绿同横条口径） ===== */
+.bond-tag{position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:1px 8px;margin-top:6px;background:#fbe9dc;border:1.5px solid #d98a68;border-radius:9px;padding:5px 9px;font-size:12.5px;color:#8a3b22;line-height:1.45;text-align:left}
+.bond-tag .bt-n{font-size:13.5px;font-weight:800;color:#b3402a;white-space:nowrap}
+.bond-tag .bt-p{font-weight:600;white-space:nowrap}
+.bond-tag .bt-f{color:#7a5a3a}
+.bond-tag.bt-prog{background:#f7dfc8;border-color:#c96f3f}
+.bond-tag.bt-hot{background:#f3c1a5;border-color:#b3402a;border-width:2px}
+.bond-tag .bt-badge{position:absolute;top:-9px;right:8px;background:#b3402a;color:#fff;font-size:10.5px;font-weight:800;padding:1px 7px;border-radius:99px;letter-spacing:1px}
+.bond-tag.bt-done{background:var(--accent2);border-color:var(--accent2);color:#eaf5ee}
+.bond-tag.bt-done .bt-n{color:#fff}
+.bond-tag.bt-done .bt-f{color:rgba(255,255,255,.88)}
 .resbar b{color:#b3402a;font-weight:700}
 .slots{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}
 .slot{background:#fffaf0;border:1.5px dashed #cbbd93;border-radius:8px;padding:6px 4px;text-align:center;font-size:12px;color:var(--ink);min-width:0}
@@ -1509,13 +1520,163 @@ window.BK_ensureArt = function(){
   window.BK_Game = { newGame, genBatch, candidateObj, draftPick, rerollBatch, directedDraft, chooseBattle, chooseEvent, applyAdGrant, useRewind, finishRun, playerByName, battleDef, ensureRng, syncRng, checkAchievements, recomputeBonds, chaseOptions, missingPartners, lastUnlocked: ()=>lastUnlocked };
 })();
 </script>
+<script>// 声音层（BK-032）：WebAudio 全合成 BGM＋音效，零音频文件、零素材（包体不涨）。
+// 蓝本为《篮坛卡王》已验证方案，本作独立实现：球馆感舒缓律动 BGM（A 小调、84 BPM、合成贝斯＋踩镲＋和弦铺底）＋分级 sting。
+// 纪律：首次用户手势后才建 AudioContext（自动播放限制）；ctx 不可用/合成异常一律静默跳过，绝不报错打断游戏；
+// 静音偏好 localStorage bk_muted 持久化（与公告已读同键族）；音量保守，BGM 只走 bgmGain 支线不抢戏。
+(function(){
+  var MUTED_KEY = 'bk_muted';
+  var ctx = null, master = null, bgmBus = null, sfxBus = null;
+  var unlocked = false, bgmOn = false, bgmTimer = null, bgmStep = 0, nextT = 0, noiseBuf = null;
+  function lsGet(){ try { return localStorage.getItem(MUTED_KEY); } catch(e){ return null; } }
+  function lsSet(v){ try { localStorage.setItem(MUTED_KEY, v); } catch(e){} }
+  var muted = lsGet() === '1';
+  function acFactory(){
+    try {
+      var w = (typeof window !== 'undefined') ? window : null;
+      var AC = w && (w.AudioContext || w.webkitAudioContext);
+      return AC || null;
+    } catch(e){ return null; }
+  }
+  function ensureCtx(){
+    if(ctx) return ctx;
+    var AC = acFactory(); if(!AC) return null;
+    try { ctx = new AC(); } catch(e){ return null; }
+    try {
+      master = ctx.createGain(); master.gain.value = muted ? 0 : 1; master.connect(ctx.destination);
+      bgmBus = ctx.createGain(); bgmBus.gain.value = 0.34; bgmBus.connect(master);
+      sfxBus = ctx.createGain(); sfxBus.gain.value = 0.9; sfxBus.connect(master);
+      var len = Math.floor(ctx.sampleRate * 0.5);
+      noiseBuf = ctx.createBuffer(1, len, ctx.sampleRate);
+      var d = noiseBuf.getChannelData(0);
+      for(var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    } catch(e){ /* 支线建失败则各发声点自行 try 兜底 */ }
+    return ctx;
+  }
+  // —— 基础发声件 ——
+  function tone(freq, t0, dur, type, vol, dest, slideTo){
+    try {
+      var o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = type || 'sine';
+      o.frequency.setValueAtTime(freq, t0);
+      if(slideTo) o.frequency.exponentialRampToValueAtTime(Math.max(20, slideTo), t0 + dur);
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(vol, t0 + 0.012);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      o.connect(g); g.connect(dest || sfxBus);
+      o.start(t0); o.stop(t0 + dur + 0.05);
+    } catch(e){}
+  }
+  function hat(t0, vol){
+    try {
+      if(!noiseBuf) return;
+      var src = ctx.createBufferSource(); src.buffer = noiseBuf;
+      var f = ctx.createBiquadFilter(); f.type = 'highpass'; f.frequency.value = 6800;
+      var g = ctx.createGain();
+      g.gain.setValueAtTime(vol, t0);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.05);
+      src.connect(f); f.connect(g); g.connect(bgmBus);
+      src.start(t0); src.stop(t0 + 0.08);
+    } catch(e){}
+  }
+  // —— BGM：84 BPM、8 分音符步进、Am–F–C–G 四和弦循环（每和弦 1 小节）——
+  var SPB = 60 / 84 / 2; // 每步（8分音符）秒数
+  var CHORDS = [
+    { bass: 55.00,  pad: [220.00, 261.63, 329.63] },  // Am（A1 贝斯，A3/C4/E4 铺底）
+    { bass: 43.65,  pad: [174.61, 220.00, 261.63] },  // F
+    { bass: 65.41,  pad: [196.00, 261.63, 329.63] },  // C
+    { bass: 49.00,  pad: [196.00, 246.94, 293.66] }   // G
+  ];
+  function scheduleStep(step, t){
+    var bar = Math.floor(step / 8) % CHORDS.length;
+    var ch = CHORDS[bar], inBar = step % 8;
+    if(inBar === 0){ // 小节头：和弦铺底（三角波、缓攻缓释、低音量）
+      for(var i = 0; i < ch.pad.length; i++){
+        try {
+          var o = ctx.createOscillator(), g = ctx.createGain();
+          o.type = 'triangle'; o.frequency.setValueAtTime(ch.pad[i], t);
+          var dur = SPB * 8;
+          g.gain.setValueAtTime(0.0001, t);
+          g.gain.exponentialRampToValueAtTime(0.045, t + 0.25);
+          g.gain.setValueAtTime(0.045, t + dur - 0.3);
+          g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+          o.connect(g); g.connect(bgmBus);
+          o.start(t); o.stop(t + dur + 0.05);
+        } catch(e){}
+      }
+    }
+    if(inBar === 0 || inBar === 3 || inBar === 4 || inBar === 6){ // 贝斯律动（带一点切分）
+      tone(ch.bass * (inBar === 6 ? 1.5 : 2), t, 0.22, 'triangle', 0.16, bgmBus);
+    }
+    if(inBar % 2 === 1) hat(t, 0.028);        // 反拍踩镲
+    if(inBar === 7) hat(t, 0.016);            // 小节尾轻点
+  }
+  function pump(){
+    if(!ctx) return;
+    try {
+      while(nextT < ctx.currentTime + 0.28){
+        scheduleStep(bgmStep, nextT);
+        bgmStep++; nextT += SPB;
+      }
+    } catch(e){}
+  }
+  function startBgm(){
+    if(bgmOn || !ctx) return;
+    try {
+      bgmStep = 0; nextT = ctx.currentTime + 0.08;
+      bgmTimer = setInterval(pump, 90); pump(); bgmOn = true;
+    } catch(e){}
+  }
+  function stopBgm(){
+    if(bgmTimer){ try { clearInterval(bgmTimer); } catch(e){} bgmTimer = null; }
+    bgmOn = false;
+  }
+  // —— 对外接口 ——
+  function ready(){
+    if(!unlocked || muted) return false;
+    if(!ensureCtx()) return false;
+    try { if(ctx.state === 'suspended' && ctx.resume) ctx.resume(); } catch(e){}
+    return true;
+  }
+  function now(){ return ctx ? ctx.currentTime : 0; }
+  var A = {
+    unlock: function(){
+      if(!ensureCtx()) return false;
+      unlocked = true;
+      try { if(ctx.state === 'suspended' && ctx.resume) ctx.resume(); } catch(e){}
+      startBgm();
+      return true;
+    },
+    isUnlocked: function(){ return unlocked; },
+    isMuted: function(){ return muted; },
+    setMuted: function(m){
+      muted = !!m; lsSet(muted ? '1' : '0');
+      try { if(master) master.gain.value = muted ? 0 : 1; } catch(e){}
+      return muted;
+    },
+    toggleMute: function(){ return A.setMuted(!muted); },
+    stopBgm: stopBgm,
+    click: function(){ if(!ready()) return; var t = now(); tone(880, t, 0.055, 'square', 0.045, sfxBus, 620); },
+    pick: function(){ if(!ready()) return; var t = now(); tone(587.33, t, 0.09, 'sine', 0.13); tone(880.00, t + 0.07, 0.14, 'sine', 0.13); },
+    swap: function(){ if(!ready()) return; var t = now(); tone(300, t, 0.16, 'sawtooth', 0.05, sfxBus, 980); tone(1200, t + 0.05, 0.08, 'sine', 0.05); },
+    bond: function(){ if(!ready()) return; var t = now(); [523.25, 659.25, 783.99, 1046.50].forEach(function(f, i){ tone(f, t + i * 0.07, 0.5, 'sine', 0.13); }); },
+    win: function(){ if(!ready()) return; var t = now(); [440.00, 554.37, 659.25, 880.00].forEach(function(f, i){ tone(f, t + i * 0.09, i === 3 ? 0.5 : 0.22, 'triangle', 0.13); }); },
+    lose: function(){ if(!ready()) return; var t = now(); [220.00, 174.61, 146.83].forEach(function(f, i){ tone(f, t + i * 0.16, 0.3, 'sine', 0.11); }); },
+    jingle: function(){ if(!ready()) return; var t = now(); [659.25, 783.99, 880.00, 783.99, 659.25, 587.33, 659.25].forEach(function(f, i){ tone(f, t + i * 0.13, 0.26, 'triangle', 0.12); }); tone(523.25, t + 0.95, 0.6, 'sine', 0.08); }
+  };
+  window.BK_Audio = A;
+})();
+</script>
 <script>// 视图层：乱世拼将同款纸墨视觉（BK-025 全站对标母本）。所有按钮显式设文字颜色（CSS .btn 已定色）；中文全为真实 HTML 文字。
 (function(){
   const C = window.BK_CONFIG, F = window.BK_Formulas, G = window.BK_Game, Save = window.BK_Save, Ads = window.BK_Ads, LB = window.BK_LB;
   const app = document.getElementById('app');
   const SIL = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><rect width="120" height="120" fill="#ddd3b8"/><circle cx="60" cy="46" r="20" fill="#8a7c5c"/><path d="M22 120c4-26 20-38 38-38s34 12 38 38z" fill="#8a7c5c"/></svg>');
-  let S = null; let view = 'home'; let selCand = -1; let lbTab = 'best';
+  let S = null; let view = 'home'; let selCand = -1; let lbTab = 'best'; let galTab = 'players'; let jingleKey = '';
   function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+  // BK-032 声音出口：BK_Audio 缺失（逻辑层测试环境）或合成异常时静默跳过，绝不打断游戏
+  function sfx(name){ try{ const A = window.BK_Audio; if(A && typeof A[name]==='function') A[name](); }catch(e){} }
+  function audioMuted(){ try{ return !!(window.BK_Audio && window.BK_Audio.isMuted()); }catch(e){ return false; } }
   function portrait(p){ return p && p.portrait ? 'portraits/'+p.portrait : SIL; }
   function saveNow(r){ Save.save(r||'ui'); }
   function resBar(){
@@ -1560,6 +1721,29 @@ window.BK_ensureArt = function(){
     if(B.type==='mech') t += '；另送免费换一批 1 次';
     return t;
   }
+  // BK-032 效果短句：bondGoalText 的精简版，数值全部由 BONDS 配置现算（与一览页/横条同一口径，不另写一套）
+  function bondGoalShort(B){
+    if(B.type==='foe') return '同队：各 -'+Math.round(C.BOND_FOE_RATE*100)+'%（可化敌为友 +'+C.BOND_BEFRIEND_BONUS+'）';
+    if(B.type==='team') return '凑齐：全队未满 '+C.BOND_TEAM_LINE+' 的项 +1';
+    const spec = C.BOND_FILL[B.cls] || C.BOND_FILL.BASE;
+    let t = (!spec.cap) ? '凑齐：两人各 +'+C.BOND_BASE_BONUS : '凑齐：弱项补到 '+(B.ref||spec.ref);
+    if(B.type==='temp') t += '＋下一战判定 +'+C.BOND_TEMP_VALUE;
+    if(B.type==='mech') t += '＋免费换一批';
+    return t;
+  }
+  // BK-032 候选卡羁绊 chip：三段（羁绊名状态／搭档／效果短句），三态呈现——未开始（浅）／本人已锁进行中（中）／搭档已锁就差此人（最深＋「就差他」角标，决策关键时刻）；已达成与横条同口径深绿
+  function bondChipHtml(name){
+    if(!S || !S.attrSrc) return '';
+    return C.BONDS.filter(B=>B.a===name||B.b===name).map(B=>{
+      const partner = B.a===name ? B.b : B.a;
+      const selfIn = S.attrSrc.includes(name), partnerIn = S.attrSrc.includes(partner);
+      let cls = 'bt0', mark = '0/2', badge = '', fx = bondGoalShort(B);
+      if(S.bonds && S.bonds[B.id]){ cls = 'bt-done'; mark = '✓'; fx = '已达成'; }
+      else if(partnerIn && !selfIn){ cls = 'bt-hot'; mark = '1/2'; badge = '<span class="bt-badge">就差他</span>'; }
+      else if(selfIn && !partnerIn){ cls = 'bt-prog'; mark = '1/2'; }
+      return '<span class="bond-tag '+cls+'">'+badge+'<span class="bt-n">💞 '+esc(B.name)+' '+mark+'</span><span class="bt-p">搭档 '+esc(partner)+'</span><span class="bt-f">'+esc(fx)+'</span></span>';
+    }).join('');
+  }
   // BK-029/031 羁绊横条：选秀页（进行中进度＋预期效果／已达成＋实际效果）与对战页（已达成＋实际效果）共用；chip 两段式，无任何内容时返回空串、整条不占位
   function bondStripHtml(mode){
     if(!S || !S.attrSrc) return '';
@@ -1598,7 +1782,7 @@ window.BK_ensureArt = function(){
   }
   function modal(html){ document.getElementById('modal-root').innerHTML = '<div class="modal"><div class="box">'+html+'</div></div>'; }
   function closeModal(){ document.getElementById('modal-root').innerHTML=''; }
-  window.BK_UI = { render, setState:(s)=>{S=s;}, bondStripHtml };
+  window.BK_UI = { render, setState:(s)=>{S=s;}, bondStripHtml, bondChipHtml, bondGoalShort, galBondsHtml };
   function render(){
     if(view==='home') return renderHome();
     if(view==='setup') return renderSetup();
@@ -1622,13 +1806,16 @@ window.BK_ensureArt = function(){
     + (has ? '<button class="btn primary" id="b-continue">继续赛季</button>' : '')
     + '<button class="btn primary" id="b-new">开启新赛季</button>'
     + '<div class="row"><button class="btn" id="b-gallery">球员图鉴</button><button class="btn" id="b-boards">传奇榜</button></div>'
+    + '<button class="btn" id="b-bonds">💞 羁绊一览</button>'
     + '<div class="row"><button class="btn" id="b-shop">生涯规划商店</button><button class="btn" id="b-save">存档页</button></div>'
     + '<div class="row"><button class="btn" id="b-notice">📜 更新公告'+(noticeUnread()?'<span class="ndot"></span>':'')+'</button><button class="btn" id="b-group">💬 拼将交流群</button></div>'
-    + '<button class="btn ghost" id="b-rules">归队规则与玩法</button></div>'
+    + '<div class="row"><button class="btn ghost" id="b-rules">归队规则与玩法</button><button class="btn ghost" id="b-mute">'+(audioMuted()?'🔇 音效关（点击开启）':'🔊 音效开（点击静音）')+'</button></div></div>'
     + '<div class="foot">'+C.GAME_NAME+' '+C.VERSION+'</div>';
     bind('b-new', ()=>{ view='setup'; render(); });
     if(has) bind('b-continue', ()=>{ S = Save.peek(); resumeView(); });
-    bind('b-gallery', ()=>{ if(!S){ S = Save.peek(); } view='gallery'; render(); });
+    bind('b-gallery', ()=>{ if(!S){ S = Save.peek(); } galTab='players'; view='gallery'; render(); });
+    bind('b-bonds', ()=>{ if(!S){ S = Save.peek(); } galTab='bonds'; view='gallery'; render(); });
+    bind('b-mute', ()=>{ sfx('unlock'); try{ if(window.BK_Audio) window.BK_Audio.toggleMute(); }catch(e){} if(!audioMuted()) sfx('click'); render(); });
     bind('b-boards', ()=>{ view='boards'; render(); });
     bind('b-shop', ()=>{ view='shop'; render(); });
     bind('b-save', ()=>{ if(!S){ S = Save.peek(); } view='saves'; render(); });
@@ -1638,7 +1825,7 @@ window.BK_ensureArt = function(){
   }
   // —— 更新公告（母本 NOTICES 同款：未读红点，打开即已读）——
   const NOTICES = [
-    { v:'v1.8', d:'11月8日', t:'羁绊系统上线', items:['💞 新增「羁绊」：同一赛季凑齐配对球星（如水花兄弟、姚麦组合、神与王），两人被夺的能力联手补强——短板补得多，强强联手也有保底','📺 追羁绊广告：已锁定羁绊一员后，看广告可让下一批候选必出搭档（每局 2 次）；伯德与魔术师的《宿敌》触发后，还能看广告「化敌为友」还原扣减','💞 选秀卡与拼图槽新增羁绊进度角标（💞 羁绊名 n/2，触发变 ✓）；图鉴新增「羁绊」页，12 个羁绊的配对与效果全公开'] },
+    { v:'v1.8', d:'11月8日', t:'羁绊系统上线', items:['💞 新增「羁绊」：同一赛季凑齐配对球星（如水花兄弟、姚麦组合、神与王），两人被夺的能力联手补强——短板补得多，强强联手也有保底','📺 追羁绊广告：已锁定羁绊一员后，看广告可让下一批候选必出搭档（每局 2 次）；伯德与魔术师的《宿敌》触发后，还能看广告「化敌为友」还原扣减','💞 选秀卡与拼图槽新增羁绊进度角标（💞 羁绊名 n/2，触发变 ✓）；图鉴新增「羁绊」页，12 个羁绊的配对与效果全公开','🎵 新增 BGM 与音效：球馆律动背景音乐＋夺技/羁绊/胜负音效（首页可一键静音）；选秀卡羁绊标记升级成醒目条——搭档已锁定、就差这一张时会重点提醒；首页与结算页新增「💞 羁绊一览」直达入口'] },
     { v:'v1.7', d:'11月7日', t:'广告奖励修复（紧急）', items:['🛠️ 修复「广告看完不给奖励」：发奖通道按《乱世拼将》线上实证口径重做，看完当场发奖，不再无声丢失','此前白看的广告很抱歉——补偿已备好：交流群弹窗内领取生涯功勋点 ×150＋定向招募 ×1（每人限领一次，福利码只在群内发布，进群可领）','本版同时包含 v1.6 全站视觉重做（纸墨风）与球员数据修正'] },
     { v:'v1.6', d:'11月7日', t:'全站视觉推翻重做', items:['🏀 全站换成《乱世拼将》同款纸墨风：米纸底、白卡、朱红主按钮，告别深绿金配色','首页主视觉换成揭幕战球馆长卷，标题、印章签与版式全向乱世首页对齐','结算页加盖「结局」印章、排行榜前三名奖牌与黑表头、图鉴页签高亮——按 GPT 优化稿逐项落地'] },
     { v:'v1.5', d:'11月6日', t:'球员数据修正', items:['🏀 按历史地位修正招牌单项：库里三分 99、雷·阿伦 98、雷吉·米勒 97、克莱·汤普森 95、利拉德 90','文斯·卡特扣篮修正为 98、斯托克顿传球修正为 95——专精球员的看家本领不再被综合档位压低'] },
@@ -1788,7 +1975,7 @@ window.BK_ensureArt = function(){
       panel += '<p class="meta" style="font-size:12px;color:#7a6c4f;margin:8px 0 0">我的拼图还缺：'+(missing.length?missing.join('、'):'已拼满')+'</p></div>';
       h += '<div class="cand cand2 tier-'+p.tier.toLowerCase()+(p.isPeak?' tier-peak':'')+(selCand===i?' open':'')+'" data-cand="'+i+'">'
         + (p.isPeak?'<span class="peak-ribbon">巅峰</span>':'')
-        + '<div class="chead"><img src="'+portrait(p)+'" alt="" decoding="async"><div class="cinfo"><div class="nm">'+esc(p.name)+'</div><div class="meta">'+esc(p.team)+' · '+p.tier+'档 · 峰值 '+esc(p.window)+'</div><div class="meta">'+esc(p.note)+' · 强项总评 <b>'+rating+'</b></div>'+(bondBadges(p.name)?'<div class="meta" style="color:#b3402a">'+bondBadges(p.name)+'</div>':'')+'</div></div>'
+        + '<div class="chead"><img src="'+portrait(p)+'" alt="" decoding="async"><div class="cinfo"><div class="nm">'+esc(p.name)+'</div><div class="meta">'+esc(p.team)+' · '+p.tier+'档 · 峰值 '+esc(p.window)+'</div><div class="meta">'+esc(p.note)+' · 强项总评 <b>'+rating+'</b></div>'+bondChipHtml(p.name)+'</div></div>'
         + cells + panel + '</div>';
     });
     h += '</div></div>';
@@ -1803,17 +1990,21 @@ window.BK_ensureArt = function(){
     }));
     app.querySelectorAll('[data-attr]').forEach(el=>el.addEventListener('click', ()=>{
       const card = el.closest('[data-cand]'); if(card) selCand = +card.dataset.cand;
+      const bondsBefore = S.bonds ? Object.keys(S.bonds).length : 0;
       const r = G.draftPick(S, selCand, +el.dataset.attr);
-      if(r.ok){ selCand=-1; saveNow('draft-pick'); if(S.phase==='battle'){ view='battle'; } render(); }
+      if(r.ok){ // BK-032：夺技锁定音；本锁新触发羁绊则换专属 chime
+        const bondsAfter = S.bonds ? Object.keys(S.bonds).length : 0;
+        sfx(bondsAfter > bondsBefore ? 'bond' : 'pick');
+        selCand=-1; saveNow('draft-pick'); if(S.phase==='battle'){ view='battle'; } render(); }
     }));
     bind('b-swap', async ()=>{
       const r = G.rerollBatch(S);
-      if(r.ok){ selCand=-1; saveNow('draft-reroll'); render(); return; }
+      if(r.ok){ sfx('swap'); selCand=-1; saveNow('draft-reroll'); render(); return; }
       // BK-029：免费与已备次数耗尽 → 看广告换一批（不限局内次数，走 BK-027 发奖状态机）；落定入账 swapAds 后立即消费一次
       await Ads.watch('swap', (t)=>G.applyAdGrant(S,t));
       saveNow('ad-swap');
       const r2 = G.rerollBatch(S);
-      if(r2.ok){ selCand=-1; saveNow('draft-reroll'); }
+      if(r2.ok){ sfx('swap'); selCand=-1; saveNow('draft-reroll'); }
       else toast('广告奖励待核对，稍后再点一次换一批');
       render();
     });
@@ -1860,7 +2051,7 @@ window.BK_ensureArt = function(){
       const left = window.BK_DATA.players.filter(p=>p.team===t && !S.attrSrc.includes(p.name)).length;
       return '<button class="btn small" data-team="'+t+'" '+(left<=0?'disabled':'')+'>'+t+'（尚余 '+left+' 人）</button>';
     }).join('') + '<button class="btn ghost" id="m-cancel">先不选（资格保留）</button>');
-    document.querySelectorAll('[data-team]').forEach(el=>el.addEventListener('click', ()=>{ const r = G.directedDraft(S, el.dataset.team); if(!r.ok){ closeModal(); toast('定向招募本局已用，下局再来'); render(); return; } selCand=-1; saveNow('directed-pick'); closeModal(); render(); }));
+    document.querySelectorAll('[data-team]').forEach(el=>el.addEventListener('click', ()=>{ const r = G.directedDraft(S, el.dataset.team); if(!r.ok){ closeModal(); toast('定向招募本局已用，下局再来'); render(); return; } sfx('swap'); selCand=-1; saveNow('directed-pick'); closeModal(); render(); }));
     bind('m-cancel', closeModal);
   }
   // —— 战斗 ——
@@ -1922,6 +2113,7 @@ window.BK_ensureArt = function(){
       const gamble = document.getElementById('gamble').checked;
       const r = G.chooseBattle(S, el.dataset.opt, { gamble });
       if(r.ok){
+        if(r.rec && r.rec.success===true) sfx('win'); else if(r.rec && r.rec.success===false) sfx('lose'); // BK-032 对战胜负 sting（固定结算不响）
         Save.save('battle-settle'); // 判定落盘：结算即存
         S._settleShown = -1;
         if(S.phase==='ending'){ view='ending'; render(); }
@@ -1964,9 +2156,13 @@ window.BK_ensureArt = function(){
     + fateBadgeHtml(S.fate)
     + '<h3>我的拼图</h3>'+slotsHtml()
     + '<div class="row"><button class="btn primary" id="b-poster">生成构筑海报</button><button class="btn" id="b-submit"'+(S.submitted?' disabled':'')+'>'+(S.submitted?'已提交上榜':'提交成绩上榜')+'</button></div>'
-    + '<div class="row"><button class="btn" id="b-boards2">看排行榜</button><button class="btn" id="b-again">再来一局</button></div>';
+    + '<div class="row"><button class="btn" id="b-boards2">看排行榜</button><button class="btn" id="b-again">再来一局</button></div>'
+    + '<button class="btn" id="b-bonds2">💞 羁绊一览</button>';
     h += '</div>';
     app.innerHTML = h;
+    // BK-032 结算 jingle：同一结局只响一次（重渲/恢复不重播）
+    const jk = (S.seed||'')+'|'+(S.endingId||'');
+    if(jingleKey!==jk){ jingleKey = jk; sfx('jingle'); }
     // 批2·成就：当次结算新解锁弹提示（自有 modal，禁原生 alert）
     const na = G.lastUnlocked();
     if(na && na.length){
@@ -1985,6 +2181,7 @@ window.BK_ensureArt = function(){
       }catch(e){ if(btn) btn.disabled = false; }
     });
     bind('b-boards2', ()=>{ view='boards'; render(); });
+    bind('b-bonds2', ()=>{ galTab='bonds'; view='gallery'; render(); });
     bind('b-again', ()=>{ Save.clear(); S=null; view='setup'; render(); });
   }
   function drawPoster(){
@@ -2043,17 +2240,24 @@ window.BK_ensureArt = function(){
     h += '</div><p style="font-size:12px">已达成 '+done+' / '+C.ACHIEVEMENTS.length+'</p>';
     return h;
   }
-  // BK-028 羁绊图鉴：配对＋效果定式文案＋三态收集（本局已触发/曾经触发/未触发）；内部分档数值不外露
+  // BK-032 羁绊一览（BK-028 图鉴页升级补齐）：成员＋类别＋效果文案一律走 BK-031 口径（bondGoalText 预期／bondFxText 实得），
+  // 状态两维分开标——本局（已达成/进行中 n/2/未触发）＋跨局收集（bondsSeen 曾达成/未达成）；内部分档代码（FULL/LITE）不外露，类别名即玩家口径档位
+  const BOND_TYPE_NAMES = { fill:'联手补强', temp:'补强 · 临时骑手', mech:'补强 · 机制', foe:'宿敌相克', team:'全队共鸣' };
   function galBondsHtml(){
     const meta = window.BK_Meta.load();
     const seenN = C.BONDS.filter(B=>meta.bondsSeen[B.id]).length;
-    let h = '<h3>羁绊图鉴（已收集 '+seenN+' / '+C.BONDS.length+'）</h3><p style="font-size:12px">同一赛季里从配对的两位球星身上都夺过能力，羁绊当场触发，补强按锁定原值结算。</p><div class="grid2">';
+    let h = '<h3>羁绊一览（已收集 '+seenN+' / '+C.BONDS.length+'）</h3><p style="font-size:12px">同一赛季里从配对的两位球星身上都夺过能力，羁绊当场触发，补强按锁定原值结算。</p><div class="grid2">';
     for(const B of C.BONDS){
       const inRun = !!(S && S.bonds && S.bonds[B.id]);
+      const lockedN = (S && S.attrSrc) ? [B.a,B.b].filter(x=>S.attrSrc.includes(x)).length : 0;
+      const runSt = inRun ? '已达成' : (lockedN===1 ? '进行中 '+lockedN+'/2' : '未触发');
+      const runC = inRun ? '#2e7d4f' : (lockedN===1 ? '#b3402a' : '#a08c66');
       const seen = !!meta.bondsSeen[B.id];
-      const st = inRun ? '本局已触发' : (seen ? '曾经触发' : '未触发');
-      const stc = inRun ? '#2e7d4f' : (seen ? '#8a6d1f' : '#a08c66');
-      h += '<div class="endcard'+(inRun||seen?' on':'')+'"><div class="en-name">《'+esc(B.name)+'》<span style="float:right;font-size:12px;color:'+stc+'">'+st+'</span></div><div class="en-sub">'+esc(B.a)+' ＋ '+esc(B.b)+'</div><div class="en-sub">'+esc(B.desc)+'</div></div>';
+      h += '<div class="endcard'+(inRun||seen?' on':'')+'"><div class="en-name">《'+esc(B.name)+'》<span style="float:right;font-size:12px;color:'+runC+'">本局 · '+runSt+'</span></div>'
+        + '<div class="en-sub">'+esc(B.a)+' ＋ '+esc(B.b)+' · '+(BOND_TYPE_NAMES[B.type]||'')+'</div>'
+        + '<div class="en-sub">'+esc(bondGoalText(B))+'</div>'
+        + (inRun ? '<div class="en-sub" style="color:#2e7d4f">本局实得：'+esc(bondFxText(B, (S && S.phase==='battle') ? 'battle' : 'draft'))+'</div>' : '')
+        + '<div class="en-sub">跨局收集：'+(seen ? '曾达成 ✓' : '未达成')+'</div></div>';
     }
     return h + '</div>';
   }
@@ -2061,13 +2265,13 @@ window.BK_ensureArt = function(){
     app.innerHTML = '<div class="paper"><h2>图鉴 / 收藏<span class="gal-count">📖 90 / 90</span></h2>'
     + '<div class="row"><button class="btn small" id="gt-players">球员</button><button class="btn small" id="gt-bonds">羁绊</button><button class="btn small" id="gt-endings">结局</button><button class="btn small" id="gt-ach">成就</button></div>'
     + '<div id="gal-body"></div><button class="btn ghost" id="b-back2">返回</button></div>';
-    const draw = (tab)=>{ document.getElementById('gal-body').innerHTML = tab==='players' ? galPlayersHtml() : (tab==='bonds' ? galBondsHtml() : (tab==='endings' ? galEndingsHtml() : galAchHtml())); ['gt-players','gt-bonds','gt-endings','gt-ach'].forEach(id=>{ const b=document.getElementById(id); if(b) b.classList.toggle('tab-on', id==='gt-'+tab); }); };
+    const draw = (tab)=>{ galTab = tab; document.getElementById('gal-body').innerHTML = tab==='players' ? galPlayersHtml() : (tab==='bonds' ? galBondsHtml() : (tab==='endings' ? galEndingsHtml() : galAchHtml())); ['gt-players','gt-bonds','gt-endings','gt-ach'].forEach(id=>{ const b=document.getElementById(id); if(b) b.classList.toggle('tab-on', id==='gt-'+tab); }); };
     bind('gt-players', ()=>draw('players'));
     bind('gt-bonds', ()=>draw('bonds'));
     bind('gt-endings', ()=>draw('endings'));
     bind('gt-ach', ()=>draw('ach'));
     bind('b-back2', ()=>{ view = S && S.phase && S.phase!=='ending' ? (S.phase==='draft'?'draft':'battle') : 'home'; if(!S) view='home'; render(); });
-    draw('players');
+    draw(galTab);
   }
   function topAttrs(p){ const idx = p.stats.map((v,i)=>[v,i]).sort((a,b)=>b[0]-a[0]).slice(0,3); return idx.map(([v,i])=>C.ATTRS[i]+v).join(' / '); }
   // —— 排行榜 ——
@@ -2165,6 +2369,14 @@ window.BK_ensureArt = function(){
     + '<p><b>归队规则</b>：五年峰值窗口多数决——取球员最好的连续五季，看落在哪十年占多数。官方范例：詹姆斯峰值窗口 2009–2013，归 10 年代队。交界人卡面有「崛起于 X 年代末」注脚；中国球员归国际纵队；新世代队为截至 2026 赛季的冻结快照，只加不换。</p>'
     + '<p>判定：成功率 = 35+(属性-60)×0.8-负荷冲突×3+修正，亲为且属性≥85 成功可得高光时刻。</p><button class="btn ghost" id="m-close3">关闭</button>');
     bind('m-close3', closeModal);
+  }
+  // —— BK-032 声音启动：首次手势解锁 AudioContext 并起 BGM；全局按钮点击音（夺技/选项/换一批有专属音效的选择器除外，避免叠音） ——
+  if(typeof document!=='undefined' && typeof document.addEventListener==='function'){
+    let unlockedOnce = false;
+    document.addEventListener('pointerdown', ()=>{ if(unlockedOnce) return; unlockedOnce = true; sfx('unlock'); });
+    document.addEventListener('click', (e)=>{
+      try{ const t = e.target; if(t && t.closest && t.closest('button') && !t.closest('.attrbtn, [data-opt], #b-swap, #b-mute')) sfx('click'); }catch(err){}
+    });
   }
   // —— 启动：先核对广告 PENDING，再恢复（平台计数刷新后再核对一次） ——
   function bootGrant(t){ const s = Save.peek(); if(s){ G.applyAdGrant(s, t); Save.save('ad-settle-boot'); } }
