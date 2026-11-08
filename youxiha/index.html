@@ -22,8 +22,8 @@
   .slot .dn { font-size:11px; opacity:.75; }
   .slot .dv { font-size:16px; font-weight:800; line-height:1.15; }
   .slot .ds { font-size:8.5px; opacity:.65; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .bchip { display:inline-block; font-size:10px; line-height:1.5; padding:0 5px; border-radius:8px; background:#f3e2c7; color:#8a6d1f; margin-left:4px; font-weight:400; }
-  .bchip.on { background:#2e7d4f; color:#fff; }
+  .bchip { display:inline-block; font-size:12.5px; line-height:1.5; padding:0 7px; border-radius:8px; background:#f3e2c7; color:#8a6d1f; margin-left:4px; font-weight:700; border:1px solid #c2a15a; }
+  .bchip.on { background:#2e7d4f; color:#fff; border-color:#2e7d4f; }
   .bchip.dim { opacity:.55; }
   .prog { text-align:center; font-weight:700; font-size:15px; margin:8px 0; }
   .prog span { color:#b3352c; }
@@ -314,8 +314,8 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
           attrs:Array(12).fill(null), baseAttrs:Array(12).fill(null), src:Array(12).fill(null), used:[], options:[], sel:-1,
           chapter:0, wins:0, chapterLog:[], bonusNext:0, eventIdx:-1, usedEvents:[],
           resupplyLeft:0, replaced:[], lastResult:null, eventLog:[], acting:false, evResult:null,
-          pickLog:[], bonds:{}, bondNotes:[], iceUsed:false, actingX2:false, foeMarks:{}, befriended:{}, devUsed:false, ads:{ reroll:0, consol:0, resup:0, evredo:0, befriend:0, chase:0 },
-          mode:(mode==='daily'?'daily':'normal'), directedReady:false, directedUsed:false, recorded:false, bonusResup:0 };
+          pickLog:[], bonds:{}, bondNotes:[], iceUsed:false, actingX2:false, foeMarks:{}, befriended:{}, devUsed:false, ads:{ reroll:0, consol:0, resup:0, evredo:0, befriend:0, chase:0, radar:0 },
+          mode:(mode==='daily'?'daily':'normal'), directedReady:false, directedUsed:false, recorded:false, bonusResup:0, radarMark:false };
     if(META.welfareDirected){ S.directedReady = true; META.welfareDirected = false; yxSaveMeta(); }
     if(META.bonusReroll > 0){ S.rerolls += META.bonusReroll; META.bonusReroll = 0; yxSaveMeta(); }
     if(META.bonusResup > 0){ S.bonusResup = META.bonusResup; META.bonusResup = 0; yxSaveMeta(); }
@@ -344,9 +344,21 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
       if(S.directedUsed === undefined) S.directedUsed = false;
       if(S.recorded === undefined) S.recorded = false;
       if(S.bonusResup === undefined) S.bonusResup = 0;
+      if(S.radarMark === undefined) S.radarMark = false;
+      if(S.ads && S.ads.radar === undefined) S.ads.radar = 0;
       yxDeriveBase();
       return true; } }catch(e){}
     return false;
+  }
+  function radarMissingPartners(){
+    var out = [];
+    if(typeof BONDS === 'undefined' || !S || !S.src) return out;
+    BONDS.forEach(function(B){ if(B.id === 'devpower' || (S.bonds && S.bonds[B.id])) return; var M = bondMembers(B);
+      var locked = M.filter(function(n){ return personIn(n); });
+      if(!locked.length || locked.length >= M.length) return;
+      M.forEach(function(n){ if(!personIn(n) && out.indexOf(n) < 0){ var pi = -1; PLAYERS.forEach(function(p2, j){ if(p2.name === n) pi = j; }); if(pi >= 0 && S.used.indexOf(pi) < 0) out.push(n); } });
+    });
+    return out;
   }
   function drawOptions(){
     var usedSet = {};
@@ -358,6 +370,20 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
     }
     S.options = Array.from(idx); S.sel = -1;
     if(S.chaseNext){ var ci = -1; PLAYERS.forEach(function(p2, j){ if(p2.name === S.chaseNext) ci = j; }); if(ci >= 0 && !usedSet[ci] && S.options.indexOf(ci) < 0) S.options[S.options.length - 1] = ci; S.chaseNext = null; }
+    if(S.radarMark){
+      S.radarMark = false;
+      var missing = radarMissingPartners();
+      if(missing.length && rng() < BOND_RADAR_RATE){
+        var pickName = missing[Math.floor(rng()*missing.length)];
+        var ri = -1; PLAYERS.forEach(function(p2, j){ if(p2.name === pickName) ri = j; });
+        if(ri >= 0 && !usedSet[ri] && S.options.indexOf(ri) < 0){
+          var slot = S.options.length - 1;
+          /* 追羁绊刚塞入的最后一格不覆盖，雷达改塞倒数第二格 */
+          if(S.options.length > 1) slot = S.options.length - 2;
+          S.options[slot] = ri;
+        }
+      }
+    }
     S.options.forEach(function(i){ META.seen[PLAYERS[i].name] = 1; }); yxSaveMeta();
   }
   function topDims(p){
@@ -379,7 +405,8 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
   function header(){
     return '<div class="kicker">二 十 章 巡 演 · 第 一 季</div><h1>篮球有嘻哈</h1><div class="sub">从 120 位选手身上，夺走 12 项说唱本事<br>一路从天桥底下，唱到封神之夜</div>';
   }
-  var AD_CAPS = { reroll: 3, consol: 2, resup: 2, evredo: 2, befriend: 2, chase: 2 };
+  var BOND_RADAR_RATE = 0.65;
+  var AD_CAPS = { reroll: Infinity, consol: 2, resup: 2, evredo: 2, befriend: 2, chase: 2, radar: Infinity };
   function showAd(kind, cb){ yxPlayAdReward(kind, cb); }
   function render(){
     if(S.phase === 'intro'){ renderIntro(); }
@@ -578,7 +605,14 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
       var fired = !!(S.bonds && S.bonds[B.id]);
       parts.push('<span class="bchip' + (fired ? ' on' : '') + '">💞 ' + B.name + (fired ? ' ✓' : ' ' + locked + '/' + M.length) + '</span>');
     });
-    return parts.length ? '<div style="margin:2px 0 8px">' + parts.join(' ') + '</div>' : '';
+    return parts.length ? '<div class="bond-progress" style="margin:2px 0 8px">' + parts.join(' ') + '</div>' : '';
+  }
+  function bondTopHTML(){
+    var parts = [];
+    BONDS.forEach(function(B){ if(B.id === 'devpower') return; if(!(S.bonds && S.bonds[B.id])) return;
+      parts.push('<span class="bchip on">💞 ' + B.name + ' ✓ 生效中</span>');
+    });
+    return parts.length ? '<div class="bond-progress bond-progress-top" style="margin:2px 0 8px;text-align:center">' + parts.join(' ') + '</div>' : '';
   }
   function pendingChases(){
     var out = [];
@@ -674,7 +708,7 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
   }
   function renderDraft(){
     var h = header() + '<div class="prog">第 <span>' + (S.draftIdx+1) + '</span> / 12 轮夺技 · 还剩换一批 <span>' + S.rerolls + '</span> 次</div>';
-    h += '<div class="card">' + slotsHTML() + '</div>' + bondProgressHTML() + quipHTML() + actingHTML() + bondsHTML();
+    h += bondProgressHTML() + '<div class="card">' + slotsHTML() + '</div>' + quipHTML() + actingHTML() + bondsHTML();
     if(S.sel >= 0){
       var p = PLAYERS[S.options[S.sel]];
       if(p.name === '库里' && S.attrs[11] === null) h += '<div class="hint">格局 · 100 —— 这一项，全场没人够得着。</div>';
@@ -685,11 +719,12 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
     h += optionsHTML();
     var swapBtn;
     if(S.rerolls > 0) swapBtn = '<button class="btn ghost small" id="b-swap">换一批</button>';
-    else if(S.ads.reroll < AD_CAPS.reroll) swapBtn = '<button class="btn ghost small" id="b-swapad">📺 看广告换一批（剩 ' + (AD_CAPS.reroll - S.ads.reroll) + ' 次）</button>';
-    else swapBtn = '<button class="btn ghost small" disabled style="opacity:.4">换一批已用完</button>';
+    else swapBtn = '<button class="btn ghost small" id="b-swapad">📺 看广告换一批（不限次数）</button>';
     var chases = (S.ads.chase || 0) < AD_CAPS.chase ? pendingChases() : [];
     var chaseBtns = chases.map(function(c){ return '<button class="btn ghost small" data-chase="' + c.bond.id + '" data-partner="' + c.partner + '" style="border-color:#8a6d1f;color:#8a6d1f">📺 下批必出「' + c.partner + '」（羁绊《' + c.bond.name + '》，剩 ' + (AD_CAPS.chase - (S.ads.chase || 0)) + ' 次）</button>'; }).join('');
     h += '<div class="rowbtn">' + (S.directedReady && !S.directedUsed ? '<button class="btn ghost small" id="b-directed" style="border-color:#b03a2e;color:#b03a2e">🎯 定向点将</button>' : '') + swapBtn + chaseBtns + '<button class="btn ghost small" id="b-restart">重开</button></div>';
+    if(S.radarMark) h += '<button class="btn" id="b-radar-ready" disabled style="width:100%;margin-top:6px;opacity:.75">📡 羁绊雷达已就绪：下一批 65% 概率出现缺失的羁绊搭档</button>';
+    else if(radarMissingPartners().length) h += '<button class="btn" id="b-radar" style="width:100%;margin-top:6px;background:#2e7d4f">📺 羁绊雷达 · 看广告：下一批 65% 概率出现缺失的羁绊搭档</button>';
     app.innerHTML = h;
     bindExtra('draft');
     bindPicks(function(d){
@@ -716,12 +751,15 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
     var bd = document.getElementById('b-directed');
     if(bd) bd.onclick = function(){ yxDirectedPicker(); };
     app.querySelectorAll('[data-chase]').forEach(function(el){ el.onclick = function(){ var partner = el.getAttribute('data-partner'); showAd('chase', function(){ S.ads.chase = (S.ads.chase || 0) + 1; S.chaseNext = partner; drawOptions(); save(); render(); }); }; });
+    var brd = document.getElementById('b-radar');
+    if(brd) brd.onclick = function(){ showAd('radar', function(){ if(!S.radarMark){ S.radarMark = true; if(!S.ads) S.ads = {}; S.ads.radar = (S.ads.radar || 0) + 1; } save(); render(); }); };
   }
   function renderChapter(){
     var ch = CFG.chapters[S.chapter];
     var h = header() +
       '<img class="arcimg" src="' + ARC_IMG[ch.arc+1] + '" alt="">' +
       '<div class="prog">第 <span>' + (S.chapter+1) + '</span> / 20 章 · 已胜 <span>' + S.wins + '</span> 场</div>' +
+      bondTopHTML() +
       '<div class="chtitle">第' + (S.chapter+1) + '章 · ' + ch.title + '</div>' +
       '<div class="sub">' + ch.place + ' · 对手：' + ch.oppName + '（强度 ' + ch.oppBase + '）</div>' +
       '<div class="card"><div class="chintro">' + ch.intro + '</div></div>' +
@@ -1132,6 +1170,8 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
     if (S.directedUsed === undefined) S.directedUsed = false;
     if (S.recorded === undefined) S.recorded = false;
     if (S.bonusResup === undefined) S.bonusResup = 0;
+    if (S.radarMark === undefined) S.radarMark = false;
+    if (S.ads && S.ads.radar === undefined) S.ads.radar = 0;
     yxDeriveBase();
   }
   /* 旧档没有 baseAttrs（羁绊重算的底数）：以当前值兜底，并用 foeMarks 把宿敌惩罚精确还原回惩罚前 */
@@ -1406,6 +1446,10 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
     if (t === 'reroll') {
       if (S.phase === 'draft') { S.ads.reroll++; drawOptions(); save(); render(); return '广告奖励已补发：换一批 +1 次'; }
       META.bonusReroll++; yxSaveMeta(); return '广告奖励已补发：换一批 +1（下一局生效）';
+    }
+    if (t === 'radar') {
+      if (!S.radarMark) { S.radarMark = true; if (!S.ads) S.ads = {}; S.ads.radar = (S.ads.radar || 0) + 1; }
+      save(); render(); return '广告奖励已补发：羁绊雷达已就绪';
     }
     if (t === 'consol') {
       if (S.phase === 'battle' || S.phase === 'chapter') { S.bonusNext = (S.bonusNext || 0) + 5; save(); render(); return '广告奖励已补发：下一章 +5 状态'; }
