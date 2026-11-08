@@ -467,7 +467,7 @@ window.BK_CONFIG = {
       originId: null, position: null, identity: null,
       attrs: new Array(12).fill(C.BASE_ATTR), attrSrc: new Array(12).fill(null), attrFloors: new Array(12).fill(null),
       lockedCount: 0, draftRound: 0, batch: null, batchTeam: null, swapsLeft: C.SWAPS_FREE,
-      directedReady: false, fateBuff: 0, rewindArmed: false, peakPending: null,
+      directedReady: false, directedUsedThisRun: false, fateBuff: 0, rewindArmed: false, peakPending: null, // BK-030：定向招募整局限执行 1 次（新局重置、落盘保留、老档 normalize 按默认表补 false）
       perm: new Array(12).fill(0), fate: null, // 批2：历练成长(perm)与本局词缀(fate)，老档 normalize 补齐
       // BK-028 羁绊：锁定原值快照/已触发/净加成账/宿敌记账/化敌状态/两类羁绊广告计数/临时骑手/轻联动，老档 normalize 补齐
       baseAttrs: new Array(12).fill(null), bonds: {}, bondFx: { total: 0, per: {} }, bondNotes: [],
@@ -1144,8 +1144,11 @@ window.BK_ensureArt = function(){
     return { ok:false, reason:'no-swaps' };
   }
   function directedDraft(s, team){
+    // BK-030：定向招募整局限执行 1 次（与三作同构）——已执行则任何路径再调都被守卫拦下；
+    // 置位只在真正换队成功处：仅拿资格（directedReady）或打开选择器又取消都不置位，资格落盘语义不变
+    if(s.directedUsedThisRun) return { ok:false, reason:'directed-used' };
     if(!s.directedReady) return { ok:false, reason:'not-ready' };
-    s.directedReady = false; genBatch(s, team); syncRng(s); return { ok:true };
+    s.directedReady = false; s.directedUsedThisRun = true; genBatch(s, team); syncRng(s); return { ok:true };
   }
 
   // —— 羁绊引擎（BK-028，定案 v2 三档制）：单一入口 recomputeBonds，只从 baseAttrs 重算 ——
@@ -1730,7 +1733,7 @@ window.BK_ensureArt = function(){
     + bondStripHtml('draft')
     + '<div class="paper"><h3>我的拼图（已锁定 '+locked+' / 12）· 预估总评 '+F.overall(S)+'</h3>'+slotsHtml()
     + '<div class="row"><button class="btn" id="b-swap">'+swapLabel+'</button>'
-    + '<button class="btn green" id="b-directed">'+(S.directedReady?'🎯 定向招募已就绪':'🎯 定向招募·看广告')+'</button></div>'
+    + '<button class="btn green" id="b-directed"'+(S.directedUsedThisRun?' disabled':'')+'>'+(S.directedUsedThisRun?'🎯 定向招募（本局已用）':(S.directedReady?'🎯 定向招募已就绪':'🎯 定向招募·看广告'))+'</button></div>'
     + (S.bondNotes && S.bondNotes.length ? '<p class="meta" style="font-size:12px;color:#b3402a;line-height:1.7">'+S.bondNotes.map(esc).join('<br>')+'</p>' : '')
     + bondAdsHtml()
     + '<h3>本轮候选 · '+esc(S.batchTeam)+'（种子 '+esc(S.seed)+'）· 点一张卡，原地夺技</h3>'
@@ -1791,6 +1794,7 @@ window.BK_ensureArt = function(){
       render();
     });
     bind('b-directed', async ()=>{
+      if(S.directedUsedThisRun){ toast('定向招募本局已用，下局再来'); return; } // BK-030：入口守卫（按钮已置灰，此为程序路径兜底）
       if(S.directedReady){ showTeamPicker(); return; }
       const res = await Ads.watch('directed', (t)=>G.applyAdGrant(S,t));
       saveNow('ad-directed'); if(S.directedReady){ showTeamPicker(); } render();
@@ -1827,11 +1831,12 @@ window.BK_ensureArt = function(){
     return h;
   }
   function showTeamPicker(){
+    if(S.directedUsedThisRun){ toast('定向招募本局已用，下局再来'); return; } // BK-030：选择器入口守卫
     modal('<h3>定向招募 · 自选时代</h3>' + C.TEAMS.map(t=>{
       const left = window.BK_DATA.players.filter(p=>p.team===t && !S.attrSrc.includes(p.name)).length;
       return '<button class="btn small" data-team="'+t+'" '+(left<=0?'disabled':'')+'>'+t+'（尚余 '+left+' 人）</button>';
     }).join('') + '<button class="btn ghost" id="m-cancel">先不选（资格保留）</button>');
-    document.querySelectorAll('[data-team]').forEach(el=>el.addEventListener('click', ()=>{ G.directedDraft(S, el.dataset.team); selCand=-1; saveNow('directed-pick'); closeModal(); render(); }));
+    document.querySelectorAll('[data-team]').forEach(el=>el.addEventListener('click', ()=>{ const r = G.directedDraft(S, el.dataset.team); if(!r.ok){ closeModal(); toast('定向招募本局已用，下局再来'); render(); return; } selCand=-1; saveNow('directed-pick'); closeModal(); render(); }));
     bind('m-cancel', closeModal);
   }
   // —— 战斗 ——
