@@ -43,6 +43,9 @@ h1.title{font-size:31px;font-weight:900;margin:4px 0 2px;letter-spacing:2px;text
 .btn:disabled{opacity:.45}
 .row{display:flex;gap:8px}.row>.btn{flex:1}
 .resbar{display:flex;flex-wrap:wrap;gap:4px 10px;background:#fffdf6;color:var(--ink);border:1px solid var(--line2);border-radius:10px;padding:8px 10px;margin:10px;font-size:12.5px}
+.bond-strip{display:flex;flex-wrap:wrap;gap:6px;background:#fdf3d8;color:var(--ink);border:1.5px solid var(--gold2);border-radius:10px;padding:8px 10px;margin:10px;font-size:14px}
+.bond-chip{background:#fffdf6;border:1.5px solid var(--gold2);border-radius:999px;padding:3px 10px;color:#b3402a;font-weight:700;font-size:14px;line-height:1.5}
+.bond-chip.done{background:var(--accent2);border-color:var(--accent2);color:#fff}
 .resbar b{color:#b3402a;font-weight:700}
 .slots{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}
 .slot{background:#fffaf0;border:1.5px dashed #cbbd93;border-radius:8px;padding:6px 4px;text-align:center;font-size:12px;color:var(--ink);min-width:0}
@@ -297,6 +300,7 @@ window.BK_CONFIG = {
   BOND_BEFRIEND_MAX: 2, BOND_CHASE_MAX: 2, // 两类羁绊广告每局上限
   BOND_TEMP_VALUE: 3,            // 临时型骑手：下一战全队判定 +3（一战）
   BOND_LINKAGE_MULT: 1.5,        // 免费轻联动：已锁一员后搭档在候选权重 ×1.5（每局至多 1 批）
+  BOND_RADAR_RATE: 0.65,         // BK-029 羁绊雷达：看广告挂标记，下一批以此概率强制塞入一名缺失搭档（标记消费于下一次常规生成）
   // type: fill=补强｜temp=补强+临时骑手｜mech=补强+免费换一批｜foe=宿敌｜team=全队共鸣；cls/ref 为内部分档，玩家文案不外露
   BONDS: [
     { id:'splash',   a:'斯蒂芬·库里',   b:'克莱·汤普森',   name:'水花兄弟',   type:'fill', cls:'FULL', desc:'联手补强：两人被夺的那项能力按短板补强（弱项补得多），并各自 +2' },
@@ -469,6 +473,7 @@ window.BK_CONFIG = {
       baseAttrs: new Array(12).fill(null), bonds: {}, bondFx: { total: 0, per: {} }, bondNotes: [],
       foeMarks: {}, befriended: {}, chaseUsed: 0, chaseTarget: null, befriendUsed: 0,
       freeReroll: 0, mechBondGranted: false, bondBuff: 0, bondBuffBattles: 0, linkageUsed: false,
+      swapAds: 0, radarMark: false, // BK-029：广告换一批已备次数（回执/补发落定后入账）/羁绊雷达待生效标记，老档 normalize 补齐
       resources: { health: C.START_HEALTH, power: 0, fame: 0, rel: 0, controversy: 0, merit: 0, scene: 0 },
       personalFail: 0, proSuccess: 0, selfStreak: 0, playoffRest: 0,
       flags: { loyal:false, transfer:false, injuryMark:false, bountyTag:false },
@@ -1048,6 +1053,16 @@ window.BK_ensureArt = function(){
     return order[s.draftRound % order.length];
   }
   function genBatch(s, forcedTeam, forcedInclude){
+    // BK-029 羁绊雷达：标记消费于下一次「常规生成」（换一批/锁定推进）；定向招募与追羁绊的定向生成不消费（玩家定向意图优先，标记留待下一批常规生成）
+    // 命中（<BOND_RADAR_RATE）则从缺失搭档中随机选一人，切其所在队并必出（复用 forcedInclude 通道）
+    if(s.radarMark && !forcedTeam && !forcedInclude){
+      s.radarMark = false;
+      const missing = missingPartners(s);
+      if(missing.length && rng.next() < C.BOND_RADAR_RATE){
+        const p = playerByName(missing[rng.int(missing.length)].partner);
+        if(p){ forcedTeam = p.team; forcedInclude = p.name; }
+      }
+    }
     const team = forcedTeam || teamForRound(s);
     const pool = D.players.filter(p=>p.team===team && !s.attrSrc.includes(p.name));
     // BK-028 免费轻联动（定案 v1）：已锁某羁绊一员且搭档在本队池中 → 搭档权重 ×1.5，每局至多 1 批（宿敌不联动）
@@ -1123,8 +1138,10 @@ window.BK_ensureArt = function(){
   function rerollBatch(s){
     // BK-028：机制型羁绊的免费换一批优先于免费次数消耗
     if((s.freeReroll||0) > 0){ s.freeReroll--; genBatch(s); syncRng(s); return { ok:true, free:true }; }
-    if(s.swapsLeft<=0) return { ok:false, reason:'no-swaps' };
-    s.swapsLeft--; genBatch(s); syncRng(s); return { ok:true };
+    if(s.swapsLeft>0){ s.swapsLeft--; genBatch(s); syncRng(s); return { ok:true }; }
+    // BK-029：免费耗尽后消费「广告已备」次数（看广告 grant 入账，不限局内累计）
+    if((s.swapAds||0) > 0){ s.swapAds--; genBatch(s); syncRng(s); return { ok:true, ad:true }; }
+    return { ok:false, reason:'no-swaps' };
   }
   function directedDraft(s, team){
     if(!s.directedReady) return { ok:false, reason:'not-ready' };
@@ -1209,16 +1226,21 @@ window.BK_ensureArt = function(){
     if(dirty) window.BK_Meta.save(meta);
     return s;
   }
-  // 广告追羁绊可选项：已锁一员、搭档未锁、非宿敌的羁绊对（供 UI 出按钮）
-  function chaseOptions(s){
+  // 缺失搭档清单：非宿敌羁绊中恰有一员已锁、搭档未锁（追羁绊与羁绊雷达共用；雷达不受追羁绊次数上限约束）
+  function missingPartners(s){
     const out = [];
-    if(!s || s.phase!=='draft' || (s.chaseUsed||0) >= C.BOND_CHASE_MAX) return out;
+    if(!s || !Array.isArray(s.attrSrc)) return out;
     for(const B of C.BONDS){
       if(B.type==='foe') continue;
       const la = s.attrSrc.includes(B.a), lb = s.attrSrc.includes(B.b);
       if(la !== lb) out.push({ bond: B, partner: la ? B.b : B.a });
     }
     return out;
+  }
+  // 广告追羁绊可选项：已锁一员、搭档未锁、非宿敌的羁绊对（供 UI 出按钮）
+  function chaseOptions(s){
+    if(!s || s.phase!=='draft' || (s.chaseUsed||0) >= C.BOND_CHASE_MAX) return [];
+    return missingPartners(s);
   }
   function foeBond(){ return C.BONDS.find(b=>b.type==='foe'); }
 
@@ -1462,6 +1484,8 @@ window.BK_ensureArt = function(){
         else { const marks = (s.foeMarks||{})[fb.id] || []; for(const m of marks) s.attrs[m[0]] += (m[1]-m[2]) + C.BOND_BEFRIEND_BONUS; }
       }
     }
+    else if(type==='swap'){ s.swapAds = (s.swapAds||0) + 1; } // BK-029 广告换一批：落定即入账「已备次数」，UI 随即或下次点击时由 rerollBatch 消费（不限局内累计）
+    else if(type==='radar'){ s.radarMark = true; } // BK-029 羁绊雷达：挂标记，下一批常规生成时按 BOND_RADAR_RATE 结算（见 genBatch）
     else if(type==='fate'){ s.fateBuff = C.FATE_BATTLES; }
     else if(type==='heal'){ const medic = C.SHOP.find(x=>x.id==='medic'); const bonus = (medic && s.shopOwned.includes('medic')) ? (medic.effect.healBonus||0) : 0; L.apply(s, { health: C.HEAL_AD_AMOUNT + bonus }, 'ad-heal'); }
     else if(type==='extraSwap'){ s.swapsLeft += 1; }
@@ -1476,7 +1500,7 @@ window.BK_ensureArt = function(){
     s.phase='battle';
     return { ok:true };
   }
-  window.BK_Game = { newGame, genBatch, candidateObj, draftPick, rerollBatch, directedDraft, chooseBattle, chooseEvent, applyAdGrant, useRewind, finishRun, playerByName, battleDef, ensureRng, syncRng, checkAchievements, recomputeBonds, chaseOptions, lastUnlocked: ()=>lastUnlocked };
+  window.BK_Game = { newGame, genBatch, candidateObj, draftPick, rerollBatch, directedDraft, chooseBattle, chooseEvent, applyAdGrant, useRewind, finishRun, playerByName, battleDef, ensureRng, syncRng, checkAchievements, recomputeBonds, chaseOptions, missingPartners, lastUnlocked: ()=>lastUnlocked };
 })();
 </script>
 <script>// 视图层：乱世拼将同款纸墨视觉（BK-025 全站对标母本）。所有按钮显式设文字颜色（CSS .btn 已定色）；中文全为真实 HTML 文字。
@@ -1501,6 +1525,31 @@ window.BK_ensureArt = function(){
       const n = [B.a,B.b].filter(x=>S.attrSrc.includes(x)).length;
       return '💞 '+B.name+' '+n+'/2';
     }).join(' ');
+  }
+  // BK-029 羁绊横条：选秀页（进行中进度＋已达成）与对战页（已达成＋仍生效标记）共用；无任何内容时返回空串、整条不占位
+  function bondStripHtml(mode){
+    if(!S || !S.attrSrc) return '';
+    const chips = [];
+    for(const B of C.BONDS){
+      if(S.bonds && S.bonds[B.id]){
+        let label = '💞 '+esc(B.name)+' ✓ 已达成';
+        if(mode==='battle'){
+          if(B.type==='foe') label += (S.befriended && S.befriended[B.id]) ? ' · 已化敌为友' : ' · 扣减生效中';
+          else if(B.type==='team') label += ' · 全队共鸣生效中';
+          else if(B.type==='temp' && (S.bondBuffBattles||0)>0 && (S.bondBuff||0)>0) label += ' · 本战全队判定 +'+C.BOND_TEMP_VALUE;
+          else if(B.type==='mech' && (S.freeReroll||0)>0) label += ' · 免费换一批余 '+S.freeReroll+' 次';
+        }
+        chips.push('<span class="bond-chip done">'+label+'</span>');
+      } else if(mode==='draft'){
+        const locked = [B.a,B.b].filter(x=>S.attrSrc.includes(x));
+        if(locked.length===1){
+          const wait = locked[0]===B.a ? B.b : B.a;
+          chips.push('<span class="bond-chip">💞 '+esc(B.name)+' '+locked.length+'/2（待：'+esc(wait)+'）</span>');
+        }
+      }
+    }
+    if(!chips.length) return '';
+    return '<div class="bond-strip">'+chips.join('')+'</div>';
   }
   function slotsHtml(){
     let h = '<div class="slots">';
@@ -1671,10 +1720,16 @@ window.BK_ensureArt = function(){
     const batch = S.batch.map(e=>G.candidateObj(e));
     const locked = S.attrSrc.filter(Boolean).length;
     const gl = v => v>=97?'SS':v>=93?'S':v>=88?'A+':v>=83?'A':v>=78?'B+':v>=72?'B':v>=65?'C':'D';
+    const swapParts = [];
+    if((S.freeReroll||0)>0) swapParts.push('免费 '+S.freeReroll+' 次');
+    if(S.swapsLeft>0) swapParts.push('余 '+S.swapsLeft+' 次');
+    if((S.swapAds||0)>0) swapParts.push('广告已备 '+S.swapAds+' 次');
+    const swapLabel = swapParts.length ? '🔀 换一批（'+swapParts.join(' · ')+'）' : '📺 看广告换一批（免费已用完）';
     let h = '<div style="padding:12px 10px 0"><div class="kicker">选秀台 · 第 '+(S.draftRound+1)+' / '+C.DRAFT_ROUNDS+' 轮</div></div>'
     + resBar()
+    + bondStripHtml('draft')
     + '<div class="paper"><h3>我的拼图（已锁定 '+locked+' / 12）· 预估总评 '+F.overall(S)+'</h3>'+slotsHtml()
-    + '<div class="row"><button class="btn" id="b-swap">🔀 换一批'+((S.freeReroll||0)>0?'（免费 '+S.freeReroll+' 次 · 另余 '+S.swapsLeft+'）':'（余 '+S.swapsLeft+'）')+'</button>'
+    + '<div class="row"><button class="btn" id="b-swap">'+swapLabel+'</button>'
     + '<button class="btn green" id="b-directed">'+(S.directedReady?'🎯 定向招募已就绪':'🎯 定向招募·看广告')+'</button></div>'
     + (S.bondNotes && S.bondNotes.length ? '<p class="meta" style="font-size:12px;color:#b3402a;line-height:1.7">'+S.bondNotes.map(esc).join('<br>')+'</p>' : '')
     + bondAdsHtml()
@@ -1724,7 +1779,17 @@ window.BK_ensureArt = function(){
       const r = G.draftPick(S, selCand, +el.dataset.attr);
       if(r.ok){ selCand=-1; saveNow('draft-pick'); if(S.phase==='battle'){ view='battle'; } render(); }
     }));
-    bind('b-swap', ()=>{ const r=G.rerollBatch(S); if(r.ok){ selCand=-1; saveNow('draft-reroll'); render(); } else toast('免费换一批次数已用完'); });
+    bind('b-swap', async ()=>{
+      const r = G.rerollBatch(S);
+      if(r.ok){ selCand=-1; saveNow('draft-reroll'); render(); return; }
+      // BK-029：免费与已备次数耗尽 → 看广告换一批（不限局内次数，走 BK-027 发奖状态机）；落定入账 swapAds 后立即消费一次
+      await Ads.watch('swap', (t)=>G.applyAdGrant(S,t));
+      saveNow('ad-swap');
+      const r2 = G.rerollBatch(S);
+      if(r2.ok){ selCand=-1; saveNow('draft-reroll'); }
+      else toast('广告奖励待核对，稍后再点一次换一批');
+      render();
+    });
     bind('b-directed', async ()=>{
       if(S.directedReady){ showTeamPicker(); return; }
       const res = await Ads.watch('directed', (t)=>G.applyAdGrant(S,t));
@@ -1736,6 +1801,7 @@ window.BK_ensureArt = function(){
       saveNow('ad-chase'); selCand=-1; render();
     }));
     bind('b-befriend', async ()=>{ await Ads.watch('befriend', (t)=>G.applyAdGrant(S,t)); saveNow('ad-befriend'); render(); });
+    bind('b-radar', async ()=>{ await Ads.watch('radar', (t)=>G.applyAdGrant(S,t)); saveNow('ad-radar'); render(); });
     app.querySelectorAll('.b-peak').forEach(el=>el.addEventListener('click', async ()=>{
       const card = el.closest('[data-cand]'); if(card) selCand = +card.dataset.cand;
       S.peakPending = selCand; saveNow('peak-pending');
@@ -1752,6 +1818,11 @@ window.BK_ensureArt = function(){
     const fb = C.BONDS.find(b=>b.type==='foe');
     if(fb && S.bonds && S.bonds[fb.id] && !(S.befriended && S.befriended[fb.id]) && (S.befriendUsed||0) < C.BOND_BEFRIEND_MAX){
       h += '<button class="btn green" id="b-befriend" style="width:100%;margin-top:6px">📺 化敌为友 · 看广告：还原《宿敌》扣减，两人各 +4</button>';
+    }
+    // BK-029 羁绊雷达：与追羁绊并存不占次；有缺失搭档时才出按钮，标记待生效时置灰展示
+    if(G.missingPartners(S).length){
+      if(S.radarMark) h += '<button class="btn" disabled style="width:100%;margin-top:6px">📡 羁绊雷达已就绪：下一批大概率出现缺失的羁绊搭档</button>';
+      else h += '<button class="btn green" id="b-radar" style="width:100%;margin-top:6px">📺 羁绊雷达 · 看广告：下一批 '+Math.round(C.BOND_RADAR_RATE*100)+'% 概率出现缺失的羁绊搭档</button>';
     }
     return h;
   }
@@ -1791,7 +1862,7 @@ window.BK_ensureArt = function(){
     if(S.phase==='ending'){ view='ending'; return render(); }
     if(S.phase==='event'){ view='event'; return render(); }
     const b = G.battleDef(S); if(!b){ view='ending'; return render(); }
-    let h = '<div style="padding:12px 10px 0"><div class="kicker">赛季战役 '+b.id+' / 20</div></div>' + resBar();
+    let h = '<div style="padding:12px 10px 0"><div class="kicker">赛季战役 '+b.id+' / 20</div></div>' + resBar() + bondStripHtml('battle');
     // 已落盘结算先行展示（恢复路径）
     if(S.lastSettle && S._settleShown!==S.battleIdx && S.lastSettle.battle && S.lastSettle.battle < b.id){ h += settleHtml(S.lastSettle); }
     else if(S.lastSettle && S.lastSettle.kind==='event' && S._settleShown!==S.battleIdx){ h += settleHtml(S.lastSettle); }
