@@ -202,38 +202,39 @@ window.RAP_CONFIG = {
   ],
   resupplyAfter: [5, 10, 15],
   eventChance: 0.55,
+  GAMBLE: { startTokens: 1, tokenCap: 3, perChapter: 1, requireBond: true, earnChapterEvery: 5, earnOnBondTrigger: true, rewardK: 1.0, clampMin: 0.25, clampMax: 1.5, feelTiers: [0.7, 0.45], tokenRefundOnWin: 1, basePerChapter: 2 },
   events: [
-    { title: '插曲 · 对面发小作文了', text: '对面连夜发了篇小作文阴阳你，说你的巡演是草台班子、麦都是租的。吃瓜群众已经搬好小板凳了。',
+    { title: '插曲 · 对面发小作文了', bondRewrite: { bond:'truth', weakType:'risk-up', name:'💞 答案与真相出面', dims:[10,9], threshold:78, weakWin:5, weakLose:-4, strongWin:7, strongLose:-2, weakText:'艾弗森和皮尔斯有一位在队里，帮你转发回怼——比 人气＋感染力，门槛降到 78，成了下一场 +5，砸了 -4', strongText:'答案与真相联手开麦，小作文当场被冲烂——比 人气＋感染力，成了下一场 +7，砸了只 -2' }, text: '对面连夜发了篇小作文阴阳你，说你的巡演是草台班子、麦都是租的。吃瓜群众已经搬好小板凳了。',
       choices: [
         { name: '当场开麦回怼', desc: '比 人气＋感染力 · 成了下一场 +4，砸了 -4', dims: [10, 9], threshold: 84, win: 4, lose: -4 },
         { name: '已读乱回', desc: '不比 · 回他一个表情包，下一场稳稳 +1', dims: null, threshold: 0, win: 1, lose: 1 },
         { name: '把麦递给队友', desc: '比 控场 · 成了下一场 +3，砸了 0（队友背锅）', dims: [0], threshold: 80, win: 3, lose: 0 }
       ] },
-    { title: '插曲 · 你妈来电话了', text: '巡演间隙，你妈打来电话：「赢不赢无所谓，唱完早点回来，锅里给你留了排骨。」你的手，突然就不抖了。',
+    { title: '插曲 · 你妈来电话了', bondRewrite: { bond:'father', weakType:'safe-low', name:'💞 给家里报个平安', dims:[11], threshold:78, weakWin:3, weakLose:3, strongWin:6, strongLose:1, weakText:'詹姆斯或布朗尼在队里，陪你给家里回个电话——不比，下一场稳稳 +3', strongText:'父子同台给你打气，把排骨的祝福唱进歌里——比 格局，成了下一场 +6，砸了也有 +1' }, text: '巡演间隙，你妈打来电话：「赢不赢无所谓，唱完早点回来，锅里给你留了排骨。」你的手，突然就不抖了。',
       choices: [
         { name: '把排骨的祝福带上台', desc: '比 格局 · 成了下一场 +5，砸了也有 +1', dims: [11], threshold: 78, win: 5, lose: 1 },
         { name: '卷！连夜再练两小时', desc: '比 气息 · 成了下一场 +4，砸了 -2（卷过头也累）', dims: [5], threshold: 82, win: 4, lose: -2 },
         { name: '听妈妈的话，早点睡', desc: '不比 · 下一场 +2（妈妈的话要听）', dims: null, threshold: 0, win: 2, lose: 2 }
       ] },
-    { title: '插曲 · 小鸡在后台练球', text: '后台化妆间，一只会唱跳rap的小鸡正对着镜子练运球，球感居然意外地丝滑。它抬头问你：要不要切磋一下唱跳？',
+    { title: '插曲 · 小鸡在后台练球', bondRewrite: { bond:'backstage', weakType:'safe-low', name:'💞 跟小鸡合练一段', dims:[9], threshold:82, weakWin:3, weakLose:3, strongWin:5, strongLose:0, weakText:'小鸡或张弛在队里，陪你练两下——不比，下一场稳稳 +3', strongText:'后台奇遇本遇，合练直接练出默契——比 感染力，成了下一场 +5，砸了 0' }, text: '后台化妆间，一只会唱跳rap的小鸡正对着镜子练运球，球感居然意外地丝滑。它抬头问你：要不要切磋一下唱跳？',
       choices: [
         { name: '跟他学两招唱跳', desc: '比 感染力 · 成了下一场 +4，砸了 -2（学劈叉了）', dims: [9], threshold: 82, win: 4, lose: -2 },
         { name: '约他打一场球', desc: '比 爆发 · 成了下一场 +3，砸了 0（友谊第一）', dims: [8], threshold: 84, win: 3, lose: 0 },
         { name: '默默走开练声', desc: '不比 · 下一场 +1（专注的人最帅）', dims: null, threshold: 0, win: 1, lose: 1 }
       ] },
-    { title: '插曲 · 马老师要跟你切磋', text: '马保国老师不知从哪冒出来，说年轻人不讲武德，要跟你「切磋切磋」。他已经摆好了接化发的架势。',
+    { title: '插曲 · 马老师要跟你切磋', bondRewrite: { bond:'question', weakType:'risk-up', name:'💞 问号与答案接招', dims:[7], threshold:78, weakWin:6, weakLose:-3, strongWin:8, strongLose:-1, weakText:'尼克·杨或艾弗森在队里，帮你接招——比 即兴，门槛降到 78，成了下一场 +6，砸了 -3', strongText:'问号与答案一起出手，接化发被当场破解——比 即兴，成了下一场 +8，砸了只 -1' }, text: '马保国老师不知从哪冒出来，说年轻人不讲武德，要跟你「切磋切磋」。他已经摆好了接化发的架势。',
       choices: [
         { name: '接化发！', desc: '比 即兴 · 成了下一场 +5，砸了 -3（被化走了）', dims: [7], threshold: 84, win: 5, lose: -3 },
         { name: '双手抱拳，认个怂', desc: '比 格局 · 成了下一场 +4，砸了 +1（能屈能伸）', dims: [11], threshold: 76, win: 4, lose: 1 },
         { name: '请他先吃块排骨', desc: '不比 · 下一场 +2（化干戈为排骨）', dims: null, threshold: 0, win: 2, lose: 2 }
       ] },
-    { title: '插曲 · 大妈要借你的场子', text: '刘大妈带着音响来了，说你的场子风水好，她们想在你开场前跳两支舞热热场。大妈的音响，比你的大两号。',
+    { title: '插曲 · 大妈要借你的场子', bondRewrite: { bond:'penta', weakType:'safe-low', name:'💞 跟大妈一起热场', dims:[5,9], threshold:84, weakWin:3, weakLose:3, strongWin:6, strongLose:1, weakText:'合家亲的成员在队里，陪你跟大妈打个圆场——不比，下一场稳稳 +3', strongText:'全场其乐融融，大妈把音响借你用——比 气息＋感染力，成了下一场 +6，砸了也有 +1' }, text: '刘大妈带着音响来了，说你的场子风水好，她们想在你开场前跳两支舞热热场。大妈的音响，比你的大两号。',
       choices: [
         { name: '跟大妈共舞一曲', desc: '比 气息＋感染力 · 成了下一场 +4，砸了 -2（跟不上大妈的步伐）', dims: [5, 9], threshold: 84, win: 4, lose: -2 },
         { name: '把场子先借给她', desc: '比 格局 · 成了下一场 +4，砸了 +1（大妈记你的好）', dims: [11], threshold: 74, win: 4, lose: 1 },
         { name: '硬抢场子', desc: '比 爆发 · 成了下一场 +3，砸了 -3（大妈的音响把你盖住了）', dims: [8], threshold: 86, win: 3, lose: -3 }
       ] },
-    { title: '插曲 · AI 本人发来战书', text: 'AI 本人给你发来一封战书，全文工整押韵，据说它 0.3 秒就写完了。它要跟你比填词。',
+    { title: '插曲 · AI 本人发来战书', bondRewrite: { bond:'peer', weakType:'risk-up', name:'💞 请 PG ONE 帮腔', dims:[4], threshold:86, weakWin:6, weakLose:-2, strongWin:8, strongLose:0, weakText:'PG ONE 在队里，惺惺相惜帮你润词——比 填词，门槛降到 86，成了下一场 +6，砸了 -2', strongText:'惺惺相惜火力全开，词又快又狠——比 填词，成了下一场 +8，砸了 0' }, text: 'AI 本人给你发来一封战书，全文工整押韵，据说它 0.3 秒就写完了。它要跟你比填词。',
       choices: [
         { name: '应战！', desc: '比 填词 · 成了下一场 +5，砸了 -2（它真的没有感情，但词是真多）', dims: [4], threshold: 92, win: 5, lose: -2 },
         { name: '请它帮你写词', desc: '不比 · 下一场 +2（词是工整的，就是没有灵魂）', dims: null, threshold: 0, win: 2, lose: 2 },
@@ -316,7 +317,8 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
           chapter:0, wins:0, chapterLog:[], bonusNext:0, eventIdx:-1, usedEvents:[],
           resupplyLeft:0, replaced:[], lastResult:null, eventLog:[], acting:false, evResult:null,
           pickLog:[], bonds:{}, bondNotes:[], iceUsed:false, actingX2:false, foeMarks:{}, befriended:{}, devUsed:false, ads:{ reroll:0, consol:0, resup:0, evredo:0, befriend:0, chase:0, radar:0 },
-          mode:(mode==='daily'?'daily':'normal'), directedReady:false, directedUsed:false, recorded:false, bonusResup:0, radarMark:false };
+          mode:(mode==='daily'?'daily':'normal'), directedReady:false, directedUsed:false, recorded:false, bonusResup:0, radarMark:false,
+          gambleTokens:CFG.GAMBLE.startTokens, gambleUsedChapter:-1, gambleBet:null, gambleBondPaid:{}, gambleStats:{ bet:0, betLose:0 }, gambleGain:0, lastGamble:null, evTeleKey:'' };
     if(META.welfareDirected){ S.directedReady = true; META.welfareDirected = false; yxSaveMeta(); }
     if(META.bonusReroll > 0){ S.rerolls += META.bonusReroll; META.bonusReroll = 0; yxSaveMeta(); }
     if(META.bonusResup > 0){ S.bonusResup = META.bonusResup; META.bonusResup = 0; yxSaveMeta(); }
@@ -347,6 +349,7 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
       if(S.bonusResup === undefined) S.bonusResup = 0;
       if(S.radarMark === undefined) S.radarMark = false;
       if(S.ads && S.ads.radar === undefined) S.ads.radar = 0;
+      yxGambleDefaults();
       yxDeriveBase();
       return true; } }catch(e){}
     return false;
@@ -733,6 +736,89 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
     });
     return parts.length ? '<div class="bond-progress bond-progress-top" style="margin:2px 0 8px;text-align:center">' + parts.join(' ') + '</div>' : '';
   }
+  /* ================= 羁绊扩展批：拼一把（A）＋事件改写（E）＋专属事件预留（D） ================= */
+  var BOND_EVENTS = []; /* D 首批事件内容随双周批补入，本批只落字段与记账 */
+  var BOND_EVENT_FIRST = ['yaomai', 'wall', 'father', 'msg', 'truth', 'splash', 'ok', 'goats'];
+  function yxTele(key){
+    try { if (!META.tele) META.tele = { eWeakShow:0, eWeakPick:0, eStrongShow:0, eStrongPick:0, dFire:0, dPick:0 }; META.tele[key] = (META.tele[key] || 0) + 1; yxSaveMeta(); } catch (e) {}
+  }
+  function yxGrantToken(src){
+    if (!S) return;
+    if (S.gambleTokens === undefined) S.gambleTokens = CFG.GAMBLE.startTokens;
+    if (S.gambleTokens < CFG.GAMBLE.tokenCap) S.gambleTokens++;
+  }
+  function yxGambleOnBonds(){
+    if (!CFG.GAMBLE.earnOnBondTrigger || !S) return;
+    if (!S.gambleBondPaid) S.gambleBondPaid = {};
+    Object.keys(S.bonds || {}).forEach(function(id){ if (!S.gambleBondPaid[id]) { S.gambleBondPaid[id] = 1; yxGrantToken('bond'); } });
+  }
+  /* 本场内部胜算估算（解析解，永不外露）：mine−opp ＝ d0 ＋ (U1−U2)×swing，U1−U2 为三角分布 */
+  function yxWinProb(attrs, ch, t, bonus){
+    var d0 = RapFormulas.composite(attrs, t.dims) + (bonus || 0) - (ch.oppBase + t.oppMod);
+    var sw = t.swing || 1, tt = -d0 / sw;
+    if (tt <= -1) return 1;
+    if (tt >= 1) return 0;
+    if (tt < 0) return 1 - Math.pow(tt + 1, 2) / 2;
+    return Math.pow(1 - tt, 2) / 2;
+  }
+  function yxGambleQuote(t, ch){
+    var G = CFG.GAMBLE;
+    var p = yxWinProb(S.attrs, ch, t, (S.bonusNext || 0) + actBonus());
+    var raw = p > 0 ? (1 - p) / p : 99;
+    var k = Math.min(G.clampMax, Math.max(G.clampMin, raw)) * G.rewardK;
+    var reward = Math.max(1, Math.round(k * (S.chapter + 1) * G.basePerChapter));
+    var feel = p >= G.feelTiers[0] ? '稳' : (p >= G.feelTiers[1] ? '较稳' : '险');
+    return { reward: reward, feel: feel };
+  }
+  function yxGambleCan(){
+    var G = CFG.GAMBLE;
+    if (S.gambleBet || S.gambleUsedChapter === S.chapter) return false;
+    if ((S.gambleTokens || 0) < 1) return false;
+    if (G.requireBond && Object.keys(S.bonds || {}).length < 1) return false;
+    return true;
+  }
+  function yxGamblePlace(){
+    if (!yxGambleCan()) return;
+    S.gambleTokens--; /* 下注即扣，防中途关页躲扣 */
+    S.gambleBet = { chapter: S.chapter };
+    S.gambleUsedChapter = S.chapter;
+    if (!S.gambleStats) S.gambleStats = { bet: 0, betLose: 0 };
+    S.gambleStats.bet++;
+    save(); render();
+  }
+  function yxGambleSettle(r, t, ch){
+    if (!S.gambleBet) return;
+    var q = yxGambleQuote(t, ch);
+    S.gambleBet = null;
+    if (!S.gambleStats) S.gambleStats = { bet: 0, betLose: 0 };
+    if (r.win) {
+      META.shengliang = (META.shengliang || 0) + q.reward;
+      S.gambleGain = (S.gambleGain || 0) + q.reward;
+      if (CFG.GAMBLE.tokenRefundOnWin) yxGrantToken('refund');
+      S.lastGamble = { win: true, reward: q.reward };
+    } else {
+      S.gambleStats.betLose++;
+      S.lastGamble = { win: false, reward: q.reward };
+    }
+    yxSaveMeta();
+  }
+  function gambleBarHTML(ch){
+    if (S.gambleBet) return '<div class="hint">🎲 本章已拼一把：赢下这场，额外声量按所选打法的把握结算；输了拼令不退。</div>';
+    if (yxGambleCan()) return '<button class="btn" id="b-gamble" style="background:#8a6d1f;margin-bottom:8px">🎲 拼一把（押 1 枚拼令 · 还剩 ' + S.gambleTokens + ' 枚）：拼赢额外声量奖励，输了拼令不退</button>';
+    if (CFG.GAMBLE.requireBond && Object.keys(S.bonds || {}).length < 1) return '<div class="hint">🎲 拼一把：本局先触发任意一对羁绊，才能开拼（还剩拼令 ' + (S.gambleTokens || 0) + ' 枚）。</div>';
+    if ((S.gambleTokens || 0) < 1) return '<div class="hint">🎲 拼令不足：每通关 5 章、每触发一对新羁绊、化敌为友成功，都能挣 1 枚。</div>';
+    return '';
+  }
+  /* E：事件羁绊改写注入——弱形态任一成员在队，强形态该对已触发；每事件至多 1 个羁绊选项 */
+  function evBondChoice(ev){
+    var br = ev.bondRewrite; if (!br) return null;
+    var B = null; BONDS.forEach(function(x){ if (x.id === br.bond) B = x; }); if (!B) return null;
+    if (S.bonds && S.bonds[br.bond]) return { name: br.name, desc: br.strongText, dims: br.dims, threshold: br.threshold, win: br.strongWin, lose: br.strongLose, bondForm: 'strong', bondId: br.bond };
+    var M = bondMembers(B);
+    if (M.some(function(n){ return personIn(n); })) return { name: br.name, desc: br.weakText, dims: br.weakType === 'safe-low' ? null : br.dims, threshold: br.threshold, win: br.weakWin, lose: br.weakLose, bondForm: 'weak', bondId: br.bond };
+    return null;
+  }
+  function evChoices(ev){ var list = ev.choices.slice(); var bc = evBondChoice(ev); if (bc) list.push(bc); return list; }
   function pendingChases(){
     var out = [];
     BONDS.forEach(function(B){ if(B.id === 'devpower' || (S.bonds && S.bonds[B.id])) return; var M = bondMembers(B);
@@ -788,6 +874,7 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
       if(B.id === 'backstage'){ var dc = S.src.indexOf('一只会唱跳rap的小鸡'); if(dc >= 0) S.attrs[dc] = Math.max(0, S.attrs[dc] - 1); var dz2 = S.src.indexOf('张弛'); if(dz2 >= 0) S.attrs[dz2] = S.attrs[dz2] + 3; }
       S.bondNotes.push('羁绊《' + B.name + '》触发：' + B.desc);
     });
+    yxGambleOnBonds();
   }
   /* 换人后羁绊跟着变：以 baseAttrs（未吃羁绊的原始夺取值）为底，按当前 src 全量重算。
      旧人离队→其羁绊失效、加成/惩罚一并撤销；新人入队→新羁绊当场触发。化敌为友与开发者神力是玩家已付出的状态，重算时保留。 */
@@ -901,6 +988,7 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
     if(S.lastResult){
       var L = S.lastResult;
       h += '<div class="card vs">' + ch.title + ' · 你选了「' + L.tactic + '」<br><span class="big">' + L.mine.toFixed(1) + ' : ' + L.opp.toFixed(1) + '</span><br>' + (L.win ? '<span class="win">拿下这一章！</span>' : '这一章输了') + '<div style="font-size:13px;line-height:1.75;color:#6b5a44;margin-top:6px;text-align:left">' + (L.win ? ch.win : ch.lose) + '</div></div>';
+      if(S.lastGamble) h += '<div class="hint">' + (S.lastGamble.win ? '🎲 拼一把拼赢了！额外声量 +' + S.lastGamble.reward + '（累计 ' + (META.shengliang || 0) + '）' : '🎲 拼一把没拼中，拼令已扣——下一枚靠通关、触发羁绊或化敌为友挣回来。') + '</div>';
       if(!L.win && S.ads.consol < AD_CAPS.consol) h += '<button class="btn" id="b-consol" style="background:#2e7d4f;margin-bottom:8px">📺 看广告：下一章 +5 状态（本局剩 ' + (AD_CAPS.consol - S.ads.consol) + ' 次）</button>';
       h += '<button class="btn" id="b-next">' + (S.chapter >= 19 ? '揭晓结局' : '前往下一章') + '</button>';
       app.innerHTML = h;
@@ -910,16 +998,21 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
       return;
     }
     h += '<div class="card vs">对手强度 <b>' + ch.oppBase + '</b>' + (S.bonusNext ? ' · 插曲加成 <b style="color:#b3352c">' + (S.bonusNext>0?'+':'') + S.bonusNext + '</b>' : '') + (S.acting ? ' · 🎭 演技加成 <b style="color:#b3352c">+' + actBonus() + '</b>' : '') + '</div>';
+    h += gambleBarHTML(ch);
     h += '<div class="sub">选一个打法开麦：</div>';
     CFG.tacticSets[ch.set].forEach(function(t, ti){
       var mine = RapFormulas.composite(S.attrs, t.dims);
-      h += '<button class="tactic" data-tac="' + ti + '"><div class="tn">' + t.name + '</div><div class="td">' + t.desc + '</div><div class="tv">' + dimLabel(t.dims) + '：你的数值 ' + mine.toFixed(0) + (t.oppMod ? ' · 对手 +' + t.oppMod : '') + '</div></button>';
+      var gq = S.gambleBet ? yxGambleQuote(t, ch) : null;
+      h += '<button class="tactic" data-tac="' + ti + '"><div class="tn">' + t.name + '</div><div class="td">' + t.desc + '</div><div class="tv">' + dimLabel(t.dims) + '：你的数值 ' + mine.toFixed(0) + (t.oppMod ? ' · 对手 +' + t.oppMod : '') + (gq ? '<br>本场把握：' + gq.feel + ' · 拼赢额外声量 +' + gq.reward : '') + '</div></button>';
     });
     app.innerHTML = h;
+    var bg = document.getElementById('b-gamble');
+    if(bg) bg.onclick = function(){ yxGamblePlace(); };
     app.querySelectorAll('[data-tac]').forEach(function(el){
       el.onclick = function(){
         var t = CFG.tacticSets[ch.set][parseInt(el.getAttribute('data-tac'),10)];
         var r = RapFormulas.battleRound(S.attrs, ch, t, rng, S.bonusNext + actBonus());
+        yxGambleSettle(r, t, ch);
         S.bonusNext = 0;
         if(r.win) S.wins++;
         S.chapterLog.push({ n:S.chapter+1, title:ch.title, win:r.win });
@@ -931,6 +1024,8 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
   function advance(){
     var finished = S.chapter + 1;
     S.lastResult = null;
+    S.lastGamble = null;
+    if (finished % CFG.GAMBLE.earnChapterEvery === 0) yxGrantToken('chapter');
     if(finished >= 20){ S.phase = 'end'; save(); render(); return; }
     S.chapter = finished;
     if(CFG.resupplyAfter.indexOf(finished) >= 0){
@@ -949,7 +1044,7 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
   function renderEvent(){
     var ev = CFG.events[S.eventIdx];
     if(S.evResult){
-      var R = S.evResult, c2 = ev.choices[R.ci];
+      var R = S.evResult, c2 = evChoices(ev)[R.ci];
       var hh = header() + '<div class="prog">巡演插曲 · 判定结果</div>' +
         '<div class="evt"><div class="et">' + ev.title + '</div>' +
         '<div class="ex">你选了「' + c2.name + '」。</div>' +
@@ -967,9 +1062,12 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
       if(be) be.onclick = function(){ showAd('evredo', function(){ S.ads.evredo++; S.evResult = null; S.usedEvents.pop(); save(); render(); }); };
       return;
     }
+    var evList = evChoices(ev);
+    var bondC = evList.length > ev.choices.length ? evList[evList.length - 1] : null;
+    if (bondC) { var tk = S.eventIdx + ':' + bondC.bondForm; if (S.evTeleKey !== tk) { S.evTeleKey = tk; yxTele(bondC.bondForm === 'weak' ? 'eWeakShow' : 'eStrongShow'); } }
     var h = header() + '<div class="prog">巡演插曲</div>' +
       '<div class="evt"><div class="et">' + ev.title + '</div><div class="ex">' + ev.text + '</div>';
-    ev.choices.forEach(function(c, ci){
+    evList.forEach(function(c, ci){
       h += '<button class="tactic" data-evt="' + ci + '"><div class="tn">' + c.name + '</div><div class="td">' + c.desc + '</div>' +
            (c.dims ? '<div class="tv">你这一项：' + c.dims.map(function(d){ return DIMS[d] + S.attrs[d]; }).join(' / ') + '（门槛 ' + c.threshold + '）</div>' : '') + '</button>';
     });
@@ -977,7 +1075,8 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
     app.innerHTML = h;
     app.querySelectorAll('[data-evt]').forEach(function(el){
       el.onclick = function(){
-        var c = ev.choices[parseInt(el.getAttribute('data-evt'),10)];
+        var c = evChoices(ev)[parseInt(el.getAttribute('data-evt'),10)];
+        if (c.bondForm) yxTele(c.bondForm === 'weak' ? 'eWeakPick' : 'eStrongPick');
         var r = RapFormulas.eventResult(S.attrs, c, rng, actBonus());
         S.bonusNext = r.bonus;
         S.usedEvents.push(S.eventIdx);
@@ -1027,6 +1126,7 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
     if(S.src.indexOf(MYSTERY) >= 0) h += '<div class="hint">这支队伍里有张弛开出来的数值——从组建那天起，命运就是薛定谔的。</div>';
     if(S.acting) h += '<div class="hint">🎭 你带着阿耶莎的演技走完了巡演——哭戏说来就来，好几个裁判都看哭了。</div>';
     h += bondsHTML();
+    h += '<div class="hint">📣 声量：本局拼赢 +' + (S.gambleGain || 0) + ' · 累计 ' + (META.shengliang || 0) + '</div>';
     h += '<div class="card"><b>巡演战报</b><div style="margin-top:6px">';
     S.chapterLog.forEach(function(L){
       h += '<div class="logrow"><span>第' + L.n + '章 · ' + L.title + '</span><span class="' + (L.win?'win':'') + '">' + (L.win ? '胜' : '负') + '</span></div>';
@@ -1062,9 +1162,9 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
   var META = yxLoadMeta();
   function yxLoadMeta(){
     try { var m = JSON.parse(localStorage.getItem(YX_META_KEY) || 'null');
-      if (m && typeof m === 'object') return Object.assign({ records: [], seen: {}, bondsSeen: {}, featBefriend: false, welfareClaimed: false, welfareDirected: false, bonusReroll: 0, bonusResup: 0 }, m);
+      if (m && typeof m === 'object') return Object.assign({ records: [], seen: {}, bondsSeen: {}, featBefriend: false, welfareClaimed: false, welfareDirected: false, bonusReroll: 0, bonusResup: 0, shengliang: 0, tele: null, bondEventSeen: {}, bondClues: [] }, m);
     } catch (e) {}
-    return { records: [], seen: {}, bondsSeen: {}, featBefriend: false, welfareClaimed: false, welfareDirected: false, bonusReroll: 0, bonusResup: 0 };
+    return { records: [], seen: {}, bondsSeen: {}, featBefriend: false, welfareClaimed: false, welfareDirected: false, bonusReroll: 0, bonusResup: 0, shengliang: 0, tele: null, bondEventSeen: {}, bondClues: [] };
   }
   function yxSaveMeta(){ try { localStorage.setItem(YX_META_KEY, JSON.stringify(META)); } catch (e) {} }
   function yxActiveSlot(){ var n = parseInt(localStorage.getItem(YX_ACTIVE_KEY) || '1', 10); return (n >= 1 && n <= 3) ? n : 1; }
@@ -1115,6 +1215,7 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
     var bestW = runs ? Math.max.apply(null, META.records.map(function(r){ return r.wins; })) : 0;
     var h = yxSheetHead('📜 我的战绩') + '<div class="yx-body">';
     h += '<p class="hint">共巡演 ' + runs + ' 轮 · 最佳 ' + bestW + ' 胜</p>';
+    h += '<p class="hint">📣 累计声量 ' + (META.shengliang || 0) + '（巡演中拼一把拼赢攒下的荣誉，只记名、不兑换）</p>';
     if (!runs) h += '<p class="hint">还没打完过一轮巡演——去唱完 20 章，这里就有你的名字。</p>';
     META.records.forEach(function(r){
       h += '<div class="logrow"><span>' + new Date(r.ts).toLocaleDateString() + (r.mode === 'daily' ? ' · 今日巡演' : '') + ' · ' + yxEsc(r.ending) + '</span><span class="' + (r.wins >= 13 ? 'win' : '') + '">' + r.wins + ' 胜 · 总评 ' + r.total + '</span></div>';
@@ -1291,7 +1392,18 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
     if (S.bonusResup === undefined) S.bonusResup = 0;
     if (S.radarMark === undefined) S.radarMark = false;
     if (S.ads && S.ads.radar === undefined) S.ads.radar = 0;
+    yxGambleDefaults();
     yxDeriveBase();
+  }
+  function yxGambleDefaults(){
+    if (S.gambleTokens === undefined) S.gambleTokens = CFG.GAMBLE.startTokens;
+    if (S.gambleUsedChapter === undefined) S.gambleUsedChapter = -1;
+    if (S.gambleBet === undefined) S.gambleBet = null;
+    if (!S.gambleStats) S.gambleStats = { bet: 0, betLose: 0 };
+    if (S.gambleGain === undefined) S.gambleGain = 0;
+    if (S.lastGamble === undefined) S.lastGamble = null;
+    if (S.evTeleKey === undefined) S.evTeleKey = '';
+    if (!S.gambleBondPaid) { S.gambleBondPaid = {}; Object.keys(S.bonds || {}).forEach(function(id){ S.gambleBondPaid[id] = 1; }); }
   }
   /* 旧档没有 baseAttrs（羁绊重算的底数）：以当前值兜底，并用 foeMarks 把宿敌惩罚精确还原回惩罚前 */
   function yxDeriveBase(){
@@ -1319,9 +1431,10 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
       if (S && S.bonds && S.bonds[B.id]) { st = (S.befriended && S.befriended[B.id]) ? '本局已触发 · 已化敌为友' : '本局已触发'; stc = '#2e7d4f'; }
       else if ((META.bondsSeen || {})[B.id]) { st = '曾经触发'; stc = '#8a6d1f'; }
       else { st = '未触发'; stc = '#a08c66'; }
+      var evSub = BOND_EVENT_FIRST.indexOf(B.id) >= 0 ? '<div style="font-size:12px;color:#8a7757;margin-top:3px">专属事件：' + ((META.bondEventSeen || {})[B.id] ? '已历' : '未历') + '</div>' : '';
       h += '<div class="card" style="margin-bottom:8px"><b>《' + yxEsc(B.name) + '》</b> <span style="float:right;font-size:12px;font-weight:700;color:' + stc + '">' + st + '</span>' +
         '<div style="font-size:13px;color:#b3352c;font-weight:700;margin:3px 0">' + yxEsc(pair) + '</div>' +
-        '<div style="font-size:13px;line-height:1.7;color:#4a3a26">' + yxEsc(B.desc) + '</div></div>';
+        '<div style="font-size:13px;line-height:1.7;color:#4a3a26">' + yxEsc(B.desc) + '</div>' + evSub + '</div>';
     });
     h += '</div>';
     yxOverlay(h);
@@ -1555,6 +1668,7 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
     var B = null; BONDS.forEach(function(x){ if (x.id === id) B = x; });
     if (B) S.bondNotes.push('🤝 化敌为友：《宿敌》→《挚友》——' + B.a + ' 与 ' + B.b + ' 冰释前嫌，能力各 +4');
     META.featBefriend = true; yxSaveMeta();
+    yxGrantToken('feat');
     save(); render();
     return '广告奖励已补发：化敌为友——《宿敌》变《挚友》';
   }
