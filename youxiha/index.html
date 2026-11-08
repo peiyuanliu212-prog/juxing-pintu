@@ -24,6 +24,7 @@
   .slot .ds { font-size:8.5px; opacity:.65; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .bchip { display:inline-block; font-size:12.5px; line-height:1.5; padding:0 7px; border-radius:8px; background:#f3e2c7; color:#8a6d1f; margin-left:4px; font-weight:700; border:1px solid #c2a15a; }
   .bchip.on { background:#2e7d4f; color:#fff; border-color:#2e7d4f; }
+  .bfx { display:block; font-size:10.5px; font-weight:400; opacity:.88; line-height:1.45; }
   .bchip.dim { opacity:.55; }
   .prog { text-align:center; font-weight:700; font-size:15px; margin:8px 0; }
   .prog span { color:#b3352c; }
@@ -564,27 +565,27 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
   }
   function doBefriend(id){ showAd('befriend:' + id, function(){ yxApplyBefriend(id); }); }
   var BONDS = [
-    { id:'ice', a:'李小鹿', b:'假乃亮', name:'冰释前嫌', desc:'巡演插曲判定失败时，可以回到那次选择换一个重来（本局一次）' },
-    { id:'foe', a:'假乃亮', b:'PG ONE', name:'宿敌', desc:'从假乃亮、PG ONE 身上夺走的能力同时降低 30%——宿敌见面，分外眼红' },
-    { id:'foe2', a:'勒布朗·詹姆斯', b:'库里', name:'宿敌', desc:'从詹姆斯、库里身上夺走的能力同时降低 30%——皇帝和国王，命中宿敌' },
-    { id:'peer', a:'李小鹿', b:'PG ONE', name:'惺惺相惜', desc:'从 PG ONE 身上夺走的能力 +3——惺惺相惜' },
-    { id:'love', a:'库里', b:'阿耶莎', name:'你情我愿', desc:'库里的格局突破天际（110）；阿耶莎的演技效果翻倍' },
-    { id:'model', a:'斯蒂芬·库里', b:'阿耶莎', name:'恩爱模范', desc:'斯蒂芬·库里被夺项联手补强；阿耶莎的「演技」判定加成 +3（与《你情我愿》的翻倍叠加）——恩爱模范' },
-    { id:'side', a:'阿耶莎', b:'李小鹿', pairs:[['阿耶莎','李小鹿'],['库里','假乃亮']], name:'并肩作战', desc:'从配对两人身上夺走的能力各 +3——并肩作战，不止一对人马' },
-    { id:'splash', a:'库里', b:'克莱·汤普森', pairs:[['库里','克莱·汤普森'],['斯蒂芬·库里','克莱·汤普森']], name:'水花兄弟', desc:'从配对两人身上夺走的能力，较低的一项大幅补强、较高的一项 +2——水花四溅，先补最弱的那一溅（两位库里都算）' },
-    { id:'ok', a:'科比·布莱恩特', b:'沙奎尔·奥尼尔', name:'OK组合', desc:'从两人身上夺走的能力各 +2 保底——OK 一出，天下无解' },
-    { id:'truth', a:'阿伦·艾弗森', b:'保罗·皮尔斯', name:'答案与真相', desc:'从两人身上夺走的能力联手补强（弱项补得多），且下一场 +3——答案和真相，都在场上见' },
-    { id:'goats', a:'迈克尔·乔丹', b:'勒布朗·詹姆斯', name:'神与王', desc:'全部能力 +1——神与王同队，全队升格' },
-    { id:'backstage', a:'张弛', b:'一只会唱跳rap的小鸡', name:'后台奇遇', desc:'张弛学会了小鸡的力量，唱跳rap能力得到了巨大提升，但是小鸡就受罪了……（小鸡被夺的能力 -1，张弛被夺的能力 +3）' },
+    { id:'ice', a:'李小鹿', b:'假乃亮', name:'冰释前嫌', fx:'触发：插曲判定失败可重选一次（本局一次）', desc:'巡演插曲判定失败时，可以回到那次选择换一个重来（本局一次）' },
+    { id:'foe', a:'假乃亮', b:'PG ONE', name:'宿敌', fx:'触发：两人被夺项 ×0.7', desc:'从假乃亮、PG ONE 身上夺走的能力同时降低 30%——宿敌见面，分外眼红' },
+    { id:'foe2', a:'勒布朗·詹姆斯', b:'库里', name:'宿敌', fx:'触发：两人被夺项 ×0.7', desc:'从詹姆斯、库里身上夺走的能力同时降低 30%——皇帝和国王，命中宿敌' },
+    { id:'peer', a:'李小鹿', b:'PG ONE', name:'惺惺相惜', fx:'触发：PG ONE 被夺项 +3', desc:'从 PG ONE 身上夺走的能力 +3——惺惺相惜' },
+    { id:'love', a:'库里', b:'阿耶莎', name:'你情我愿', fx:'触发：库里格局 →110；演技效果翻倍', desc:'库里的格局突破天际（110）；阿耶莎的演技效果翻倍' },
+    { id:'model', a:'斯蒂芬·库里', b:'阿耶莎', name:'恩爱模范', fx:'触发：斯蒂芬·库里被夺项补到 86（上限 +10 · 保底 +2）；演技判定 +3', desc:'斯蒂芬·库里被夺项联手补强；阿耶莎的「演技」判定加成 +3（与《你情我愿》的翻倍叠加）——恩爱模范' },
+    { id:'side', a:'阿耶莎', b:'李小鹿', pairs:[['阿耶莎','李小鹿'],['库里','假乃亮']], name:'并肩作战', fx:'触发：配对两人被夺项各 +3', desc:'从配对两人身上夺走的能力各 +3——并肩作战，不止一对人马' },
+    { id:'splash', a:'库里', b:'克莱·汤普森', pairs:[['库里','克莱·汤普森'],['斯蒂芬·库里','克莱·汤普森']], name:'水花兄弟', fx:'触发：较低项补到 90（上限 +10 · 保底 +2），较高项 +2', desc:'从配对两人身上夺走的能力，较低的一项大幅补强、较高的一项 +2——水花四溅，先补最弱的那一溅（两位库里都算）' },
+    { id:'ok', a:'科比·布莱恩特', b:'沙奎尔·奥尼尔', name:'OK组合', fx:'触发：两人被夺项各 +2', desc:'从两人身上夺走的能力各 +2 保底——OK 一出，天下无解' },
+    { id:'truth', a:'阿伦·艾弗森', b:'保罗·皮尔斯', name:'答案与真相', fx:'触发：两人被夺项补到 92（上限 +15 · 保底 +2）；下一场 +3', desc:'从两人身上夺走的能力联手补强（弱项补得多），且下一场 +3——答案和真相，都在场上见' },
+    { id:'goats', a:'迈克尔·乔丹', b:'勒布朗·詹姆斯', name:'神与王', fx:'触发：全队 +1', desc:'全部能力 +1——神与王同队，全队升格' },
+    { id:'backstage', a:'张弛', b:'一只会唱跳rap的小鸡', name:'后台奇遇', fx:'触发：张弛被夺项 +3，小鸡被夺项 -1', desc:'张弛学会了小鸡的力量，唱跳rap能力得到了巨大提升，但是小鸡就受罪了……（小鸡被夺的能力 -1，张弛被夺的能力 +3）' },
     { id:'devpower', a:'张弛', b:'张弛', name:'开发者神力', desc:'张弛短暂拥有开发者的力量，可以再次修改自己的数值（本局一次，点下方按钮重抽，重抽结果说了算）' },
-    { id:'yaomai', a:'姚明', b:'特雷西·麦克格雷迪', name:'姚麦组合', desc:'从两人身上夺走的能力联手补强（弱项补得多）——姚麦一出，丰田中心沸腾' },
-    { id:'wall', a:'姚明', b:'易建联', name:'移动长城', desc:'从两人身上夺走的能力联手补强（弱项补得多）——长城内外，都是主场' },
-    { id:'father', a:'勒布朗·詹姆斯', b:'布朗尼·詹姆斯', name:'父子同台', desc:'从父子俩身上夺走的能力联手补强（弱项补得多）——虎父带子，子也争气' },
-    { id:'msg', a:'林书豪', b:'卡梅隆·安东尼', name:'麦迪逊之光', desc:'从两人身上夺走的能力联手补强（弱项补得多）——那一年，纽约的灯为他亮过' },
-    { id:'question', a:'尼克·杨', b:'阿伦·艾弗森', name:'问号与答案', desc:'从两人身上夺走的能力联手补强——问号遇上答案，天作之合' },
-    { id:'bath', a:'斯嘉丽的洗澡水', b:'凯文·杜兰特', name:'洗澡水之约', desc:'从杜兰特身上夺走的能力 +10——为了这杯水，他什么都肯干' },
-    { id:'trio', members:['假乃亮','李小鹿','PG ONE'], teamPlus:3, name:'三人行', desc:'三人达成了一种美丽的平衡，全队数值 +3' },
-    { id:'penta', members:['库里','阿耶莎','假乃亮','李小鹿','PG ONE'], teamPlus:8, name:'合家亲', desc:'其乐融融，阖家欢喜，全场数值 +8' }
+    { id:'yaomai', a:'姚明', b:'特雷西·麦克格雷迪', name:'姚麦组合', fx:'触发：两人被夺项补到 92（上限 +15 · 保底 +2）', desc:'从两人身上夺走的能力联手补强（弱项补得多）——姚麦一出，丰田中心沸腾' },
+    { id:'wall', a:'姚明', b:'易建联', name:'移动长城', fx:'触发：两人被夺项补到 90（上限 +15 · 保底 +2）', desc:'从两人身上夺走的能力联手补强（弱项补得多）——长城内外，都是主场' },
+    { id:'father', a:'勒布朗·詹姆斯', b:'布朗尼·詹姆斯', name:'父子同台', fx:'触发：两人被夺项补到 90（上限 +15 · 保底 +2）', desc:'从父子俩身上夺走的能力联手补强（弱项补得多）——虎父带子，子也争气' },
+    { id:'msg', a:'林书豪', b:'卡梅隆·安东尼', name:'麦迪逊之光', fx:'触发：两人被夺项补到 90（上限 +15 · 保底 +2）', desc:'从两人身上夺走的能力联手补强（弱项补得多）——那一年，纽约的灯为他亮过' },
+    { id:'question', a:'尼克·杨', b:'阿伦·艾弗森', name:'问号与答案', fx:'触发：两人被夺项补到 86（上限 +10 · 保底 +2）', desc:'从两人身上夺走的能力联手补强——问号遇上答案，天作之合' },
+    { id:'bath', a:'斯嘉丽的洗澡水', b:'凯文·杜兰特', name:'洗澡水之约', fx:'触发：杜兰特被夺项 +10', desc:'从杜兰特身上夺走的能力 +10——为了这杯水，他什么都肯干' },
+    { id:'trio', members:['假乃亮','李小鹿','PG ONE'], teamPlus:3, name:'三人行', fx:'触发：全队 +3', desc:'三人达成了一种美丽的平衡，全队数值 +3' },
+    { id:'penta', members:['库里','阿耶莎','假乃亮','李小鹿','PG ONE'], teamPlus:8, name:'合家亲', fx:'触发：全场 +8', desc:'其乐融融，阖家欢喜，全场数值 +8' }
   ];
   function personIn(name){ return S.src.indexOf(name) >= 0 || (name === '阿耶莎' && S.acting); }
   function yxFill(n, ref, cap){ var d = S.src.indexOf(n); if(d < 0) return; var b = (S.baseAttrs && S.baseAttrs[d] != null) ? S.baseAttrs[d] : S.attrs[d]; if(b == null) return; S.attrs[d] = S.attrs[d] + 2 + Math.min(cap, Math.max(0, ref - b)); }
@@ -599,18 +600,50 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
     });
     return h;
   }
+  function fmtNum(v){ return Math.round(v * 100) / 100; }
+  /* 已触发 chip 的加成行：只读结算后的真实数值（attrs 与 baseAttrs 之差 / foeMarks 记账），不从配置反推 */
+  function bondSettledLine(B){
+    if(B.teamPlus) return (B.id === 'penta' ? '全场' : '全队') + ' +' + B.teamPlus;
+    if(B.id === 'goats') return '全队 +1';
+    if(B.id === 'ice') return '插曲判定失败可重选一次 · ' + (S.iceUsed ? '已使用' : '待用');
+    if(B.id === 'foe' || B.id === 'foe2'){
+      var marks = (S.foeMarks || {})[B.id] || [];
+      var bef = !!((S.befriended || {})[B.id]);
+      if(!marks.length) return '';
+      return marks.map(function(m){
+        if(bef) return S.src[m[0]] + ' ' + CFG.dims[m[0]] + ' ' + fmtNum(m[1]) + '→' + fmtNum(S.attrs[m[0]]) + '（已回滚 +4）';
+        return S.src[m[0]] + ' ' + CFG.dims[m[0]] + ' ' + fmtNum(m[1]) + '→' + fmtNum(m[2]) + '（' + fmtNum(m[2] - m[1]) + '）';
+      }).join('；');
+    }
+    var segs = [];
+    bondMembers(B).forEach(function(n){
+      var d = S.src.indexOf(n);
+      if(d < 0) return;
+      var base = (S.baseAttrs && S.baseAttrs[d] != null) ? S.baseAttrs[d] : S.attrs[d];
+      var cur = S.attrs[d];
+      if(base == null || cur == null) return;
+      var delta = fmtNum(cur - base);
+      segs.push(n + ' ' + CFG.dims[d] + ' ' + fmtNum(base) + '→' + fmtNum(cur) + '（' + (delta > 0 ? '+' : '') + delta + '）');
+    });
+    if(B.id === 'love' && S.actingX2) segs.push('演技效果翻倍 · 当前判定 +' + actBonus());
+    if(B.id === 'model' && S.acting) segs.push('演技判定 +3 · 当前判定 +' + actBonus());
+    if(B.id === 'truth') segs.push('后续判定 +3 · ' + ((S.bonusNext || 0) > 0 ? '待生效' : '已生效'));
+    return segs.join('；');
+  }
   function bondProgressHTML(){
     var parts = [];
     BONDS.forEach(function(B){ if(B.id === 'devpower') return; var M = bondMembers(B); var locked = M.filter(function(n){ return personIn(n); }).length; if(!locked) return;
       var fired = !!(S.bonds && S.bonds[B.id]);
-      parts.push('<span class="bchip' + (fired ? ' on' : '') + '">💞 ' + B.name + (fired ? ' ✓' : ' ' + locked + '/' + M.length) + '</span>');
+      if(fired){ var sl = bondSettledLine(B); parts.push('<span class="bchip on">💞 ' + B.name + ' ✓ 已触发' + (sl ? '<span class="bfx">' + sl + '</span>' : '') + '</span>'); }
+      else parts.push('<span class="bchip">💞 ' + B.name + ' ' + locked + '/' + M.length + (B.fx ? '<span class="bfx">' + B.fx + '</span>' : '') + '</span>');
     });
     return parts.length ? '<div class="bond-progress" style="margin:2px 0 8px">' + parts.join(' ') + '</div>' : '';
   }
   function bondTopHTML(){
     var parts = [];
     BONDS.forEach(function(B){ if(B.id === 'devpower') return; if(!(S.bonds && S.bonds[B.id])) return;
-      parts.push('<span class="bchip on">💞 ' + B.name + ' ✓ 生效中</span>');
+      var sl = bondSettledLine(B);
+      parts.push('<span class="bchip on">💞 ' + B.name + ' ✓ 已触发' + (sl ? '<span class="bfx">' + sl + '</span>' : '') + '</span>');
     });
     return parts.length ? '<div class="bond-progress bond-progress-top" style="margin:2px 0 8px;text-align:center">' + parts.join(' ') + '</div>' : '';
   }
