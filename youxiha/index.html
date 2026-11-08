@@ -406,10 +406,93 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
   function header(){
     return '<div class="kicker">二 十 章 巡 演 · 第 一 季</div><h1>篮球有嘻哈</h1><div class="sub">从 120 位选手身上，夺走 12 项说唱本事<br>一路从天桥底下，唱到封神之夜</div>';
   }
+  /* ================= 音频：WebAudio 全合成 BGM＋音效（零音频文件） =================
+     boom-bap 律动循环约 90 BPM：方波低音线＋合成底鼓/军鼓/踩镲，音量保守。
+     首次用户手势后才建 AudioContext；不可用时静默跳过、绝不报错。开关存 youxiha_sound。 */
+  var YX_AUDIO = (function(){
+    var KEY = 'youxiha_sound';
+    var on = true;
+    try { on = localStorage.getItem(KEY) !== '0'; } catch (e) {}
+    var ctx = null, master = null, bgmGain = null, timer = null, step = 0, nextT = 0, noiseBuf = null;
+    var BPM = 90, SPB = 60 / BPM / 2; /* 八分音符步长 */
+    var BASS = [55, 0, 0, 55, 0, 0, 65.41, 0, 49, 0, 0, 49, 0, 0, 58.27, 0]; /* A1 线，0=休止 */
+    function ac(){ if (!window.AudioContext && !window.webkitAudioContext) return null; return window.AudioContext || window.webkitAudioContext; }
+    function ensure(){
+      if (!on) return false;
+      if (ctx) { if (ctx.state === 'suspended' && ctx.resume) ctx.resume(); return true; }
+      var AC = ac(); if (!AC) return false;
+      try {
+        ctx = new AC();
+        master = ctx.createGain(); master.gain.value = 0.5; master.connect(ctx.destination);
+        bgmGain = ctx.createGain(); bgmGain.gain.value = 0.34; bgmGain.connect(master);
+        noiseBuf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.3), ctx.sampleRate);
+        var d = noiseBuf.getChannelData(0); for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      } catch (e) { ctx = null; return false; }
+      return true;
+    }
+    function env(g, t, a, peak, dec){ g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + dec); }
+    function kick(t){ var o = ctx.createOscillator(), g = ctx.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(45, t + 0.11); env(g, t, 0.002, 0.85, 0.13); o.connect(g); g.connect(bgmGain); o.start(t); o.stop(t + 0.16); }
+    function noise(t, dur, freq, q, peak, type){ var s = ctx.createBufferSource(); s.buffer = noiseBuf; var f = ctx.createBiquadFilter(); f.type = type || 'highpass'; f.frequency.value = freq; f.Q.value = q || 0.8; var g = ctx.createGain(); env(g, t, 0.001, peak, dur); s.connect(f); f.connect(g); g.connect(bgmGain); s.start(t); s.stop(t + dur + 0.05); }
+    function snare(t){ noise(t, 0.09, 1800, 0.7, 0.32, 'bandpass'); }
+    function hat(t, open){ noise(t, open ? 0.12 : 0.03, 7000, 0.7, open ? 0.11 : 0.07); }
+    function bassNote(t, fq){ var o = ctx.createOscillator(), g = ctx.createGain(); o.type = 'square'; o.frequency.value = fq; var f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 300; env(g, t, 0.005, 0.16, SPB * 0.95); o.connect(f); f.connect(g); g.connect(bgmGain); o.start(t); o.stop(t + SPB + 0.05); }
+    function schedStep(s, t){
+      if (s % 4 === 0) kick(t);
+      if (s % 8 === 4) snare(t);
+      hat(t, s % 8 === 6);
+      var b = BASS[s]; if (b) bassNote(t, b);
+    }
+    function tick(){ if (!ctx) return; while (nextT < ctx.currentTime + 0.18) { schedStep(step % 16, nextT); step++; nextT += SPB; } }
+    function startBgm(){ if (!ensure()) return; if (timer) return; step = 0; nextT = ctx.currentTime + 0.06; timer = setInterval(tick, 40); tick(); }
+    function tone(f0, f1, t, dur, type, peak, dest){ if (!ensure()) return; try { var o = ctx.createOscillator(), g = ctx.createGain(); o.type = type || 'square'; o.frequency.setValueAtTime(f0, t); if (f1 && f1 !== f0) o.frequency.exponentialRampToValueAtTime(f1, t + dur); env(g, t, 0.004, peak || 0.16, dur); o.connect(g); g.connect(dest || master); o.start(t); o.stop(t + dur + 0.05); } catch (e) {} }
+    function seq(notes, gap, type, peak){ if (!on) return; if (!ensure()) return; var t = ctx.currentTime + 0.01; notes.forEach(function(f, i){ tone(f, f, t + i * gap, gap * 1.7, type, peak); }); }
+    var sfx = {
+      click: function(){ seq([620], 0.07, 'square', 0.07); },
+      select: function(){ seq([440, 660], 0.07, 'square', 0.13); },
+      pick: function(){ seq([523, 784, 1047], 0.06, 'square', 0.14); },
+      swap: function(){ if (!ensure()) return; tone(300, 900, ctx.currentTime + 0.01, 0.14, 'sawtooth', 0.08); },
+      bond: function(){ seq([392, 523, 659, 784], 0.09, 'triangle', 0.18); },
+      win: function(){ seq([523, 659, 784], 0.1, 'square', 0.15); },
+      lose: function(){ seq([330, 262, 196], 0.13, 'sawtooth', 0.1); },
+      jingle: function(){ seq([523, 659, 784, 1047, 784, 1047], 0.11, 'triangle', 0.17); }
+    };
+    function play(name){ try { if (!on) return; if (sfx[name]) sfx[name](); } catch (e) {} }
+    function unlock(){ try { if (on) startBgm(); } catch (e) {} }
+    function setOn(v){
+      on = !!v;
+      try { localStorage.setItem(KEY, on ? '1' : '0'); } catch (e) {}
+      if (!on) { if (timer) { clearInterval(timer); timer = null; } if (ctx && ctx.suspend) ctx.suspend(); }
+      else { if (ctx && ctx.resume) ctx.resume(); startBgm(); }
+    }
+    return { play: play, unlock: unlock, setOn: setOn, isOn: function(){ return on; }, _hasCtx: function(){ return !!ctx; } };
+  })();
+  window.YX_AUDIO = YX_AUDIO;
+  document.addEventListener('pointerdown', function(){ YX_AUDIO.unlock(); }, true);
+  document.addEventListener('click', function(e){ try { var t = e.target; if (t && t.closest && t.closest('button')) YX_AUDIO.play('click'); } catch (err) {} }, true);
   var BOND_RADAR_RATE = 0.65;
   var AD_CAPS = { reroll: Infinity, consol: 2, resup: 2, evredo: 2, befriend: 2, chase: 2, radar: Infinity };
   function showAd(kind, cb){ yxPlayAdReward(kind, cb); }
+  var __yxSfxSeen = null; /* 音频表现钩子：只观察渲染前后的状态差，不参与结算 */
+  var __yxSfxPhase = null, __yxSfxResult = null;
+  function yxSfxWatch(){
+    try {
+      var keys = Object.keys(S.bonds || {}).sort().join(',');
+      if (__yxSfxSeen === null) { __yxSfxSeen = keys; }
+      else if (keys !== __yxSfxSeen) {
+        var before = __yxSfxSeen ? __yxSfxSeen.split(',') : [];
+        if (keys.split(',').some(function(k){ return k && before.indexOf(k) < 0; })) YX_AUDIO.play('bond');
+        __yxSfxSeen = keys;
+      }
+      if (S.phase === 'battle' && S.lastResult) {
+        var sig = S.chapter + ':' + S.lastResult.win;
+        if (sig !== __yxSfxResult) { __yxSfxResult = sig; YX_AUDIO.play(S.lastResult.win ? 'win' : 'lose'); }
+      }
+      if (S.phase === 'end' && __yxSfxPhase !== 'end') YX_AUDIO.play('jingle');
+      __yxSfxPhase = S.phase;
+    } catch (e) {}
+  }
   function render(){
+    yxSfxWatch();
     if(S.phase === 'intro'){ renderIntro(); }
     else if(S.phase === 'draft'){ renderDraft(); }
     else if(S.phase === 'chapter'){ renderChapter(); }
@@ -434,10 +517,13 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
     h += '<div class="yx-menu">'
       + '<button data-m="records">📜 战绩</button><button data-m="gallery">📖 图鉴</button><button data-m="boards">🏆 排行榜</button>'
       + '<button data-m="notice">📣 公告</button><button data-m="group">👥 交流群</button><button data-m="saves">💾 存档</button>'
-      + '<button data-m="bonds">💞 羁绊</button><button data-m="feats">🏅 成就</button></div>';
+      + '<button data-m="bonds">💞 羁绊</button><button data-m="feats">🏅 成就</button></div>'
+      + '<button class="btn ghost" id="b-sound" style="margin-top:8px">' + (YX_AUDIO.isOn() ? '🔊 音乐音效：开' : '🔇 音乐音效：关') + '</button>';
     h += '<div class="card"><b>怎么玩</b><br><span style="font-size:13px;line-height:1.8;color:#6b5a44">先用 12 轮选人，从球星和嘉宾身上夺走 12 项说唱能力（选过的人不会再出现）。然后开启 <b>20 章巡演</b>：每一章一个场子、一位对手，选对打法才能赢；章节之间有随机插曲，中途有 3 次补给换人。<br>卡面颜色有讲究：金卡是传说，还有粉卡、绿卡和一张数值全是 ?? 的<b style="color:#1d8aa5">钻石卡</b>——夺走它的能力时，数值当场随机开出。<br>格局能到 <b style="color:#b3352c">100</b> 的只有库里和乔丹。阿耶莎藏着专属夺技「演技」，夺走它后面每场都有加成。凑齐特定的组合，还会触发隐藏<b>「羁绊」</b>（全 21 个）。<br>换一批、补给、判定重选、化敌为友，都能看广告追加次数；广告奖励没到账，重进游戏会自动核对补发。</span></div>';
     h += '<div class="foot">拼将系列第五作 · 正式版 v1.0</div>';
     app.innerHTML = h;
+    var bsnd = document.getElementById('b-sound');
+    if(bsnd) bsnd.onclick = function(){ YX_AUDIO.setOn(!YX_AUDIO.isOn()); render(); };
     var bc = document.getElementById('b-continue');
     if(bc) bc.onclick = function(){ render(); };
     document.getElementById('b-start').onclick = function(){
@@ -518,10 +604,10 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
   }
   function bindPicks(onDim){
     app.querySelectorAll('[data-pick]').forEach(function(el){
-      el.onclick = function(){ S.sel = parseInt(el.getAttribute('data-pick'),10); save(); render(); };
+      el.onclick = function(){ YX_AUDIO.play('select'); S.sel = parseInt(el.getAttribute('data-pick'),10); save(); render(); };
     });
     app.querySelectorAll('[data-dim]').forEach(function(el){
-      el.onclick = function(){ onDim(parseInt(el.getAttribute('data-dim'),10)); };
+      el.onclick = function(){ YX_AUDIO.play('pick'); onDim(parseInt(el.getAttribute('data-dim'),10)); };
     });
   }
   function actBonus(){ var b = (S.acting ? 3 : 0) + (S.bonds && S.bonds.model ? 3 : 0); return S.actingX2 ? b * 2 : b; }
@@ -777,7 +863,7 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
       save(); render();
     });
     var sw = document.getElementById('b-swap');
-    if(sw) sw.onclick = function(){ if(S.rerolls>0){ S.rerolls--; drawOptions(); save(); render(); } };
+    if(sw) sw.onclick = function(){ if(S.rerolls>0){ YX_AUDIO.play('swap'); S.rerolls--; drawOptions(); save(); render(); } };
     var sa = document.getElementById('b-swapad');
     if(sa) sa.onclick = function(){ showAd('reroll', function(){ S.ads.reroll++; drawOptions(); save(); render(); }); };
     document.getElementById('b-restart').onclick = function(){ clearRun(); };
