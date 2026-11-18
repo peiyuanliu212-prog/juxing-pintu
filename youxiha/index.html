@@ -396,7 +396,7 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
     return p.rap.map(function(v,i){return [v,i];}).sort(function(a,b){return b[0]-a[0];}).slice(0,3)
       .map(function(x){ return DIMS[x[1]] + x[0]; }).join(' · ');
   }
-  function rollMystery(){ return 40 + Math.floor(rng()*60); }
+  function rollMystery(){ return 70 + Math.floor(rng()*51); }
   function slotsHTML(){
     var h = '<div class="dims">';
     for(var i=0;i<12;i++){
@@ -1255,10 +1255,10 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
   }
   function yxOpenWelfare(){
     var inner;
-    if (META.welfareClaimed) inner = '<p class="hint">✅ 你已经领过这份福利啦。' + (META.welfareDirected || (S && S.directedReady) ? '定向点将资格已备好，下一局夺技时可用。' : '') + '</p>';
-    else inner = '<p class="hint" style="line-height:1.8">进群福利：<b>定向点将资格 ×1</b>（每人限领一次）。领到后，下一局夺技会出现「🎯 定向点将」按钮，自选一位选手出场。福利码在交流群里发布。</p>' +
-      '<div style="display:flex;gap:8px"><input id="yx-wf-code" placeholder="输入福利码" style="flex:1;text-transform:uppercase;padding:10px;border:1px solid #c9b98a;border-radius:8px;background:#fffdf4"><button class="btn" id="yx-wf-btn" style="width:auto;padding:10px 18px">领取</button></div>' +
+    var wfInput = '<div style="display:flex;gap:8px"><input id="yx-wf-code" placeholder="输入福利码" style="flex:1;text-transform:uppercase;padding:10px;border:1px solid #c9b98a;border-radius:8px;background:#fffdf4"><button class="btn" id="yx-wf-btn" style="width:auto;padding:10px 18px">领取</button></div>' +
       '<p class="hint" id="yx-wf-msg"></p>';
+    if (META.welfareClaimed) inner = '<p class="hint">✅ 你已经领过这份福利啦。' + (META.welfareDirected || (S && S.directedReady) ? '定向点将资格已备好，下一局夺技时可用。' : '') + '</p><p class="hint">有新的活动码可以在这里继续输入（每个码限领一次）。</p>' + wfInput;
+    else inner = '<p class="hint" style="line-height:1.8">进群福利：<b>定向点将资格 ×1</b>（每人限领一次）。领到后，下一局夺技会出现「🎯 定向点将」按钮，自选一位选手出场。福利码在交流群里发布。</p>' + wfInput;
     var ov = yxOverlay(yxSheetHead('🎁 群福利') + '<div class="yx-body">' + inner + '</div>');
     var btn = ov.querySelector('#yx-wf-btn');
     if (btn) btn.onclick = async function(){
@@ -1328,13 +1328,16 @@ window.ARC_IMG = {"0": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
     h += '</div>';
     var ov = yxOverlay(h);
     ov.querySelectorAll('[data-slot-load]').forEach(function(b){ b.onclick = function(){
-      localStorage.setItem(YX_ACTIVE_KEY, b.getAttribute('data-slot-load'));
-      if (!load() || !S) newGame(); yxCloseOverlay(); render(); yxToast('已切换存档槽');
+      var wok = true;
+      try { localStorage.setItem(YX_ACTIVE_KEY, b.getAttribute('data-slot-load')); } catch (e) { wok = false; }
+      if (!load() || !S) newGame(); yxCloseOverlay(); render();
+      yxToast(wok ? '已切换存档槽' : '已切换，但本机写入异常，重进可能回到原槽');
     }; });
     ov.querySelectorAll('[data-slot-del]').forEach(function(b){ b.onclick = function(){
-      localStorage.removeItem(yxSlotKey(parseInt(b.getAttribute('data-slot-del'), 10)));
+      var wok = true;
+      try { localStorage.removeItem(yxSlotKey(parseInt(b.getAttribute('data-slot-del'), 10))); } catch (e) { wok = false; }
       if (parseInt(b.getAttribute('data-slot-del'), 10) === yxActiveSlot()) { newGame(); }
-      yxOpenSaves(); yxToast('已删除');
+      yxOpenSaves(); yxToast(wok ? '已删除' : '删除失败，本机写入异常');
     }; });
     ov.querySelector('#yx-code-export').onclick = function(){
       var ta = ov.querySelector('#yx-save-code');
