@@ -2658,7 +2658,8 @@ window.BK_ensureArt = function(){
       try{ const t = e.target; if(t && t.closest && t.closest('button') && !t.closest('.attrbtn, [data-opt], #b-swap, #b-mute')) sfx('click'); }catch(err){}
     });
   }
-  // —— 启动：先核对广告 PENDING，再恢复（平台计数刷新后再核对一次） ——
+  // —— 启动：先从本地存档恢复当前局（BK-SAVE-001：此前 boot 从未调 load，peek 恒 null、继续赛季入口失效），再核对广告 PENDING 并恢复视图（平台计数刷新后再核对一次） ——
+  Save.load();
   function bootGrant(t){ const s = Save.peek(); if(s){ G.applyAdGrant(s, t); Save.save('ad-settle-boot'); } }
   Ads.settleAll(bootGrant);
   Ads.refreshCount().then(()=>Ads.settleAll(bootGrant));
